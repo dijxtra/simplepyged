@@ -54,6 +54,10 @@ class Gedcom:
         self.__individuals = 0
         self.__parse(file)
 
+        self.__individual_list = []
+        self.__individual_dict = {}
+        self.__parse_individuals()
+
     def element_list(self):
         """ Return a list of all the elements in the Gedcom file.  The
         elements are in the same order as they appeared in the file.
@@ -66,6 +70,19 @@ class Gedcom:
         key for the dictionary is the pointer.
         """
         return self.__element_dict
+
+    def individual_list(self):
+        """ Return a list of all the individuals in the Gedcom file.  The
+        individuals are in the same order as they appeared in the file.
+        """
+        return self.__individual_list
+
+    def individual_dict(self):
+        """ Return a dictionary of individuals from the Gedcom file.  Only
+        individuals identified by a pointer are listed in the dictionary.  The
+        key for the dictionary is the pointer.
+        """
+        return self.__individual_dict
 
     # Private methods
 
@@ -115,6 +132,16 @@ class Gedcom:
         # finish up
         self.__current_level = l
         self.__current_element = e
+
+    def __parse_individuals(self):
+        """Populates self.__individual_list and self.__individual_dict with individuals from self.__element_list and self.__element_dict"""
+        for e in self.__element_list:
+            if e.individual():
+                self.__individual_list.append(e)
+
+        for key, e in self.__element_dict.items():
+            if e.individual():
+                self.__individual_dict[key] = e
 
     def __level(self,number,parts,place):
         if len(parts) <= place:
