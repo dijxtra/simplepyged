@@ -126,8 +126,6 @@ class Gedcom:
             if p != '':
                 self.__individual_dict[p] = e
 
-
-
         if l > self.__current_level:
             self.__current_element.add_child(e)
             e.add_parent(self.__current_element)
