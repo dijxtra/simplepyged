@@ -1,0 +1,7 @@
+*~
+*.pyc
+.coverage*
+t.sh
+htmlcov
+docs/conf.py
+docs/_build
