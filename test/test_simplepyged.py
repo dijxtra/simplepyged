@@ -1,8 +1,8 @@
 import unittest
-from gedcom import *
+from simplepyged import *
 
 class Test(unittest.TestCase):
-    """Unit tests for gedcom.py."""
+    """Unit tests for simplepyged.py."""
 
     def setUp(self):
         self.g = Gedcom('/home/nick/code/gedrep/test/mcintyre.ged')
@@ -63,6 +63,16 @@ class Test(unittest.TestCase):
         for e in self.g.element_list():
             if e.pointer() == "@I99@":
                 print e.name()
+
+    def test_individuals(self):
+        num_of_individuals = 0
+        for e in self.g.element_list():
+            if e.individual():
+                num_of_individuals += 1
+
+        self.assertEqual(num_of_individuals, len(self.g.individual_list()))
+        self.assertEqual(num_of_individuals, len(self.g.individual_dict()))
+         
 
 if __name__ == '__main__':
     unittest.main()
