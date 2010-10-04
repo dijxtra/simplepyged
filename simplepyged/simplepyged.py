@@ -387,6 +387,100 @@ class Element:
                     
         return match
 
+    def marriage_year_match(self,year):
+        """ Check if one of the marriage years of an individual matches
+        the supplied year.  Year is an integer. """
+        years = self.marriage_years()
+        return year in years
+
+    def marriage_range_match(self,year1,year2):
+        """ Check if one of the marriage year of an individual is in a
+        given range.  Years are integers.
+        """
+        years = self.marriage_years()
+        for year in years:
+            if year >= year1 and year <= year2:
+                return True
+        return False
+
+    def marriage(self):
+        """ Return a list of marriage tuples for a person, each listing
+        (date,place).
+        """
+        date = ""
+        place = ""
+        if not self.individual():
+            return (date,place)
+        for e in self.children():
+            if e.tag() == "FAMS":
+                f = self.__dict.get(e.value(),None)
+                if f == None:
+                    return (date,place)
+                for g in f.children():
+                    if g.tag() == "MARR":
+                        for h in g.children():
+                            if h.tag() == "DATE":
+                                date = h.value()
+                            if h.tag() == "PLAC":
+                                place = h.value()
+        return (date,place)
+
+    def marriage_years(self):
+        """ Return a list of marriage years for a person, each in integer
+        format.
+        """
+        dates = []
+        if not self.individual():
+            return dates
+        for e in self.children():
+            if e.tag() == "FAMS":
+                f = self.__dict.get(e.value(),None)
+                if f == None:
+                    return dates
+                for g in f.children():
+                    if g.tag() == "MARR":
+                        for h in g.children():
+                            if h.tag() == "DATE":
+                                datel = string.split(h.value())
+                                date = datel[len(datel)-1]
+                                try:
+                                    dates.append(int(date))
+                                except:
+                                    pass
+        return dates
+
+    def get_individual(self):
+        """ Return this element and all of its sub-elements """
+        result = str(self)
+        for e in self.children():
+            result += '\n' + e.get_individual()
+        return result
+
+    def get_family(self):
+        result = self.get_individual()
+        for e in self.children():
+            if e.tag() == "HUSB" or e.tag() == "WIFE" or e.tag() == "CHIL":
+                f = self.__dict.get(e.value())
+                if f != None:
+                    result += '\n' + f.get_individual()
+        return result
+
+    def __str__(self):
+        """ Format this element as its original string """
+        result = str(self.level())
+        if self.pointer() != "":
+            result += ' ' + self.pointer()
+        result += ' ' + self.tag()
+        if self.value() != "":
+            result += ' ' + self.value()
+        return result
+
+
+class Individual(Element):
+    """ Gedcom element representing an Individual
+
+    Child class of Element
+    """
     def surname_match(self,name):
         """ Match a string with the surname of an individual """
         (first,last) = self.name()
@@ -421,22 +515,6 @@ class Element:
         year = self.death_year()
         if year >= year1 and year <= year2:
             return True
-        return False
-
-    def marriage_year_match(self,year):
-        """ Check if one of the marriage years of an individual matches
-        the supplied year.  Year is an integer. """
-        years = self.marriage_years()
-        return year in years
-
-    def marriage_range_match(self,year1,year2):
-        """ Check if one of the marriage year of an individual is in a
-        given range.  Years are integers.
-        """
-        years = self.marriage_years()
-        for year in years:
-            if year >= year1 and year <= year2:
-                return True
         return False
 
     def families(self):
@@ -562,74 +640,3 @@ class Element:
                 return True
         return False
 
-    def marriage(self):
-        """ Return a list of marriage tuples for a person, each listing
-        (date,place).
-        """
-        date = ""
-        place = ""
-        if not self.individual():
-            return (date,place)
-        for e in self.children():
-            if e.tag() == "FAMS":
-                f = self.__dict.get(e.value(),None)
-                if f == None:
-                    return (date,place)
-                for g in f.children():
-                    if g.tag() == "MARR":
-                        for h in g.children():
-                            if h.tag() == "DATE":
-                                date = h.value()
-                            if h.tag() == "PLAC":
-                                place = h.value()
-        return (date,place)
-
-    def marriage_years(self):
-        """ Return a list of marriage years for a person, each in integer
-        format.
-        """
-        dates = []
-        if not self.individual():
-            return dates
-        for e in self.children():
-            if e.tag() == "FAMS":
-                f = self.__dict.get(e.value(),None)
-                if f == None:
-                    return dates
-                for g in f.children():
-                    if g.tag() == "MARR":
-                        for h in g.children():
-                            if h.tag() == "DATE":
-                                datel = string.split(h.value())
-                                date = datel[len(datel)-1]
-                                try:
-                                    dates.append(int(date))
-                                except:
-                                    pass
-        return dates
-
-    def get_individual(self):
-        """ Return this element and all of its sub-elements """
-        result = str(self)
-        for e in self.children():
-            result += '\n' + e.get_individual()
-        return result
-
-    def get_family(self):
-        result = self.get_individual()
-        for e in self.children():
-            if e.tag() == "HUSB" or e.tag() == "WIFE" or e.tag() == "CHIL":
-                f = self.__dict.get(e.value())
-                if f != None:
-                    result += '\n' + f.get_individual()
-        return result
-
-    def __str__(self):
-        """ Format this element as its original string """
-        result = str(self.level())
-        if self.pointer() != "":
-            result += ' ' + self.pointer()
-        result += ' ' + self.tag()
-        if self.value() != "":
-            result += ' ' + self.value()
-        return result
