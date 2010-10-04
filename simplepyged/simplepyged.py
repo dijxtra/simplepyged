@@ -449,6 +449,22 @@ class Element:
                     results.append(f)
         return results
 
+    def family_of_parents(self):
+        """ Return a family element of a person in which the person is a child. """
+        results = []
+        for e in self.children():
+            if e.tag() == "FAMC":
+                f = self.__dict.get(e.value(),None)
+                if f != None:
+                    results.append(f)
+        if len(results) > 1:
+            raise Exception('Individual has multiple parent families.')
+
+        if len(results) == 0:
+            return None
+        
+        return results[0]
+
     def name(self):
         """ Return a person's names as a tuple: (first,last) """
         first = ""

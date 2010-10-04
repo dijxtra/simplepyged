@@ -72,7 +72,7 @@ class Test(unittest.TestCase):
 
         self.assertEqual(num_of_individuals, len(self.g.individual_list()))
         self.assertEqual(num_of_individuals, len(self.g.individual_dict()))
-         
+
 
 if __name__ == '__main__':
     unittest.main()
