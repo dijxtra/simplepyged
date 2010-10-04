@@ -48,14 +48,13 @@ class Gedcom:
         """
         self.__element_list = []
         self.__element_dict = {}
+        self.__individual_list = []
+        self.__individual_dict = {}
         self.__element_top = Element(-1,"","TOP","",self.__element_dict)
         self.__current_level = -1
         self.__current_element = self.__element_top
         self.__individuals = 0
         self.__parse(file)
-
-        self.__individual_list = []
-        self.__individual_dict = {}
 
     def element_list(self):
         """ Return a list of all the elements in the Gedcom file.  The
@@ -522,9 +521,11 @@ class Individual(Element):
         results = []
         for e in self.children():
             if e.tag() == "FAMS":
-                f = self.__dict.get(e.value(),None)
-                if f != None:
-                    results.append(f)
+                if e.value() != None:
+                    results.append(e.value())
+#                f = self.__dict.get(e.value(),None) #old version (why did this need to go through __dict?)
+#                if f != None:
+#                    results.append(f)
         return results
 
     def family_of_parents(self):
@@ -532,9 +533,11 @@ class Individual(Element):
         results = []
         for e in self.children():
             if e.tag() == "FAMC":
-                f = self.__dict.get(e.value(),None)
-                if f != None:
-                    results.append(f)
+                if e.value() != None:
+                    results.append(e.value())
+#                f = self.__dict.get(e.value(),None) #old version (why did this need to go through __dict?)
+#                if f != None:
+#                    results.append(f)
         if len(results) > 1:
             raise Exception('Individual has multiple parent families.')
 
