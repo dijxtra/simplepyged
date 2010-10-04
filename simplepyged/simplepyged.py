@@ -56,7 +56,6 @@ class Gedcom:
 
         self.__individual_list = []
         self.__individual_dict = {}
-        self.__parse_individuals()
 
     def element_list(self):
         """ Return a list of all the elements in the Gedcom file.  The
@@ -114,10 +113,21 @@ class Gedcom:
         if l > self.__current_level + 1:
             self.__error(number,"Structure of GEDCOM file is corrupted")
 
-        e = Element(l,p,t,v,self.element_dict())
+        if t == "INDI":
+            e = Individual(l,p,t,v,self.element_dict())
+        else:
+            e = Element(l,p,t,v,self.element_dict())
+
         self.__element_list.append(e)
         if p != '':
             self.__element_dict[p] = e
+
+        if e.individual():
+            self.__individual_list.append(e)
+            if p != '':
+                self.__individual_dict[p] = e
+
+
 
         if l > self.__current_level:
             self.__current_element.add_child(e)
@@ -132,16 +142,6 @@ class Gedcom:
         # finish up
         self.__current_level = l
         self.__current_element = e
-
-    def __parse_individuals(self):
-        """Populates self.__individual_list and self.__individual_dict with individuals from self.__element_list and self.__element_dict"""
-        for e in self.__element_list:
-            if e.individual():
-                self.__individual_list.append(e)
-
-        for key, e in self.__element_dict.items():
-            if e.individual():
-                self.__individual_dict[key] = e
 
     def __level(self,number,parts,place):
         if len(parts) <= place:
