@@ -327,24 +327,18 @@ class Element:
 
     def criteria_match(self,criteria):
         """ Check in this element matches all of the given criteria.
-        The criteria is a colon-separated list, where each item in the
 
-        list has the form [name]=[value]. The following criteria are supported:
+        The criteria is a colon-separated list, where each item in the list has the form [name]=[value]. The following criteria are supported:
 
-        surname=[name]
-             Match a person with [name] in any part of the surname.
-        name=[name]
-             Match a person with [name] in any part of the given name.
-        birth=[year]
-             Match a person whose birth year is a four-digit [year].
-        birthrange=[year1-year2]
-             Match a person whose birth year is in the range of years from
-             [year1] to [year2], including both [year1] and [year2].
-        death=[year]
-        deathrange=[year1-year2]
-        marriage=[year]
-        marriagerange=[year1-year2]
-
+        * surname=[name] - Match a person with [name] in any part of the surname.
+        * name=[name] - Match a person with [name] in any part of the given name.
+        * birth=[year] - Match a person whose birth year is a four-digit [year].
+        * birthrange=[year1-year2] - Match a person whose birth year is in the range of years from [year1] to [year2], including both [year1] and [year2].
+        * death=[year]
+        * deathrange=[year1-year2]
+        * marriage=[year]
+        * marriagerange=[year1-year2]
+        
         """
 
         # error checking on the criteria
@@ -474,8 +468,10 @@ class Element:
         return dates
 
     def get_individual(self):
-        """.. deprecated::
-        This feature is obsolete, use Element.gedcom()."""
+        """.. deprecated
+
+        This method is obsolete, use Element.gedcom().
+        """
         return self.gedcom()
 
     def gedcom(self):

@@ -3,16 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to SimplePyGed's documentation!
-=======================================
+.. include:: ../README.rst
 
-Contents:
+
+Classes
+-------
 
 .. toctree::
    :maxdepth: 2
 
-.. automodule:: simplepyged
-   :members:
+   gedcom.rst
+   element.rst
+   individual.rst
+   family.rst
+
 
 Indices and tables
 ==================
