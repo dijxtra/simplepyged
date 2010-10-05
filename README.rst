@@ -1,10 +1,15 @@
-# simplepyged - A simple Python GEDCOM parser
+===========================================
+simplepyged - A simple Python GEDCOM parser
+===========================================
 
+Examples
+========
 
-## Examples
 Examples of how to use this parser are at docs/examples.
 
-## Licence
+Licence
+=======
+
 All code is licenced under GPL v.3 or newer.
 
 First commit to this repository was based on source from here:
