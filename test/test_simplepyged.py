@@ -1,11 +1,12 @@
 import unittest
+import os
 from simplepyged import *
 
 class Test(unittest.TestCase):
     """Unit tests for simplepyged.py."""
 
     def setUp(self):
-        self.g = Gedcom('/home/nick/code/gedrep/test/mcintyre.ged')
+        self.g = Gedcom(os.path.abspath('test/mcintyre.ged'))
 
     def test_matches(self):
         for e in self.g.element_list():
