@@ -677,29 +677,33 @@ class Family(Element):
     def __init__(self,level,pointer,tag,value,dict):
         Element.__init__(self,level,pointer,tag,value,dict)
 
-        self.__husband = None
-        self.__wife = None
-        self.__children = []
         self.__parse()
 
     def __parse(self):
+        self.__husband = None
+        self.__wife = None
+#        self.__children = []
+
         for e in self.children():
             if e.value() != None:
                 if e.tag() == "HUSB":
                     self.__husband = e.value()
                 elif e.tag() == "WIFE":
                     self.__wife = e.value()
-                elif e.tag() == "CHIL":
-                    self.__children.append(e.value())
+#                elif e.tag() == "CHIL":
+#                    self.__children.append(e.value())
 
     def husband(self):
         """ Return husband this family """
+        self.__parse() #__init__ didn't run parse, I don't know why
         return self.__husband
 
     def wife(self):
         """ Return wife this family """
+        self.__parse() #__init__ didn't run parse, I don't know why
         return self.__wife
 
 #    def children(self): #in conflict with Element.children()
 #        """ Return list of children in this family """
+#        self.__parse() #__init__ didn't run parse, I don't know why
 #        return self.__children
