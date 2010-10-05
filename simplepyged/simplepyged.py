@@ -97,6 +97,15 @@ class Gedcom:
         """
         return self.__family_dict
 
+    def get_individual(self, pointer):
+        """ Return an object of class Individual identified by pointer """
+        return self.individual_dict()[pointer]
+
+    def get_family(self, pointer):
+        """ Return an object of class Family identified by pointer """
+        return self.family_dict()[pointer]
+
+
     # Private methods
 
     def __parse(self,file):
@@ -273,7 +282,7 @@ class Element:
         self.__pointer = pointer
         self.__tag = tag
         self.__value = value
-        self.__dict = dict
+        self.dict = dict #subclasses need to use it, so it is not private
         # structuring
         self.__children_elements = []
         self.__parent_element = None
@@ -428,7 +437,7 @@ class Element:
             return (date,place)
         for e in self.children_elements():
             if e.tag() == "FAMS":
-                f = self.__dict.get(e.value(),None)
+                f = self.dict.get(e.value(),None)
                 if f == None:
                     return (date,place)
                 for g in f.children_elements():
@@ -449,7 +458,7 @@ class Element:
             return dates
         for e in self.children_elements():
             if e.tag() == "FAMS":
-                f = self.__dict.get(e.value(),None)
+                f = self.dict.get(e.value(),None)
                 if f == None:
                     return dates
                 for g in f.children_elements():
@@ -480,7 +489,7 @@ class Element:
         result = self.get_individual()
         for e in self.children_elements():
             if e.tag() == "HUSB" or e.tag() == "WIFE" or e.tag() == "CHIL":
-                f = self.__dict.get(e.value())
+                f = self.dict.get(e.value())
                 if f != None:
                     result += '\n' + f.get_individual()
         return result
@@ -502,6 +511,52 @@ class Individual(Element):
     Child class of Element
 
     """
+
+    def __init__(self,level,pointer,tag,value,dict):
+        Element.__init__(self,level,pointer,tag,value,dict)
+
+        self.__init()
+
+    def __init(self):
+        self.__parent_family = None
+        self.__families = []
+
+        if self.parent_family_pointer() != None:
+            self.__parent_family = self.dict[self.parent_family_pointer()]
+
+        if self.families_pointers() != []:
+            for f in self.families_pointers():
+                self.__families.append(self.dict[f])
+                
+
+    def parent_family(self):
+        self.__init()
+        return self.__parent_family
+
+    def families(self):
+        return self.__families
+
+    def father(self):
+        self.__init()
+        if self.parent_family() != None:
+            if self.parent_family().husband() != None:
+                return self.parent_family().husband()
+
+    def mother(self):
+        self.__init()
+        if self.parent_family() != None:
+            if self.parent_family().wife() != None:
+                return self.parent_family().wife()
+
+    def children(self):
+        self.__init()
+        retval = []
+
+        for f in self.families():
+            for c in f.children():
+                retval.append(c)
+
+        return retval
 
     def surname_match(self,name):
         """ Match a string with the surname of an individual """
@@ -539,26 +594,26 @@ class Individual(Element):
             return True
         return False
 
-    def families(self):
-        """ Return a list of all of the family elements of a person. """
+    def families_pointers(self):
+        """ Return a list of pointers of all of the family elements of a person. """
         results = []
         for e in self.children_elements():
             if e.tag() == "FAMS":
                 if e.value() != None:
                     results.append(e.value())
-#                f = self.__dict.get(e.value(),None) #old version (why did this need to go through __dict?)
+#                f = self.dict.get(e.value(),None) #old version (why did this need to go through __dict?)
 #                if f != None:
 #                    results.append(f)
         return results
 
-    def family_of_parents(self):
+    def parent_family_pointer(self):
         """ Return a family element of a person in which the person is a child. """
         results = []
         for e in self.children_elements():
             if e.tag() == "FAMC":
                 if e.value() != None:
                     results.append(e.value())
-#                f = self.__dict.get(e.value(),None) #old version (why did this need to go through __dict?)
+#                f = self.dict.get(e.value(),None) #old version (why did this need to go through __dict?)
 #                if f != None:
 #                    results.append(f)
         if len(results) > 1:
@@ -687,11 +742,11 @@ class Family(Element):
         for e in self.children_elements():
             if e.value() != None:
                 if e.tag() == "HUSB":
-                    self.__husband = e.value()
+                    self.__husband = self.dict[e.value()]
                 elif e.tag() == "WIFE":
-                    self.__wife = e.value()
+                    self.__wife = self.dict[e.value()]
                 elif e.tag() == "CHIL":
-                    self.__children.append(e.value())
+                    self.__children.append(self.dict[e.value()])
 
     def husband(self):
         """ Return husband this family """
@@ -703,7 +758,7 @@ class Family(Element):
         self.__parse() #__init__ didn't run parse, I don't know why
         return self.__wife
 
-    def children(self): #in conflict with Element.children()
+    def children(self):
         """ Return list of children in this family """
         self.__parse() #__init__ didn't run parse, I don't know why
         return self.__children

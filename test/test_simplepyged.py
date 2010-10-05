@@ -75,5 +75,18 @@ class Test(unittest.TestCase):
         self.assertEqual(num_of_individuals, len(self.g.individual_dict()))
 
 
+    def test_individual(self):
+        """Testing class Individual"""
+        mary = self.g.get_individual('@P405366386@')
+
+        self.assertEqual(mary.parent_family_pointer(), '@F5@')
+        self.assertEqual(self.g.get_family(mary.parent_family_pointer()), mary.parent_family())
+        self.assertEqual(self.g.get_family(mary.parent_family_pointer()).husband().pointer(), '@P405368888@')
+        self.assertEqual(mary.father().pointer(), '@P405368888@')
+        self.assertEqual(mary.mother().pointer(), '@P405538002@')
+        self.assertEqual(map(lambda x: x.pointer(), mary.families()), ['@F4@'])
+        self.assertEqual(mary.father().children(), [mary])
+        
+
 if __name__ == '__main__':
     unittest.main()
