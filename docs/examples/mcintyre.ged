@@ -1,0 +1,470 @@
+0 HEAD
+1 CHAR ANSI
+1 SOUR Ancestry.com Family Trees
+1 NOTE Retreived from http://www.gedcoms.com/downloads/summary/7/28.html
+2 VERS (2010.3)
+2 NAME Ancestry.com Family Trees
+2 CORP Ancestry.com
+1 GEDC
+2 VERS 5.5
+2 FORM LINEAGE-LINKED
+0 @P405313470@ INDI 
+1 BIRT 
+2 DATE 21 Jul 1968
+2 PLAC Bastrop, Louisiana
+1 NAME Kimberly Dawn /McIntyre/
+1 SEX F
+1 NOTE Kim
+2 CONT http://trees.ancestry.com/rd?f=image&guid=2168c95f-cee4-4acb-8a72-4cc9b96922dd&tid=16672988&pid=405313470
+1 FAMC @F1@
+1 FAMS @F14@
+0 @P405419061@ INDI 
+1 BIRT 
+2 DATE 1859
+1 NAME Franklin Patterson /McIntyre/
+1 DEAT 
+2 DATE 06 Feb 1889
+1 SEX M
+1 FAMS @F6@
+1 FAMC @F7@
+0 @P405429008@ INDI 
+1 DEAT 
+2 DATE 24 Jan 1875
+1 BIRT 
+2 DATE 1832
+1 NAME Mary /Patterson/
+1 SEX F
+1 FAMS @F7@
+1 FAMC @F16@
+0 @P407996928@ INDI 
+1 NAME William Todd /Johnston/
+1 BIRT 
+2 DATE 26 Dec 1975
+1 SEX M
+1 FAMS @F14@
+0 @P405729389@ INDI 
+1 NAME Alexander Duncan /McIntyre/
+1 SEX M
+1 NOTE Alex
+2 CONT http://trees.ancestry.com/rd?f=image&guid=ad15b5af-724d-4ec9-8eb7-ad826600b83f&tid=16672988&pid=405729389
+1 FAMC @F9@
+0 @P407866716@ INDI 
+1 SEX M
+1 NAME Levi Parks /Norman/
+1 FAMS @F15@
+0 @P405892805@ INDI 
+1 NAME Rhonda /McIntyre/
+1 SEX F
+1 FAMC @F2@
+0 @P405362004@ INDI 
+1 BIRT 
+2 DATE 28 May 1890
+1 DEAT 
+2 DATE 11 Apr 1953
+1 SEX M
+1 NAME Ernest R /McIntyre/
+1 NOTE Ma and Papa
+2 CONT http://trees.ancestry.com/rd?f=image&guid=042fa73f-298e-4db2-ab0f-1c377cfbe7f0&tid=16672988&pid=405362004
+1 FAMS @F3@
+1 FAMC @F6@
+0 @P405445882@ INDI 
+1 SEX M
+1 BIRT 
+2 DATE 04 Nov 1966
+2 PLAC Bastrop, Louisiana
+1 NAME Alan Wayne /McIntyre/
+1 NOTE Alan
+2 CONT http://trees.ancestry.com/rd?f=image&guid=77eb92d0-f735-4bf9-950c-291ada83dd58&tid=16672988&pid=405445882
+1 FAMC @F1@
+0 @P405569531@ INDI 
+1 NAME Christian /McCorquedale/
+1 SEX F
+1 FAMS @F11@
+0 @P405607245@ INDI 
+1 NAME Daniel /McIntyre/
+1 BIRT 
+2 DATE 1815
+2 PLAC South Carolina, USA
+1 SEX M
+1 FAMC @F8@
+0 @P405441243@ INDI 
+1 SEX M
+1 NAME Michael Shane /McIntyre/
+1 BIRT 
+2 DATE 05 Apr 1974
+2 PLAC Bastrop, Louisiana
+1 NOTE Michael McIntyre
+2 CONT http://trees.ancestry.com/rd?f=image&guid=95085742-0fe3-4628-9471-a101a8cf7508&tid=16672988&pid=405441243
+1 FAMC @F1@
+1 FAMS @F9@
+0 @P405613353@ INDI 
+1 NAME Calvin Colin /McIntyre/
+1 BIRT 
+2 DATE 1820
+2 PLAC Union Church, Mississippi, USA
+1 DEAT 
+2 DATE 1869
+1 SEX M
+1 FAMC @F8@
+0 @P407946950@ INDI 
+1 NAME Barbara Lynn /McLean/
+1 BIRT 
+2 DATE 20 Sept 1946
+2 PLAC Baltimore, Maryland, USA
+1 SEX F
+1 FAMC @F4@
+0 @P405366386@ INDI 
+1 SEX F
+1 NAME Mary Christine /Hern/
+1 BIRT 
+2 DATE 19 Nov 1923
+2 PLAC Louisiana, USA
+1 NOTE Christine
+2 CONT http://trees.ancestry.com/rd?f=image&guid=74028830-6507-4ca4-85bd-5f3353091509&tid=16672988&pid=405366386
+1 FAMS @F4@
+1 FAMC @F5@
+0 @P405892080@ INDI 
+1 NAME Gary Lane /McIntyre/
+1 BIRT 
+2 DATE 16 Jul 1947
+1 SEX M
+1 FAMC @F2@
+0 @P405608614@ INDI 
+1 SEX M
+1 BIRT 
+2 DATE 1819
+1 NAME Archibald /McIntyre/
+1 FAMC @F8@
+0 @P405355157@ INDI 
+1 SEX F
+1 NAME Audrey /Norman/
+1 DEAT 
+2 PLAC Bastrop, Louisiana
+1 NOTE Audrey Norman
+2 CONT http://trees.ancestry.com/rd?f=image&guid=a4c6e077-44df-42b6-8662-56866e611bd1&tid=16672988&pid=405355157
+1 FAMS @F2@
+1 FAMC @F15@
+0 @P405749335@ INDI 
+1 BIRT 
+2 DATE 17 Sept 1990
+2 PLAC Bastrop, Louisiana, USA
+1 SEX F
+1 NAME Christian Dianne /Johnston/
+1 NOTE Christian
+2 CONT http://trees.ancestry.com/rd?f=image&guid=f5e5ba78-ee42-4819-8e5a-f26d11fe2301&tid=16672988&pid=405749335
+1 NOTE Christian
+2 CONT http://trees.ancestry.com/rd?f=image&guid=dc89f22a-eaed-4867-b837-f9582e28647b&tid=16672988&pid=405749335
+1 FAMC @F14@
+0 @P405585821@ INDI 
+1 NAME Angus /Patterson/
+1 SEX M
+1 FAMS @F16@
+0 @P407932786@ INDI 
+1 NAME John Thomas /Hern/
+1 BIRT 
+2 DATE May 1867
+1 DEAT 
+2 DATE 30 Mar 1922
+1 SEX M
+1 FAMS @F13@
+0 @P405368888@ INDI 
+1 BIRT 
+2 DATE 12 May 1898
+2 PLAC Hollow Rock, Tennessee, USA
+1 NAME Thomas Clyde /Hern/
+1 DEAT 
+2 DATE 19 Aug 1975
+2 PLAC Bastrop, Louisiana
+1 SEX M
+1 NOTE Papaw and Mamaw Hern
+2 CONT http://trees.ancestry.com/rd?f=image&guid=3692c490-70ab-4e1b-9efc-0c88b2be8828&tid=16672988&pid=405368888
+1 FAMS @F5@
+1 FAMC @F13@
+0 @P405313479@ INDI 
+1 BIRT 
+2 DATE 16 July 1947
+1 NAME Kary Wayne /McIntyre/
+1 SEX M
+1 BIRT Kary is a twin to Gary
+1 NOTE Kary McIntyre
+2 CONT http://trees.ancestry.com/rd?f=image&guid=28121bd2-9d53-417b-8828-5b68c83403da&tid=16672988&pid=405313479
+1 FAMS @F1@
+1 FAMC @F2@
+0 @P405431718@ INDI 
+1 SEX M
+1 NAME John M /McIntyre/
+1 BIRT 
+2 DATE 1792
+2 PLAC Scotland
+1 DEAT 
+2 DATE 1859
+1 FAMS @F8@
+0 @P405741315@ INDI 
+1 NAME Connor Aiden /McIntyre/
+1 SEX M
+1 NOTE Connor
+2 CONT http://trees.ancestry.com/rd?f=image&guid=8b0839e9-c02a-4121-82f9-51e8729d9b27&tid=16672988&pid=405741315
+1 FAMC @F9@
+0 @P405538002@ INDI 
+1 DEAT 
+2 DATE 11 Jun 1979
+1 BIRT 
+2 DATE 23 Dec 1904
+2 PLAC Shawneetown, Illinois, USA
+1 NAME Carrie Lee /Horney/
+1 SEX F
+1 NOTE Mamaw and Papaw Hern
+2 CONT http://trees.ancestry.com/rd?f=image&guid=481c124f-3897-40c8-bc32-e5f124d27815&tid=16672988&pid=405538002
+1 FAMS @F5@
+1 FAMC @F12@
+0 @P405421877@ INDI 
+1 DEAT 
+2 DATE 24 Aug 1887
+1 SEX M
+1 NAME John /McIntyre/
+1 BIRT 
+2 DATE 1824
+2 PLAC Union Church, Mississippi, USA
+1 FAMS @F7@
+1 FAMC @F8@
+0 @P405353518@ INDI 
+1 SEX M
+1 NAME Frellson A /McIntyre/
+1 BIRT 
+2 DATE 30 Sept 1915
+1 DEAT 
+2 DATE 1961
+1 NOTE Audrey Norman
+2 CONT http://trees.ancestry.com/rd?f=image&guid=a4c6e077-44df-42b6-8662-56866e611bd1&tid=16672988&pid=405353518
+1 NOTE Frellson McIntyre
+2 CONT http://trees.ancestry.com/rd?f=image&guid=803b794d-d334-4e48-8fb5-6a6795e7b2e0&tid=16672988&pid=405353518
+1 FAMS @F2@
+1 FAMC @F3@
+0 @P405364205@ INDI 
+1 BIRT 
+2 DATE 06 Sept 1922
+2 PLAC Goldonna, Louisiana, USA
+1 DEAT 
+2 DATE 31 Dec 1991
+2 PLAC Bastrop, Louisiana
+1 SEX M
+1 NAME Lester Leonard /McLean/
+1 NOTE Christine
+2 CONT http://trees.ancestry.com/rd?f=image&guid=74028830-6507-4ca4-85bd-5f3353091509&tid=16672988&pid=405364205
+1 NOTE LL McLean
+2 CONT http://trees.ancestry.com/rd?f=image&guid=b2e95bb2-f3b3-45c4-92ef-d58cfc31bc6d&tid=16672988&pid=405364205
+1 FAMS @F4@
+1 FAMC @F10@
+0 @P405425012@ INDI 
+1 NAME Mary /Lord/
+1 SEX F
+1 NOTE Ma and Papa
+2 CONT http://trees.ancestry.com/rd?f=image&guid=ea23334b-2eaf-4a06-89b8-5a903a3d445e&tid=16672988&pid=405425012
+1 FAMS @F3@
+0 @P405568174@ INDI 
+1 NAME Malcolm /Calhoun/
+1 SEX M
+1 FAMS @F11@
+0 @P407935120@ INDI 
+1 BIRT 
+2 DATE 1870
+1 DEAT 
+2 DATE 1910
+1 SEX F
+1 NAME Susan /Williams/
+1 FAMS @F13@
+0 @P405427309@ INDI 
+1 NAME Olive Gean /McCaa/
+1 SEX F
+1 FAMS @F6@
+0 @P407945433@ INDI 
+1 NAME Edwin Walter /McLean/
+1 BIRT 
+2 DATE 03 Apr 1951
+2 PLAC Bastrop, Louisiana, USA
+1 SEX M
+1 FAMC @F4@
+0 @P407884398@ INDI 
+1 NAME Lucy /Merriman/
+1 DEAT 
+2 DATE 1930
+1 SEX F
+1 FAMS @F12@
+0 @P405533196@ INDI 
+1 DEAT 
+2 DATE 13 May 1966
+1 BIRT 
+2 DATE 01 Oct 1898
+1 NAME Walter Grady /McLean/
+1 SEX M
+1 FAMS @F10@
+0 @P405342543@ INDI 
+1 BIRT 
+2 DATE 17 Dec 1947
+1 SEX F
+1 NAME Marsha Dianne /McLean/
+1 NOTE M McLean
+2 CONT http://trees.ancestry.com/rd?f=image&guid=d0e2c083-45fd-42d9-b699-9ef897811c5a&tid=16672988&pid=405342543
+1 FAMS @F1@
+1 FAMC @F4@
+0 @P405433289@ INDI 
+1 BIRT 
+2 DATE 1785
+2 PLAC Isle of Skye, Scotland
+1 NAME Katherine /Calhoun/
+1 SEX F
+1 FAMS @F8@
+1 FAMC @F11@
+0 @P405535703@ INDI 
+1 DEAT 
+2 DATE 20 Jul 1964
+1 BIRT 
+2 DATE 20 May 1898
+1 SEX F
+1 NAME Velie /Emerson/
+1 FAMS @F10@
+0 @P405725218@ INDI 
+1 BIRT 
+2 PLAC Oak Grove, Louisiana
+1 SEX F
+1 NAME Angela Renee /Davis/
+1 NOTE Renee
+2 CONT http://trees.ancestry.com/rd?f=image&guid=b16beabd-814a-4f41-8155-5a5d47bfe9cc&tid=16672988&pid=405725218
+1 FAMS @F9@
+0 @P407883078@ INDI 
+1 SEX M
+1 DEAT 
+2 DATE 1944
+1 NAME William Samuel /Horney/
+1 BIRT 
+2 DATE 1866
+1 FAMS @F12@
+0 @F1@ FAM 
+1 HUSB @P405313479@
+1 WIFE @P405342543@
+1 CHIL @P405445882@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P405313470@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P405441243@
+2 _FREL Natural
+2 _MREL Natural
+0 @F2@ FAM 
+1 HUSB @P405353518@
+1 WIFE @P405355157@
+1 CHIL @P405313479@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P405892080@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P405892805@
+2 _FREL Natural
+2 _MREL Natural
+0 @F3@ FAM 
+1 HUSB @P405362004@
+1 WIFE @P405425012@
+1 CHIL @P405353518@
+2 _FREL Natural
+2 _MREL Natural
+0 @F4@ FAM 
+1 HUSB @P405364205@
+1 WIFE @P405366386@
+1 CHIL @P407946950@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P405342543@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P407945433@
+2 _FREL Natural
+2 _MREL Natural
+0 @F5@ FAM 
+1 HUSB @P405368888@
+1 WIFE @P405538002@
+1 CHIL @P405366386@
+2 _FREL Natural
+2 _MREL Natural
+0 @F6@ FAM 
+1 HUSB @P405419061@
+1 WIFE @P405427309@
+1 CHIL @P405362004@
+2 _FREL Natural
+2 _MREL Natural
+0 @F7@ FAM 
+1 HUSB @P405421877@
+1 WIFE @P405429008@
+1 CHIL @P405419061@
+2 _FREL Natural
+2 _MREL Natural
+0 @F8@ FAM 
+1 HUSB @P405431718@
+1 WIFE @P405433289@
+1 CHIL @P405607245@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P405608614@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P405613353@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P405421877@
+2 _FREL Natural
+2 _MREL Natural
+1 MARR 
+2 DATE 22 Oct 1821
+2 PLAC Jefferson County, Mississippi, USA
+0 @F9@ FAM 
+1 HUSB @P405441243@
+1 WIFE @P405725218@
+1 CHIL @P405729389@
+2 _FREL Natural
+2 _MREL Natural
+1 CHIL @P405741315@
+2 _FREL Natural
+2 _MREL Natural
+0 @F10@ FAM 
+1 HUSB @P405533196@
+1 WIFE @P405535703@
+1 CHIL @P405364205@
+2 _FREL Natural
+2 _MREL Natural
+0 @F11@ FAM 
+1 HUSB @P405568174@
+1 WIFE @P405569531@
+1 CHIL @P405433289@
+2 _FREL Natural
+2 _MREL Natural
+0 @F12@ FAM 
+1 HUSB @P407883078@
+1 WIFE @P407884398@
+1 CHIL @P405538002@
+2 _FREL Natural
+2 _MREL Natural
+0 @F13@ FAM 
+1 HUSB @P407932786@
+1 WIFE @P407935120@
+1 CHIL @P405368888@
+2 _FREL Natural
+2 _MREL Natural
+0 @F14@ FAM 
+1 HUSB @P407996928@
+1 WIFE @P405313470@
+1 CHIL @P405749335@
+2 _FREL Natural
+2 _MREL Natural
+1 DIV 
+2 DATE 2004
+2 PLAC Bastrop, Louisiana, USA
+0 @F15@ FAM 
+1 HUSB @P407866716@
+1 CHIL @P405355157@
+2 _FREL Natural
+0 @F16@ FAM 
+1 HUSB @P405585821@
+1 CHIL @P405429008@
+2 _FREL Natural
+0 TRLR

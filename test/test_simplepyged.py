@@ -81,7 +81,7 @@ class Test(unittest.TestCase):
 
         self.assertEqual(mary.parent_family_pointer(), '@F5@')
         self.assertEqual(self.g.get_family(mary.parent_family_pointer()), mary.parent_family())
-        self.assertEqual(self.g.get_family(mary.parent_family_pointer()).husband().pointer(), '@P405368888@')
+        self.assertEqual(mary.parent_family().husband().pointer(), '@P405368888@')
         self.assertEqual(mary.father().pointer(), '@P405368888@')
         self.assertEqual(mary.mother().pointer(), '@P405538002@')
         self.assertEqual(map(lambda x: x.pointer(), mary.families()), ['@F4@'])
