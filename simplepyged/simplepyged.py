@@ -50,6 +50,8 @@ class Gedcom:
         self.__element_dict = {}
         self.__individual_list = []
         self.__individual_dict = {}
+        self.__family_list = []
+        self.__family_dict = {}
         self.__element_top = Element(-1,"","TOP","",self.__element_dict)
         self.__current_level = -1
         self.__current_element = self.__element_top
@@ -81,6 +83,19 @@ class Gedcom:
         key for the dictionary is the pointer.
         """
         return self.__individual_dict
+
+    def family_list(self):
+        """ Return a list of all the families in the Gedcom file.  The
+        families are in the same order as they appeared in the file.
+        """
+        return self.__family_list
+
+    def family_dict(self):
+        """ Return a dictionary of families from the Gedcom file.  Only
+        families identified by a pointer are listed in the dictionary.  The
+        key for the dictionary is the pointer.
+        """
+        return self.__family_dict
 
     # Private methods
 
@@ -114,17 +129,20 @@ class Gedcom:
 
         if t == "INDI":
             e = Individual(l,p,t,v,self.element_dict())
+            self.__individual_list.append(e)
+            if p != '':
+                self.__individual_dict[p] = e
+        elif t == "FAM":
+            e = Family(l,p,t,v,self.element_dict())
+            self.__family_list.append(e)
+            if p != '':
+                self.__family_dict[p] = e
         else:
             e = Element(l,p,t,v,self.element_dict())
 
         self.__element_list.append(e)
         if p != '':
             self.__element_dict[p] = e
-
-        if e.individual():
-            self.__individual_list.append(e)
-            if p != '':
-                self.__individual_dict[p] = e
 
         if l > self.__current_level:
             self.__current_element.add_child(e)
@@ -447,7 +465,12 @@ class Element:
         return dates
 
     def get_individual(self):
-        """ Return this element and all of its sub-elements """
+        """.. deprecated::
+        This feature is obsolete, use Element.gedcom()."""
+        return self.gedcom()
+
+    def gedcom(self):
+        """ Return GEDCOM code for this element and all of its sub-elements """
         result = str(self)
         for e in self.children():
             result += '\n' + e.get_individual()
@@ -474,10 +497,12 @@ class Element:
 
 
 class Individual(Element):
-    """ Gedcom element representing an Individual
+    """ Gedcom element representing an individual
 
     Child class of Element
+
     """
+
     def surname_match(self,name):
         """ Match a string with the surname of an individual """
         (first,last) = self.name()
@@ -641,3 +666,41 @@ class Individual(Element):
                 return True
         return False
 
+
+class Family(Element):
+    """ Gedcom element representing a family
+
+    Child class of Element
+
+    """
+
+    def __init__(self,level,pointer,tag,value,dict):
+        Element.__init__(self,level,pointer,tag,value,dict)
+
+        self.__husband = None
+        self.__wife = None
+        self.__children = []
+        self.parse()
+
+    def parse(self):
+        print self.children()
+        for e in self.children():
+            if e.value() != None:
+                if e.tag() == "HUSB":
+                    self.__husband = e.value()
+                elif e.tag() == "WIFE":
+                    self.__wife = e.value()
+                elif e.tag() == "CHIL":
+                    self.__children.append(e.value())
+
+    def husband(self):
+        """ Return husband this family """
+        return self.__husband
+
+    def wife(self):
+        """ Return wife this family """
+        return self.__wife
+
+#    def children(self): #in conflict with Element.children()
+#        """ Return list of children in this family """
+#        return self.__children
