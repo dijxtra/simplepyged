@@ -146,13 +146,13 @@ class Gedcom:
 
         if l > self.__current_level:
             self.__current_element.add_child(e)
-            e.add_parent(self.__current_element)
+            e.add_parent_element(self.__current_element)
         else:
             # l.value <= self.__current_level:
             while (self.__current_element.level() != l - 1):
-                self.__current_element = self.__current_element.parent()
+                self.__current_element = self.__current_element.parent_element()
             self.__current_element.add_child(e)
-            e.add_parent(self.__current_element)
+            e.add_parent_element(self.__current_element)
 
         # finish up
         self.__current_level = l
@@ -275,8 +275,8 @@ class Element:
         self.__value = value
         self.__dict = dict
         # structuring
-        self.__children = []
-        self.__parent = None
+        self.__children_elements = []
+        self.__parent_element = None
 
     def level(self):
         """ Return the level of this element """
@@ -294,21 +294,21 @@ class Element:
         """ Return the value of this element """
         return self.__value
 
-    def children(self):
+    def children_elements(self):
         """ Return the child elements of this element """
-        return self.__children
+        return self.__children_elements
 
-    def parent(self):
+    def parent_element(self):
         """ Return the parent element of this element """
-        return self.__parent
+        return self.__parent_element
 
     def add_child(self,element):
         """ Add a child element to this element """
-        self.children().append(element)
+        self.children_elements().append(element)
         
-    def add_parent(self,element):
+    def add_parent_element(self,element):
         """ Add a parent element to this element """
-        self.__parent = element
+        self.__parent_element = element
 
     def individual(self):
         """ Check if this element is an individual """
@@ -426,14 +426,14 @@ class Element:
         place = ""
         if not self.individual():
             return (date,place)
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "FAMS":
                 f = self.__dict.get(e.value(),None)
                 if f == None:
                     return (date,place)
-                for g in f.children():
+                for g in f.children_elements():
                     if g.tag() == "MARR":
-                        for h in g.children():
+                        for h in g.children_elements():
                             if h.tag() == "DATE":
                                 date = h.value()
                             if h.tag() == "PLAC":
@@ -447,14 +447,14 @@ class Element:
         dates = []
         if not self.individual():
             return dates
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "FAMS":
                 f = self.__dict.get(e.value(),None)
                 if f == None:
                     return dates
-                for g in f.children():
+                for g in f.children_elements():
                     if g.tag() == "MARR":
-                        for h in g.children():
+                        for h in g.children_elements():
                             if h.tag() == "DATE":
                                 datel = string.split(h.value())
                                 date = datel[len(datel)-1]
@@ -472,13 +472,13 @@ class Element:
     def gedcom(self):
         """ Return GEDCOM code for this element and all of its sub-elements """
         result = str(self)
-        for e in self.children():
+        for e in self.children_elements():
             result += '\n' + e.get_individual()
         return result
 
     def get_family(self):
         result = self.get_individual()
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "HUSB" or e.tag() == "WIFE" or e.tag() == "CHIL":
                 f = self.__dict.get(e.value())
                 if f != None:
@@ -542,7 +542,7 @@ class Individual(Element):
     def families(self):
         """ Return a list of all of the family elements of a person. """
         results = []
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "FAMS":
                 if e.value() != None:
                     results.append(e.value())
@@ -554,7 +554,7 @@ class Individual(Element):
     def family_of_parents(self):
         """ Return a family element of a person in which the person is a child. """
         results = []
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "FAMC":
                 if e.value() != None:
                     results.append(e.value())
@@ -575,7 +575,7 @@ class Individual(Element):
         last = ""
         if not self.individual():
             return (first,last)
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "NAME":
                 # some older Gedcom files don't use child tags but instead
                 # place the name in the value of the NAME tag
@@ -584,7 +584,7 @@ class Individual(Element):
                     first = string.strip(name[0])
                     last = string.strip(name[1])
                 else:
-                    for c in e.children():
+                    for c in e.children_elements():
                         if c.tag() == "GIVN":
                             first = c.value()
                         if c.tag() == "SURN":
@@ -597,9 +597,9 @@ class Individual(Element):
         place = ""
         if not self.individual():
             return (date,place)
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "BIRT":
-                for c in e.children():
+                for c in e.children_elements():
                     if c.tag() == "DATE":
                         date = c.value()
                     if c.tag() == "PLAC":
@@ -611,9 +611,9 @@ class Individual(Element):
         date = ""
         if not self.individual():
             return date
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "BIRT":
-                for c in e.children():
+                for c in e.children_elements():
                     if c.tag() == "DATE":
                         datel = string.split(c.value())
                         date = datel[len(datel)-1]
@@ -630,9 +630,9 @@ class Individual(Element):
         place = ""
         if not self.individual():
             return (date,place)
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "DEAT":
-                for c in e.children():
+                for c in e.children_elements():
                     if c.tag() == "DATE":
                         date = c.value()
                     if c.tag() == "PLAC":
@@ -644,9 +644,9 @@ class Individual(Element):
         date = ""
         if not self.individual():
             return date
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "DEAT":
-                for c in e.children():
+                for c in e.children_elements():
                     if c.tag() == "DATE":
                         datel = string.split(c.value())
                         date = datel[len(datel)-1]
@@ -661,7 +661,7 @@ class Individual(Element):
         """ Check if a person is deceased """
         if not self.individual():
             return False
-        for e in self.children():
+        for e in self.children_elements():
             if e.tag() == "DEAT":
                 return True
         return False
@@ -682,16 +682,16 @@ class Family(Element):
     def __parse(self):
         self.__husband = None
         self.__wife = None
-#        self.__children = []
-
-        for e in self.children():
+        self.__children = []
+ 
+        for e in self.children_elements():
             if e.value() != None:
                 if e.tag() == "HUSB":
                     self.__husband = e.value()
                 elif e.tag() == "WIFE":
                     self.__wife = e.value()
-#                elif e.tag() == "CHIL":
-#                    self.__children.append(e.value())
+                elif e.tag() == "CHIL":
+                    self.__children.append(e.value())
 
     def husband(self):
         """ Return husband this family """
@@ -703,7 +703,7 @@ class Family(Element):
         self.__parse() #__init__ didn't run parse, I don't know why
         return self.__wife
 
-#    def children(self): #in conflict with Element.children()
-#        """ Return list of children in this family """
-#        self.__parse() #__init__ didn't run parse, I don't know why
-#        return self.__children
+    def children(self): #in conflict with Element.children()
+        """ Return list of children in this family """
+        self.__parse() #__init__ didn't run parse, I don't know why
+        return self.__children
