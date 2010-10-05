@@ -680,9 +680,9 @@ class Family(Element):
         self.__husband = None
         self.__wife = None
         self.__children = []
-        self.parse()
+        self.__parse()
 
-    def parse(self):
+    def __parse(self):
         for e in self.children():
             if e.value() != None:
                 if e.tag() == "HUSB":
