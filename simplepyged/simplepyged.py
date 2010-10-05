@@ -683,7 +683,6 @@ class Family(Element):
         self.parse()
 
     def parse(self):
-        print self.children()
         for e in self.children():
             if e.value() != None:
                 if e.tag() == "HUSB":
