@@ -530,6 +530,7 @@ class Individual(Element):
         return self.__parent_family
 
     def families(self):
+        self.__init()
         return self.__families
 
     def father(self):
