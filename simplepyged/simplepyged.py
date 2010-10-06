@@ -642,6 +642,24 @@ class Individual(Element):
                             last = c.value()
         return (first,last)
 
+    def given_name(self):
+        """ Return person's given name """
+        try:
+            return self.name()[0]
+        except:
+            return None
+
+    def surname(self):
+        """ Return person's surname """
+        try:
+            return self.name()[1]
+        except:
+            return None
+
+    def fathers_name(self):
+        """ Return father's name (patronymic) """
+        return self.father().given_name()
+        
     def birth(self):
         """ Return the birth tuple of a person as (date,place) """
         date = ""
