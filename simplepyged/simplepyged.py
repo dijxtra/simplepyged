@@ -347,149 +347,6 @@ class Element:
 
     # criteria matching
 
-    def criteria_match(self,criteria):
-        """ Check in this element matches all of the given criteria.
-
-        The criteria is a colon-separated list, where each item in the list has the form [name]=[value]. The following criteria are supported:
-
-        * surname=[name] - Match a person with [name] in any part of the surname.
-        * name=[name] - Match a person with [name] in any part of the given name.
-        * birth=[year] - Match a person whose birth year is a four-digit [year].
-        * birthrange=[year1-year2] - Match a person whose birth year is in the range of years from [year1] to [year2], including both [year1] and [year2].
-        * death=[year]
-        * deathrange=[year1-year2]
-        * marriage=[year]
-        * marriagerange=[year1-year2]
-        
-        """
-
-        # error checking on the criteria
-        try:
-            for crit in criteria.split(':'):
-                key,value = crit.split('=')
-        except:
-            return False
-        match = True
-        for crit in criteria.split(':'):
-            key,value = crit.split('=')
-            if key == "surname" and not self.surname_match(value):
-                match = False
-            elif key == "name" and not self.given_match(value):
-                match = False
-            elif key == "birth":
-                try:
-                    year = int(value)
-                    if not self.birth_year_match(year):
-                        match = False
-                except:
-                    match = False
-            elif key == "birthrange":
-                try:
-                    year1,year2 = value.split('-')
-                    year1 = int(year1)
-                    year2 = int(year2)
-                    if not self.birth_range_match(year1,year2):
-                        match = False
-                except:
-                    match = False
-            elif key == "death":
-                try:
-                    year = int(value)
-                    if not self.death_year_match(year):
-                        match = False
-                except:
-                    match = False
-            elif key == "deathrange":
-                try:
-                    year1,year2 = value.split('-')
-                    year1 = int(year1)
-                    year2 = int(year2)
-                    if not self.death_range_match(year1,year2):
-                        match = False
-                except:
-                    match = False
-            elif key == "marriage":
-                try:
-                    year = int(value)
-                    if not self.marriage_year_match(year):
-                        match = False
-                except:
-                    match = False
-            elif key == "marriagerange":
-                try:
-                    year1,year2 = value.split('-')
-                    year1 = int(year1)
-                    year2 = int(year2)
-                    if not self.marriage_range_match(year1,year2):
-                        match = False
-                except:
-                    match = False
-                    
-        return match
-
-    def marriage_year_match(self,year):
-        """ Check if one of the marriage years of an individual matches
-        the supplied year.  Year is an integer. """
-        years = self.marriage_years()
-        return year in years
-
-    def marriage_range_match(self,year1,year2):
-        """ Check if one of the marriage year of an individual is in a
-        given range.  Years are integers.
-        """
-        years = self.marriage_years()
-        for year in years:
-            if year >= year1 and year <= year2:
-                return True
-        return False
-
-    def marriage(self):
-        """ Return a list of marriage tuples for a person, each listing
-        (date,place).
-        """
-        date = ""
-        place = ""
-        if not self.individual():
-            return (date,place)
-
-        for e in self.children_elements():
-            if e.tag() == "FAMS":
-                f = self.dict.get(e.value(),None)
-                if f == None:
-                    return (date,place)
-                for g in f.children_elements():
-                    if g.tag() == "MARR":
-                        for h in g.children_elements():
-                            if h.tag() == "DATE":
-                                date = h.value()
-                            if h.tag() == "PLAC":
-                                place = h.value()
-        return (date,place)
-
-    def marriage_years(self):
-        """ Return a list of marriage years for a person, each in integer
-        format.
-        """
-        dates = []
-        if not self.individual():
-            return dates
-        for e in self.children_elements():
-            if e.tag() == "FAMS":
-                f = self.dict.get(e.value(),None)
-                if f == None:
-                    return dates
-                for g in f.children_elements():
-                    if g.tag() == "MARR":
-                        for h in g.children_elements():
-                            if h.tag() == "DATE":
-                                datel = string.split(h.value())
-                                date = datel[len(datel)-1]
-                                try:
-                                    dates.append(int(date))
-                                except:
-                                    pass
-        return dates
-
     def get_individual(self):
         """.. deprecated
 
@@ -754,6 +611,152 @@ class Individual(Element):
                 return True
         return False
 
+    def criteria_match(self,criteria):
+        """ Check in this element matches all of the given criteria.
+
+        The criteria is a colon-separated list, where each item in the list has the form [name]=[value]. The following criteria are supported:
+
+        * surname=[name] - Match a person with [name] in any part of the surname.
+        * name=[name] - Match a person with [name] in any part of the given name.
+        * birth=[year] - Match a person whose birth year is a four-digit [year].
+        * birthrange=[year1-year2] - Match a person whose birth year is in the range of years from [year1] to [year2], including both [year1] and [year2].
+        * death=[year]
+        * deathrange=[year1-year2]
+        * marriage=[year]
+        * marriagerange=[year1-year2]
+        
+        """
+
+        # error checking on the criteria
+        try:
+            for crit in criteria.split(':'):
+                key,value = crit.split('=')
+        except:
+            return False
+        match = True
+        for crit in criteria.split(':'):
+            key,value = crit.split('=')
+            if key == "surname" and not self.surname_match(value):
+                match = False
+            elif key == "name" and not self.given_match(value):
+                match = False
+            elif key == "birth":
+                try:
+                    year = int(value)
+                    if not self.birth_year_match(year):
+                        match = False
+                except:
+                    match = False
+            elif key == "birthrange":
+                try:
+                    year1,year2 = value.split('-')
+                    year1 = int(year1)
+                    year2 = int(year2)
+                    if not self.birth_range_match(year1,year2):
+                        match = False
+                except:
+                    match = False
+            elif key == "death":
+                try:
+                    year = int(value)
+                    if not self.death_year_match(year):
+                        match = False
+                except:
+                    match = False
+            elif key == "deathrange":
+                try:
+                    year1,year2 = value.split('-')
+                    year1 = int(year1)
+                    year2 = int(year2)
+                    if not self.death_range_match(year1,year2):
+                        match = False
+                except:
+                    match = False
+            elif key == "marriage":
+                try:
+                    year = int(value)
+                    if not self.marriage_year_match(year):
+                        match = False
+                except:
+                    match = False
+            elif key == "marriagerange":
+                try:
+                    year1,year2 = value.split('-')
+                    year1 = int(year1)
+                    year2 = int(year2)
+                    if not self.marriage_range_match(year1,year2):
+                        match = False
+                except:
+                    match = False
+                    
+        return match
+
+    def marriage_year_match(self,year):
+        """ Check if one of the marriage years of an individual matches
+        the supplied year.  Year is an integer. """
+        years = self.marriage_years()
+        return year in years
+
+    def marriage_range_match(self,year1,year2):
+        """ Check if one of the marriage year of an individual is in a
+        given range.  Years are integers.
+        """
+        years = self.marriage_years()
+        for year in years:
+            if year >= year1 and year <= year2:
+                return True
+        return False
+
+    def marriage(self):
+        """ Return a list of marriage tuples for a person, each listing
+        (date,place).
+        """
+        date = ""
+        place = ""
+        if not self.individual():
+            return (date,place)
+
+        for e in self.children_tag_elements("FAMS"):
+        for e in self.children_elements():
+            if e.tag() == "FAMS":
+                f = self.dict.get(e.value(),None)
+                if f == None:
+                    return (date,place)
+                for g in f.children_elements():
+                    if g.tag() == "MARR":
+                        for h in g.children_elements():
+                            if h.tag() == "DATE":
+                                date = h.value()
+                            if h.tag() == "PLAC":
+                                place = h.value()
+        return (date,place)
+
+    def marriage_years(self):
+        """ Return a list of marriage years for a person, each in integer
+        format.
+        """
+        dates = []
+        if not self.individual():
+            return dates
+        for e in self.children_elements():
+            if e.tag() == "FAMS":
+                f = self.dict.get(e.value(),None)
+                if f == None:
+                    return dates
+                for g in f.children_elements():
+                    if g.tag() == "MARR":
+                        for h in g.children_elements():
+                            if h.tag() == "DATE":
+                                datel = string.split(h.value())
+                                date = datel[len(datel)-1]
+                                try:
+                                    dates.append(int(date))
+                                except:
+                                    pass
+        return dates
+
+
+    
 
 class Family(Element):
     """ Gedcom element representing a family
