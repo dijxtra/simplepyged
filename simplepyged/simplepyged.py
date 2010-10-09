@@ -773,6 +773,11 @@ class Family(Element):
         self.__parse() #__init__ didn't run parse, I don't know why
         return self.__wife
 
+    def parents(self):
+        """ Return list of parents in this family """
+        self.__parse() #__init__ didn't run parse, I don't know why
+        return [self.__husband, self.__wife]
+
     def children(self):
         """ Return list of children in this family """
         self.__parse() #__init__ didn't run parse, I don't know why
