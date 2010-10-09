@@ -118,6 +118,9 @@ class Gedcom:
             number += 1
         self.__count()
 
+        for e in self.element_list():
+            e._init()
+
     def __parse_line(self,number,line):
         # each line should have: Level SP (Pointer SP)? Tag (SP Value)? (SP)? NL
         # parse the line
@@ -286,6 +289,10 @@ class Element:
         # structuring
         self.__children_elements = []
         self.__parent_element = None
+
+    def _init(self):
+        """ A method to which GEDCOM parser runs after all elements are available. Subclasses should implement this method if they want to work with other Elements at parse time, but after all Elements are parsed. """
+        pass
 
     def level(self):
         """ Return the level of this element """
@@ -511,7 +518,7 @@ class Individual(Element):
     def __init__(self,level,pointer,tag,value,dict):
         Element.__init__(self,level,pointer,tag,value,dict)
 
-        self.__init()
+        self._init()
 
     def __init(self):
         self.__parent_family = None
@@ -526,27 +533,22 @@ class Individual(Element):
                 
 
     def parent_family(self):
-        self.__init()
         return self.__parent_family
 
     def families(self):
-        self.__init()
         return self.__families
 
     def father(self):
-        self.__init()
         if self.parent_family() != None:
             if self.parent_family().husband() != None:
                 return self.parent_family().husband()
 
     def mother(self):
-        self.__init()
         if self.parent_family() != None:
             if self.parent_family().wife() != None:
                 return self.parent_family().wife()
 
     def children(self):
-        self.__init()
         retval = []
 
         for f in self.families():
@@ -747,9 +749,7 @@ class Family(Element):
     def __init__(self,level,pointer,tag,value,dict):
         Element.__init__(self,level,pointer,tag,value,dict)
 
-        self.__parse()
-
-    def __parse(self):
+    def _init(self):
         self.__husband = None
         self.__wife = None
         self.__children = []
@@ -765,20 +765,16 @@ class Family(Element):
 
     def husband(self):
         """ Return husband this family """
-        self.__parse() #__init__ didn't run parse, I don't know why
         return self.__husband
 
     def wife(self):
         """ Return wife this family """
-        self.__parse() #__init__ didn't run parse, I don't know why
         return self.__wife
 
     def parents(self):
         """ Return list of parents in this family """
-        self.__parse() #__init__ didn't run parse, I don't know why
         return [self.__husband, self.__wife]
 
     def children(self):
         """ Return list of children in this family """
-        self.__parse() #__init__ didn't run parse, I don't know why
         return self.__children
