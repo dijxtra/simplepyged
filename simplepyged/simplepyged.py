@@ -716,7 +716,6 @@ class Individual(Element):
         if not self.individual():
             return (date,place)
 
-        for e in self.children_tag_elements("FAMS"):
         for e in self.children_elements():
             if e.tag() == "FAMS":
                 f = self.dict.get(e.value(),None)
