@@ -326,8 +326,8 @@ class Element:
         """ Add a parent element to this element """
         self.__parent_element = element
 
-    def children_tag_elements(self, tag):
-        """ Returns list of child elements who match the argument. """
+    def children_tags(self, tag):
+        """ Returns list of child elements whos tag matchs the argument. """
         elements = []
         for c in self.children_elements():
             if c.tag() == tag:
@@ -336,10 +336,16 @@ class Element:
         return elements
 
     def children_tag_values(self, tag):
-        """ Returns list of values of child elements who match the argument. """
-        values = map(lambda x: x.value(), self.children_tag_elements(tag))
+        """ Returns list of values of child elements whos tag matches the argument. """
+        values = map(lambda x: x.value(), self.children_tags(tag))
 
         return values
+
+    def children_tag_elements(self, tag):
+        """ Returns list of elements which are pointed by child elements with given tag. """
+        elements = map(lambda x: self.dict[x], self.children_tag_values(tag))
+
+        return elements
 
     def individual(self):
         """ Check if this element is an individual """
@@ -713,8 +719,6 @@ class Individual(Element):
         """
         date = ""
         place = ""
-        if not self.individual():
-            return (date,place)
 
         for e in self.children_elements():
             if e.tag() == "FAMS":
@@ -768,18 +772,31 @@ class Family(Element):
         Element.__init__(self,level,pointer,tag,value,dict)
 
     def _init(self):
-        self.__husband = None
-        self.__wife = None
-        self.__children = []
- 
-        for e in self.children_elements():
-            if e.value() != None:
-                if e.tag() == "HUSB":
-                    self.__husband = self.dict[e.value()]
-                elif e.tag() == "WIFE":
-                    self.__wife = self.dict[e.value()]
-                elif e.tag() == "CHIL":
-                    self.__children.append(self.dict[e.value()])
+        """ Initialise husband, wife and children attributes. """
+        
+        try:
+            self.__husband = self.children_tag_elements("HUSB")[0]
+        except IndexError:
+            self.__husband = None
+
+        try:
+            self.__wife = self.children_tag_elements("WIFE")[0]
+        except IndexError:
+            self.__wife = None
+
+        try:
+            self.__children = self.children_tag_elements("CHIL")
+        except IndexError:
+            self.__children = []
+
+#        for e in self.children_elements():
+#            if e.value() != None:
+#                if e.tag() == "CHIL":
+#                    self.__children.append(self.dict[e.value()])
+#                elif e.tag() == "HUSB":
+#                    self.__husband = self.dict[e.value()]
+#                elif e.tag() == "WIFE":
+#                    self.__wife = self.dict[e.value()]
 
     def husband(self):
         """ Return husband this family """
