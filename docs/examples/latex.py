@@ -1,10 +1,9 @@
 import os
 from simplepyged import *
 
-g = Gedcom(os.path.abspath('mcintyre.ged'))
-fam = g.get_family('@F5@')
-
 def name(person):
+    if person is None:
+        return ""
     return str(person.surname()) + ", " + str(person.given_name())
 
 def name_link_html(person, prefix=""):
@@ -12,6 +11,16 @@ def name_link_html(person, prefix=""):
 
 def name_link_latex(person, prefix=""):
     return name(person) + ' (str. \pageref{' + prefix + str(person.pointer()) + '})'
+
+def link_latex(element, prefix=""):
+    if element == None:
+        return ""
+    return '$^{\pageref{' + prefix + str(element.pointer()) + '}}$ '
+
+def link_latex_index(element, prefix=""):
+    if element == None:
+        return ""
+    return '\pageref{' + prefix + str(element.pointer()) + '}'
 
 def anchor(person):
     return "[" + str(person.pointer()) + "] "
@@ -35,37 +44,69 @@ def text(family):
 
     return retval
 
-def start_html():
-    retval = ""
-    retval += "<html><head><title>Burek</title></head><body>"
-    return retval
-
-def html(family):
-    retval = ""
-    retval += "\n<hr>\n"
-    retval += anchor_html(family.husband(), "up_") + "Husband: " + name_link_html(family.husband(), "down_") + "<br />\n"
-    retval += anchor_html(family.wife(), "up_") + "Wife: " + name_link_html(family.wife(), "down_") + "<br />\n"
-    for c in family.children():
-        retval += anchor_html(c, "down_") + "Child: " + name_link_html(c, "up_") + "<br />\n"
-
-    return retval
-
-def end_html():
-    retval = ""
-    retval += "<body></html>"
-    return retval
-
 def start_latex():
     retval = ''
-    retval += '\documentstyle[11pt]{article}\\begin{document}' + "\n"
+    retval += '\documentstyle[12pt]{article}\\begin{document}' + "\n"
     return retval
 
 def latex(family):
     retval = ''
-    retval += anchor_latex(family.husband(), 'up_') + 'Husband: ' + name_link_latex(family.husband(), 'down_') + "\n\n"
-    retval += anchor_latex(family.wife(), 'up_') + 'Wife: ' + name_link_latex(family.wife(), 'down_') + "\n\n"
+    retval += anchor_latex(family) + "\n"
+    retval += '\\begin{tabular*}{0.9\\textwidth}{ | l | l | }' + "\n"
+#    retval += '\\begin{tabular}{ l r }' + "\n"
+    retval += 'Husband '
+    retval += ' & '
+    retval += 'Wife '
+    retval += ' \\\\ ' + "\n"
+    if family.husband() is not None:
+        retval += name(family.husband()) + link_latex(family.husband().parent_family())
+    retval += ' & '
+    if family.wife() is not None:
+        retval += name(family.wife()) + link_latex(family.wife().parent_family())
+    retval += ' \\\\ ' + "\n"
+    if family.husband() is not None:
+        retval += str(family.husband().birth()[0])
+    retval += ' & '
+    if family.wife() is not None:
+        retval += str(family.wife().birth()[0])
+    retval += ' \\\\ ' + "\n"
+    if family.husband() is not None:
+        retval += str(family.husband().birth()[1])
+    retval += ' & '
+    if family.wife() is not None:
+        retval += str(family.wife().birth()[1])
+    retval += ' \\\\ ' + "\n"
+    retval += ' \\\\ ' + "\n"
+    if family.husband() is not None:
+        retval += str(family.husband().death()[0])
+    retval += ' & '
+    if family.wife() is not None:
+        retval += str(family.wife().death()[0])
+    retval += ' \\\\ ' + "\n"
+    if family.husband() is not None:
+        retval += str(family.husband().death()[1])
+    retval += ' & '
+    if family.wife() is not None:
+        retval += str(family.wife().death()[1])
+    retval += ' \\\\ ' + "\n"
+    retval += '\end{tabular*}' + "\n\n"
+
+    retval += '\\paragraph{}' + "\n"
+    retval += 'Married: ' + '' + "\n\n"
+
+    retval += '\\paragraph{}' + "\n\n"
+    retval += '\\begin{center}Children\end{center}' + '' + "\n\n"
     for c in family.children():
-        retval += anchor_latex(c, 'down_') + 'Child: ' + name_link_latex(c, 'up_') + "\n\n"
+        retval += '\\paragraph{}' + "\n"
+        retval += name(c)
+        for f in c.families():
+            retval += link_latex(f)
+        retval += "\n\n"
+        retval += "\tBorn: " + str(c.birth()) + "\n\n"
+        retval += "\tDied: " + str(c.death()) + "\n\n"
+        if len(c.children()) > 0:
+            retval += "\tChildren: " + str(len(c.children())) + "\n\n"
+        retval += "\n\n"
 
     retval += '\\newpage' + "\n\n"
     return retval
@@ -115,9 +156,44 @@ def construct_stack(stack, depth):
 
     return stack
 
-stack = [fam]
-stack = construct_stack(stack, 6)
+def latex_index(stack):
+    individuals = []
+    for family in stack:
+        for p in family.parents():
+            individuals = push(individuals, p)
+        for c in family.children():
+            individuals = push(individuals, c)
+
+    individuals = sorted(individuals, key=name)
+
+    retval = ""
+    retval += '\\begin{tabular*}{0.9\\textwidth}{  l  r  }' + "\n"
+    for i in individuals:
+        retval += name(i) + " "
+        retval += ' & '
+        pages = []
+        if i.parent_family() is not None:
+            pages = push(pages, link_latex_index(i.parent_family()))
+        for f in i.families():
+            if f is not None:
+                pages = push(pages, link_latex_index(f))
+
+        retval += ', '.join(pages)
+        retval += ' \\\\ ' + "\n"
+
+    retval += '\end{tabular*}' + "\n\n"
+
+    return retval
+
+g = Gedcom(os.path.abspath('mcintyre.ged'))
+#fam = g.get_family('@F5@')
+#stack = [fam]
+#stack = construct_stack(stack, 6)
+
+stack = g.family_list()
+
 print start_latex()
 print print_stack(latex, stack)
+print latex_index(stack)
 print end_latex()
 
