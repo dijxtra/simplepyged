@@ -96,14 +96,17 @@ def latex(family):
 
     retval += '\\paragraph{}' + "\n\n"
     retval += '\\begin{center}Children\end{center}' + '' + "\n\n"
-    for c in family.children():
+    for i in range(1, len(family.children()) + 1):
+        c = family.children()[i - 1]
         retval += '\\paragraph{}' + "\n"
-        retval += name(c)
+        retval += str(i) + '. ' + name(c)
         for f in c.families():
             retval += link_latex(f)
         retval += "\n\n"
-        retval += "\tBorn: " + str(c.birth()) + "\n\n"
-        retval += "\tDied: " + str(c.death()) + "\n\n"
+        if c.birth() != ('',''):
+            retval += "\tBorn: " + str(c.birth()) + "\n\n"
+        if c.death() != ('',''):
+            retval += "\tDied: " + str(c.death()) + "\n\n"
         if len(c.children()) > 0:
             retval += "\tChildren: " + str(len(c.children())) + "\n\n"
         retval += "\n\n"
@@ -167,8 +170,10 @@ def latex_index(stack):
     individuals = sorted(individuals, key=name)
 
     retval = ""
-    retval += '\\begin{tabular*}{0.9\\textwidth}{  l  r  }' + "\n"
     for i in individuals:
+        if i.given_name() == '' and i.surname() == '':
+            continue
+        retval += '\\begin{tabular*}{0.9\\textwidth}{  l  r  }' + "\n"
         retval += name(i) + " "
         retval += ' & '
         pages = []
@@ -181,11 +186,12 @@ def latex_index(stack):
         retval += ', '.join(pages)
         retval += ' \\\\ ' + "\n"
 
-    retval += '\end{tabular*}' + "\n\n"
+        retval += '\end{tabular*}' + "\n\n"
 
     return retval
 
-g = Gedcom(os.path.abspath('mcintyre.ged'))
+#g = Gedcom(os.path.abspath('mcintyre.ged'))
+g = Gedcom(os.path.abspath('moje.ged'))
 #fam = g.get_family('@F5@')
 #stack = [fam]
 #stack = construct_stack(stack, 6)
