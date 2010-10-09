@@ -326,6 +326,21 @@ class Element:
         """ Add a parent element to this element """
         self.__parent_element = element
 
+    def children_tag_elements(self, tag):
+        """ Returns list of child elements who match the argument. """
+        elements = []
+        for c in self.children_elements():
+            if c.tag() == tag:
+                elements.append(c)
+
+        return elements
+
+    def children_tag_values(self, tag):
+        """ Returns list of values of child elements who match the argument. """
+        values = map(lambda x: x.value(), self.children_tag_elements(tag))
+
+        return values
+
     def individual(self):
         """ Check if this element is an individual """
         return self.tag() == "INDI"
@@ -436,6 +451,7 @@ class Element:
         place = ""
         if not self.individual():
             return (date,place)
+
         for e in self.children_elements():
             if e.tag() == "FAMS":
                 f = self.dict.get(e.value(),None)

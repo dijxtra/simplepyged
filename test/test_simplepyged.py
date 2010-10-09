@@ -75,6 +75,12 @@ class Test(unittest.TestCase):
         self.assertEqual(num_of_individuals, len(self.g.individual_dict()))
 
 
+    def test_element(self):
+        """Testing class Element"""
+        mary = self.g.get_individual('@P405366386@')
+
+        self.assertEqual(mary.children_tag_values("SEX"), ["F"])
+
     def test_individual(self):
         """Testing class Individual"""
         mary = self.g.get_individual('@P405366386@')
