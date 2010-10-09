@@ -520,7 +520,7 @@ class Individual(Element):
 
         self._init()
 
-    def __init(self):
+    def _init(self):
         self.__parent_family = None
         self.__families = []
 
