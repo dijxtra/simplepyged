@@ -397,19 +397,10 @@ class Individual(Element):
     def __init__(self,level,pointer,tag,value,dict):
         Element.__init__(self,level,pointer,tag,value,dict)
 
-        self._init()
-
     def _init(self):
-        self.__parent_family = None
-        self.__families = []
-
-        if self.parent_family_pointer() != None:
-            self.__parent_family = self.dict[self.parent_family_pointer()]
-
-        if self.families_pointers() != []:
-            for f in self.families_pointers():
-                self.__families.append(self.dict[f])
-                
+        """ Implementing Element._init() """
+        self.__parent_family = self.get_parent_family()
+        self.__families = self.get_families()
 
     def parent_family(self):
         return self.__parent_family
@@ -472,7 +463,7 @@ class Individual(Element):
             return True
         return False
 
-    def families_pointers(self): #TODO: merge this method into Individual.families()
+    def families_pointers(self): #TODO: merge this method into Individual.get_families()
         """ Return a list of pointers of all of the family elements of a person. """
         results = []
 
@@ -487,7 +478,11 @@ class Individual(Element):
 ##                    results.append(f)
         return results
 
-    def parent_family_pointer(self): #TODO: merge this method into Individual.parent_family()
+    def get_families(self):
+        """ Return a list of all of the family elements of a person. """
+        return map(lambda x: self.dict[x], self.families_pointers())
+
+    def parent_family_pointer(self): #TODO: merge this method into Individual.get_parent_family()
         """ Return a family element of a person in which the person is a child. """
         results = []
 
@@ -508,6 +503,12 @@ class Individual(Element):
         
         return results[0]
 
+    def get_parent_family(self):
+        """ Return a family element of a person in which the person is a child. """
+        if self.parent_family_pointer() is None:
+            return None
+        return self.dict[self.parent_family_pointer()]
+    
     def name(self):
         """ Return a person's names as a tuple: (first,last) """
         first = ""
@@ -778,7 +779,9 @@ class Family(Element):
         Element.__init__(self,level,pointer,tag,value,dict)
 
     def _init(self):
-        """ Initialise husband, wife and children attributes. """
+        """ Implementing Element._init()
+
+        Initialise husband, wife and children attributes. """
         
         try:
             self.__husband = self.children_tag_elements("HUSB")[0]
