@@ -472,28 +472,34 @@ class Individual(Element):
             return True
         return False
 
-    def families_pointers(self):
+    def families_pointers(self): #TODO: merge this method into Individual.families()
         """ Return a list of pointers of all of the family elements of a person. """
         results = []
-        for e in self.children_elements():
-            if e.tag() == "FAMS":
-                if e.value() != None:
-                    results.append(e.value())
-#                f = self.dict.get(e.value(),None) #old version (why did this need to go through __dict?)
-#                if f != None:
-#                    results.append(f)
+
+        results = self.children_tag_values("FAMS")
+
+#        for e in self.children_elements():
+#            if e.tag() == "FAMS":
+#                if e.value() != None:
+#                    results.append(e.value())
+##                f = self.dict.get(e.value(),None) #old version (why did this need to go through __dict?)
+##                if f != None:
+##                    results.append(f)
         return results
 
-    def parent_family_pointer(self):
+    def parent_family_pointer(self): #TODO: merge this method into Individual.parent_family()
         """ Return a family element of a person in which the person is a child. """
         results = []
-        for e in self.children_elements():
-            if e.tag() == "FAMC":
-                if e.value() != None:
-                    results.append(e.value())
-#                f = self.dict.get(e.value(),None) #old version (why did this need to go through __dict?)
-#                if f != None:
-#                    results.append(f)
+
+        results = self.children_tag_values("FAMC")
+        
+#        for e in self.children_elements():
+#            if e.tag() == "FAMC":
+#                if e.value() != None:
+#                    results.append(e.value())
+##                f = self.dict.get(e.value(),None) #old version (why did this need to go through __dict?)
+##                if f != None:
+##                    results.append(f)
         if len(results) > 1:
             raise Exception('Individual has multiple parent families.')
 
