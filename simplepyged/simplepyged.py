@@ -553,8 +553,7 @@ class Individual(Element):
         """ Return the birth tuple of a person as (date,place) """
         date = ""
         place = ""
-        if not self.individual():
-            return (date,place)
+
         for e in self.children_elements():
             if e.tag() == "BIRT":
                 for c in e.children_elements():

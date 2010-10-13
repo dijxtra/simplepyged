@@ -85,6 +85,8 @@ class Test(unittest.TestCase):
         """Testing class Individual"""
         mary = self.g.get_individual('@P405366386@')
 
+        self.assertEqual(mary.birth(), ('19 Nov 1923', 'Louisiana, USA'))
+
         self.assertEqual(mary.parent_family_pointer(), '@F5@')
         self.assertEqual(self.g.get_family(mary.parent_family_pointer()), mary.parent_family())
         self.assertEqual(mary.parent_family().husband().pointer(), '@P405368888@')
