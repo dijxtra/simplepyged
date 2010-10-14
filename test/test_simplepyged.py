@@ -87,7 +87,13 @@ class Test(unittest.TestCase):
 
         self.assertEqual(mary.birth(), ('19 Nov 1923', 'Louisiana, USA'))
         self.assertEqual(mary.sex(), 'F')
+        self.assertEqual(mary.given_name(), 'Mary Christine')
+        self.assertEqual(mary.surname(), 'Hern')
+        self.assertEqual(mary.fathers_name(), 'Thomas Clyde')
 
+        self.assertEqual(mary.deceased(), False)
+        self.assertEqual(mary.death(), ('', ''))
+           
         self.assertEqual(mary.parent_family().xref(), '@F5@')
         self.assertEqual(mary.parent_family().husband().xref(), '@P405368888@')
         self.assertEqual(mary.father().xref(), '@P405368888@')
