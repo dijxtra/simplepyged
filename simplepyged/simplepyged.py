@@ -350,15 +350,6 @@ class Line:
             result += '\n' + e.gedcom()
         return result
 
-    def get_family(self):
-        result = self.gedcom()
-        for e in self.children_lines():
-            if e.tag() == "HUSB" or e.tag() == "WIFE" or e.tag() == "CHIL":
-                f = self.dict.get(e.value())
-                if f != None:
-                    result += '\n' + f.gedcom()
-        return result
-
     def __str__(self):
         """ Format this line as its original string """
         result = str(self.level())
