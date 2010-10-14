@@ -504,14 +504,14 @@ class Individual(Record):
         """ Return person's given name """
         try:
             return self.name()[0]
-        except:
+        except IndexError:
             return None
 
     def surname(self):
         """ Return person's surname """
         try:
             return self.name()[1]
-        except:
+        except IndexError:
             return None
 
     def fathers_name(self):
@@ -545,7 +545,7 @@ class Individual(Record):
             return -1
         try:
             return int(date)
-        except:
+        except ValueError:
             return -1
 
     def death(self):
@@ -574,7 +574,7 @@ class Individual(Record):
             return -1
         try:
             return int(date)
-        except:
+        except ValueError:
             return -1
 
     def deceased(self):
@@ -604,7 +604,7 @@ class Individual(Record):
         try:
             for crit in criteria.split(':'):
                 key,value = crit.split('=')
-        except:
+        except ValueError:
             return False
         match = True
         for crit in criteria.split(':'):
@@ -618,7 +618,7 @@ class Individual(Record):
                     year = int(value)
                     if not self.birth_year_match(year):
                         match = False
-                except:
+                except ValueError:
                     match = False
             elif key == "birthrange":
                 try:
@@ -627,14 +627,14 @@ class Individual(Record):
                     year2 = int(year2)
                     if not self.birth_range_match(year1,year2):
                         match = False
-                except:
+                except ValueError:
                     match = False
             elif key == "death":
                 try:
                     year = int(value)
                     if not self.death_year_match(year):
                         match = False
-                except:
+                except ValueError:
                     match = False
             elif key == "deathrange":
                 try:
@@ -643,14 +643,14 @@ class Individual(Record):
                     year2 = int(year2)
                     if not self.death_range_match(year1,year2):
                         match = False
-                except:
+                except ValueError:
                     match = False
             elif key == "marriage":
                 try:
                     year = int(value)
                     if not self.marriage_year_match(year):
                         match = False
-                except:
+                except ValueError:
                     match = False
             elif key == "marriagerange":
                 try:
@@ -659,7 +659,7 @@ class Individual(Record):
                     year2 = int(year2)
                     if not self.marriage_range_match(year1,year2):
                         match = False
-                except:
+                except ValueError:
                     match = False
                     
         return match
@@ -719,7 +719,7 @@ class Individual(Record):
                                 date = datel[len(datel)-1]
                                 try:
                                     dates.append(int(date))
-                                except:
+                                except ValueError:
                                     pass
         return dates
 
