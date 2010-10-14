@@ -95,14 +95,13 @@ class Gedcom:
         """
         return self.__family_dict
 
-    def get_individual(self, xref):
+    def gedcom(self, xref):
         """ Return an object of class Individual identified by xref """
         return self.individual_dict()[xref]
 
     def get_family(self, xref):
         """ Return an object of class Family identified by xref """
         return self.family_dict()[xref]
-
 
     # Private methods
 
@@ -114,7 +113,6 @@ class Gedcom:
         for line in f.readlines():
             self.__parse_line(number,line)
             number += 1
-        self.__count()
 
         for e in self.line_list():
             e._init()
@@ -238,14 +236,6 @@ class Gedcom:
         error = "Gedcom format error on line " + str(number) + ': ' + text
         raise GedcomParseError, error
 
-    def __count(self):
-        # Count number of individuals
-        self.__individuals = 0
-        for e in self.__line_list:
-            if e.individual():
-                self.__individuals += 1
-
-
     def __print(self):
         for e in self.line_list:
             print string.join([str(e.level()),e.xref(),e.tag(),e.value()])
@@ -359,33 +349,20 @@ class Line:
 
         return lines
 
-    def individual(self):
-        """ Check if this line is an individual """
-        return self.tag() == "INDI"
-
-    # criteria matching
-
-    def get_individual(self):
-        """.. deprecated
-
-        This method is obsolete, use Line.gedcom().
-        """
-        return self.gedcom()
-
     def gedcom(self):
         """ Return GEDCOM code for this line and all of its sub-lines """
         result = str(self)
         for e in self.children_lines():
-            result += '\n' + e.get_individual()
+            result += '\n' + e.gedcom()
         return result
 
     def get_family(self):
-        result = self.get_individual()
+        result = self.gedcom()
         for e in self.children_lines():
             if e.tag() == "HUSB" or e.tag() == "WIFE" or e.tag() == "CHIL":
                 f = self.dict.get(e.value())
                 if f != None:
-                    result += '\n' + f.get_individual()
+                    result += '\n' + f.gedcom()
         return result
 
     def __str__(self):
@@ -520,8 +497,6 @@ class Individual(Record):
         """ Return a person's names as a tuple: (first,last) """
         first = ""
         last = ""
-        if not self.individual():
-            return (first,last)
         for e in self.children_lines():
             if e.tag() == "NAME":
                 # some older Gedcom files don't use child tags but instead
@@ -573,8 +548,6 @@ class Individual(Record):
     def birth_year(self):
         """ Return the birth year of a person in integer format """
         date = ""
-        if not self.individual():
-            return date
         for e in self.children_lines():
             if e.tag() == "BIRT":
                 for c in e.children_lines():
@@ -592,8 +565,6 @@ class Individual(Record):
         """ Return the death tuple of a person as (date,place) """
         date = ""
         place = ""
-        if not self.individual():
-            return (date,place)
         for e in self.children_lines():
             if e.tag() == "DEAT":
                 for c in e.children_lines():
@@ -606,8 +577,6 @@ class Individual(Record):
     def death_year(self):
         """ Return the death year of a person in integer format """
         date = ""
-        if not self.individual():
-            return date
         for e in self.children_lines():
             if e.tag() == "DEAT":
                 for c in e.children_lines():
@@ -623,8 +592,6 @@ class Individual(Record):
 
     def deceased(self):
         """ Check if a person is deceased """
-        if not self.individual():
-            return False
         for e in self.children_lines():
             if e.tag() == "DEAT":
                 return True
@@ -752,8 +719,6 @@ class Individual(Record):
         format.
         """
         dates = []
-        if not self.individual():
-            return dates
         for e in self.children_lines():
             if e.tag() == "FAMS":
                 f = self.dict.get(e.value(),None)
