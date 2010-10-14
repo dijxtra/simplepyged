@@ -7,15 +7,15 @@ def name(person):
         return ""
     return str(person.surname()) + ", " + str(person.given_name())
 
-def link_latex(element, prefix=""):
-    if element == None:
+def link_latex(record, prefix=""):
+    if record == None:
         return ""
-    return '$^{\pageref{' + prefix + str(element.pointer()) + '}}$ '
+    return '$^{\pageref{' + prefix + str(record.pointer()) + '}}$ '
 
-def link_latex_index(element, prefix=""):
-    if element == None:
+def link_latex_index(record, prefix=""):
+    if record == None:
         return ""
-    return '\pageref{' + prefix + str(element.pointer()) + '}'
+    return '\pageref{' + prefix + str(record.pointer()) + '}'
 
 def anchor_latex(person, prefix=""):
     return '\label{' + prefix + str(person.pointer()) + '}'

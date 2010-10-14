@@ -22,7 +22,7 @@
 #
 # To contact the author, see http://faculty.cs.byu.edu/~zappala
 
-__all__ = ["Gedcom", "Element", "GedcomParseError"]
+__all__ = ["Gedcom", "Line", "GedcomParseError"]
 
 # Global imports
 import string
@@ -35,41 +35,41 @@ class Gedcom:
 
     http://homepages.rootsweb.com/~pmcbride/gedcom/55gctoc.htm
 
-    This parser reads a GEDCOM file and parses it into a set of
-    elements.  These elements can be accessed via a list (the order of
-    the list is the same as the order of the elements in the GEDCOM
-    file), or a dictionary (the key to the dictionary is a unique
-    identifier that one element can use to point to another element).
+    This parser reads a GEDCOM file and parses it into a set of lines.
+    These lines can be accessed via a list (the order of the list is
+    the same as the order of the lines in the GEDCOM file), or a
+    dictionary (only lines that represent records: the key to the
+    dictionary is a unique identifier of each record).
 
     """
 
     def __init__(self,file):
         """ Initialize a Gedcom parser. You must supply a Gedcom file.
         """
-        self.__element_list = []
-        self.__element_dict = {}
+        self.__line_list = []
+        self.__line_dict = {}
         self.__individual_list = []
         self.__individual_dict = {}
         self.__family_list = []
         self.__family_dict = {}
-        self.__element_top = Element(-1,"","TOP","",self.__element_dict)
+        self.__line_top = Line(-1,"","TOP","",self.__line_dict)
         self.__current_level = -1
-        self.__current_element = self.__element_top
+        self.__current_line = self.__line_top
         self.__individuals = 0
         self.__parse(file)
 
-    def element_list(self):
-        """ Return a list of all the elements in the Gedcom file.  The
-        elements are in the same order as they appeared in the file.
+    def line_list(self):
+        """ Return a list of all the lines in the Gedcom file.  The
+        lines are in the same order as they appeared in the file.
         """
-        return self.__element_list
+        return self.__line_list
 
-    def element_dict(self):
-        """ Return a dictionary of elements from the Gedcom file.  Only
-        elements identified by a pointer are listed in the dictionary.  The
+    def line_dict(self):
+        """ Return a dictionary of lines from the Gedcom file.  Only
+        lines identified by a pointer are listed in the dictionary.  The
         key for the dictionary is the pointer.
         """
-        return self.__element_dict
+        return self.__line_dict
 
     def individual_list(self):
         """ Return a list of all the individuals in the Gedcom file.  The
@@ -118,7 +118,7 @@ class Gedcom:
             number += 1
         self.__count()
 
-        for e in self.element_list():
+        for e in self.line_list():
             e._init()
 
     def __parse_line(self,number,line):
@@ -126,49 +126,49 @@ class Gedcom:
         # parse the line
         parts = string.split(line)
         place = 0
-        l = self.__level(number,parts,place)
+        l = self.__level(number,parts,place) #retireve line level
         place += 1
-        p = self.__pointer(number,parts,place)
+        p = self.__pointer(number,parts,place) #retrieve line pointer if it exists
         if p != '':
             place += 1
-        t = self.__tag(number,parts,place)
+        t = self.__tag(number,parts,place) #retrieve line tag
         place += 1
-        v = self.__value(number,parts,place)
+        v = self.__value(number,parts,place) #retrieve value of tag if it exists
 
-        # create the element
+        # create the line
         if l > self.__current_level + 1:
             self.__error(number,"Structure of GEDCOM file is corrupted")
 
         if t == "INDI":
-            e = Individual(l,p,t,v,self.element_dict())
+            e = Individual(l,p,t,v,self.line_dict())
             self.__individual_list.append(e)
             if p != '':
                 self.__individual_dict[p] = e
         elif t == "FAM":
-            e = Family(l,p,t,v,self.element_dict())
+            e = Family(l,p,t,v,self.line_dict())
             self.__family_list.append(e)
             if p != '':
                 self.__family_dict[p] = e
         else:
-            e = Element(l,p,t,v,self.element_dict())
+            e = Line(l,p,t,v,self.line_dict())
 
-        self.__element_list.append(e)
+        self.__line_list.append(e)
         if p != '':
-            self.__element_dict[p] = e
+            self.__line_dict[p] = e
 
         if l > self.__current_level:
-            self.__current_element.add_child(e)
-            e.add_parent_element(self.__current_element)
+            self.__current_line.add_child(e)
+            e.add_parent_line(self.__current_line)
         else:
             # l.value <= self.__current_level:
-            while (self.__current_element.level() != l - 1):
-                self.__current_element = self.__current_element.parent_element()
-            self.__current_element.add_child(e)
-            e.add_parent_element(self.__current_element)
+            while (self.__current_line.level() != l - 1):
+                self.__current_line = self.__current_line.parent_line()
+            self.__current_line.add_child(e)
+            e.add_parent_line(self.__current_line)
 
         # finish up
         self.__current_level = l
-        self.__current_element = e
+        self.__current_line = e
 
     def __level(self,number,parts,place):
         if len(parts) <= place:
@@ -195,7 +195,7 @@ class Gedcom:
                 # string.strip(part,'@')
                 # but it may be useful to identify pointers outside this class
             else:
-                self.__error(number,"Pointer element must start and end with @")
+                self.__error(number,"Pointer must start and end with @")
         return p
 
     def __tag(self,number,parts,place):
@@ -210,7 +210,7 @@ class Gedcom:
         if p != '':
             # rest of the line should be empty
             if len(parts) > place + 1:
-                self.__error(number,"Too many elements")
+                self.__error(number,"Too many parts of line")
             return p
         else:
             # rest of the line should be ours
@@ -228,13 +228,13 @@ class Gedcom:
     def __count(self):
         # Count number of individuals
         self.__individuals = 0
-        for e in self.__element_list:
+        for e in self.__line_list:
             if e.individual():
                 self.__individuals += 1
 
 
     def __print(self):
-        for e in self.element_list:
+        for e in self.line_list:
             print string.join([str(e.level()),e.pointer(),e.tag(),e.value()])
 
 
@@ -248,26 +248,26 @@ class GedcomParseError(Exception):
     def __str__(self):
         return `self.value`
 
-class Element:
-    """ Gedcom element
+class Line:
+    """ Line of a GEDCOM file
 
-    Each line in a Gedcom file is an element with the format
+    Each line in a Gedcom file has following format:
 
     level [pointer] tag [value]
 
     where level and tag are required, and pointer and value are
-    optional.  Elements are arranged hierarchically according to their
-    level, and elements with a level of zero are at the top level.
-    Elements with a level greater than zero are children of their
+    optional.  Lines are arranged hierarchically according to their
+    level, and lines with a level of zero are at the top level.
+    Lines with a level greater than zero are children of their
     parent.
 
     A pointer has the format @pname@, where pname is any sequence of
     characters and numbers.  The pointer identifies the object being
     pointed to, so that any pointer included as the value of any
-    element points back to the original object.  For example, an
-    element may have a FAMS tag whose value is @F1@, meaning that this
-    element points to the family record in which the associated person
-    is a spouse.  Likewise, an element with a tag of FAMC has a value
+    line points back to the original object.  For example, an
+    line may have a FAMS tag whose value is @F1@, meaning that this
+    line points to the family record in which the associated person
+    is a spouse.  Likewise, an line with a tag of FAMC has a value
     that points to a family record in which the associated person is a
     child.
     
@@ -276,79 +276,79 @@ class Element:
     """
 
     def __init__(self,level,pointer,tag,value,dict):
-        """ Initialize an element.  You must include a level, pointer,
-        tag, value, and global element dictionary.  Normally initialized
+        """ Initialize a line.  You must include a level, pointer,
+        tag, value, and global line dictionary.  Normally initialized
         by the Gedcom parser, not by a user.
         """
-        # basic element info
+        # basic line info
         self.__level = level
         self.__pointer = pointer
         self.__tag = tag
         self.__value = value
         self.dict = dict #subclasses need to use it, so it is not private
         # structuring
-        self.__children_elements = []
-        self.__parent_element = None
+        self.__children_lines = []
+        self.__parent_line = None
 
     def _init(self):
-        """ A method to which GEDCOM parser runs after all elements are available. Subclasses should implement this method if they want to work with other Elements at parse time, but after all Elements are parsed. """
+        """ A method to which GEDCOM parser runs after all lines are available. Subclasses should implement this method if they want to work with other Lines at parse time, but after all Lines are parsed. """
         pass
 
     def level(self):
-        """ Return the level of this element """
+        """ Return the level of this line """
         return self.__level
 
     def pointer(self):
-        """ Return the pointer of this element """
+        """ Return the pointer of this line """
         return self.__pointer
     
     def tag(self):
-        """ Return the tag of this element """
+        """ Return the tag of this line """
         return self.__tag
 
     def value(self):
-        """ Return the value of this element """
+        """ Return the value of this line """
         return self.__value
 
-    def children_elements(self):
-        """ Return the child elements of this element """
-        return self.__children_elements
+    def children_lines(self):
+        """ Return the child lines of this line """
+        return self.__children_lines
 
-    def parent_element(self):
-        """ Return the parent element of this element """
-        return self.__parent_element
+    def parent_line(self):
+        """ Return the parent line of this line """
+        return self.__parent_line
 
-    def add_child(self,element):
-        """ Add a child element to this element """
-        self.children_elements().append(element)
+    def add_child(self,line):
+        """ Add a child line to this line """
+        self.children_lines().append(line)
         
-    def add_parent_element(self,element):
-        """ Add a parent element to this element """
-        self.__parent_element = element
+    def add_parent_line(self,line):
+        """ Add a parent line to this line """
+        self.__parent_line = line
 
     def children_tags(self, tag):
-        """ Returns list of child elements whos tag matchs the argument. """
-        elements = []
-        for c in self.children_elements():
+        """ Returns list of child lines whos tag matchs the argument. """
+        lines = []
+        for c in self.children_lines():
             if c.tag() == tag:
-                elements.append(c)
+                lines.append(c)
 
-        return elements
+        return lines
 
     def children_tag_values(self, tag):
-        """ Returns list of values of child elements whos tag matches the argument. """
+        """ Returns list of values of child lines whos tag matches the argument. """
         values = map(lambda x: x.value(), self.children_tags(tag))
 
         return values
 
-    def children_tag_elements(self, tag):
-        """ Returns list of elements which are pointed by child elements with given tag. """
-        elements = map(lambda x: self.dict[x], self.children_tag_values(tag))
+    def children_tag_lines(self, tag):
+        """ Returns list of lines which are pointed by child lines with given tag. """
+        lines = map(lambda x: self.dict[x], self.children_tag_values(tag))
 
-        return elements
+        return lines
 
     def individual(self):
-        """ Check if this element is an individual """
+        """ Check if this line is an individual """
         return self.tag() == "INDI"
 
     # criteria matching
@@ -356,20 +356,20 @@ class Element:
     def get_individual(self):
         """.. deprecated
 
-        This method is obsolete, use Element.gedcom().
+        This method is obsolete, use Line.gedcom().
         """
         return self.gedcom()
 
     def gedcom(self):
-        """ Return GEDCOM code for this element and all of its sub-elements """
+        """ Return GEDCOM code for this line and all of its sub-lines """
         result = str(self)
-        for e in self.children_elements():
+        for e in self.children_lines():
             result += '\n' + e.get_individual()
         return result
 
     def get_family(self):
         result = self.get_individual()
-        for e in self.children_elements():
+        for e in self.children_lines():
             if e.tag() == "HUSB" or e.tag() == "WIFE" or e.tag() == "CHIL":
                 f = self.dict.get(e.value())
                 if f != None:
@@ -377,7 +377,7 @@ class Element:
         return result
 
     def __str__(self):
-        """ Format this element as its original string """
+        """ Format this line as its original string """
         result = str(self.level())
         if self.pointer() != "":
             result += ' ' + self.pointer()
@@ -387,18 +387,18 @@ class Element:
         return result
 
 
-class Individual(Element):
-    """ Gedcom element representing an individual
+class Individual(Line):
+    """ Gedcom line representing an individual
 
-    Child class of Element
+    Child class of Line
 
     """
 
     def __init__(self,level,pointer,tag,value,dict):
-        Element.__init__(self,level,pointer,tag,value,dict)
+        Line.__init__(self,level,pointer,tag,value,dict)
 
     def _init(self):
-        """ Implementing Element._init() """
+        """ Implementing Line._init() """
         self.__parent_family = self.get_parent_family()
         self.__families = self.get_families()
 
@@ -464,12 +464,12 @@ class Individual(Element):
         return False
 
     def families_pointers(self): #TODO: merge this method into Individual.get_families()
-        """ Return a list of pointers of all of the family elements of a person. """
+        """ Return a list of pointers of all of the family lines of a person. """
         results = []
 
         results = self.children_tag_values("FAMS")
 
-#        for e in self.children_elements():
+#        for e in self.children_lines():
 #            if e.tag() == "FAMS":
 #                if e.value() != None:
 #                    results.append(e.value())
@@ -479,16 +479,16 @@ class Individual(Element):
         return results
 
     def get_families(self):
-        """ Return a list of all of the family elements of a person. """
+        """ Return a list of all of the family lines of a person. """
         return map(lambda x: self.dict[x], self.families_pointers())
 
     def parent_family_pointer(self): #TODO: merge this method into Individual.get_parent_family()
-        """ Return a family element of a person in which the person is a child. """
+        """ Return a family line of a person in which the person is a child. """
         results = []
 
         results = self.children_tag_values("FAMC")
         
-#        for e in self.children_elements():
+#        for e in self.children_lines():
 #            if e.tag() == "FAMC":
 #                if e.value() != None:
 #                    results.append(e.value())
@@ -504,7 +504,7 @@ class Individual(Element):
         return results[0]
 
     def get_parent_family(self):
-        """ Return a family element of a person in which the person is a child. """
+        """ Return a family line of a person in which the person is a child. """
         if self.parent_family_pointer() is None:
             return None
         return self.dict[self.parent_family_pointer()]
@@ -515,7 +515,7 @@ class Individual(Element):
         last = ""
         if not self.individual():
             return (first,last)
-        for e in self.children_elements():
+        for e in self.children_lines():
             if e.tag() == "NAME":
                 # some older Gedcom files don't use child tags but instead
                 # place the name in the value of the NAME tag
@@ -524,7 +524,7 @@ class Individual(Element):
                     first = string.strip(name[0])
                     last = string.strip(name[1])
                 else:
-                    for c in e.children_elements():
+                    for c in e.children_lines():
                         if c.tag() == "GIVN":
                             first = c.value()
                         if c.tag() == "SURN":
@@ -554,9 +554,9 @@ class Individual(Element):
         date = ""
         place = ""
 
-        for e in self.children_elements():
+        for e in self.children_lines():
             if e.tag() == "BIRT":
-                for c in e.children_elements():
+                for c in e.children_lines():
                     if c.tag() == "DATE":
                         date = c.value()
                     if c.tag() == "PLAC":
@@ -568,9 +568,9 @@ class Individual(Element):
         date = ""
         if not self.individual():
             return date
-        for e in self.children_elements():
+        for e in self.children_lines():
             if e.tag() == "BIRT":
-                for c in e.children_elements():
+                for c in e.children_lines():
                     if c.tag() == "DATE":
                         datel = string.split(c.value())
                         date = datel[len(datel)-1]
@@ -587,9 +587,9 @@ class Individual(Element):
         place = ""
         if not self.individual():
             return (date,place)
-        for e in self.children_elements():
+        for e in self.children_lines():
             if e.tag() == "DEAT":
-                for c in e.children_elements():
+                for c in e.children_lines():
                     if c.tag() == "DATE":
                         date = c.value()
                     if c.tag() == "PLAC":
@@ -601,9 +601,9 @@ class Individual(Element):
         date = ""
         if not self.individual():
             return date
-        for e in self.children_elements():
+        for e in self.children_lines():
             if e.tag() == "DEAT":
-                for c in e.children_elements():
+                for c in e.children_lines():
                     if c.tag() == "DATE":
                         datel = string.split(c.value())
                         date = datel[len(datel)-1]
@@ -618,13 +618,13 @@ class Individual(Element):
         """ Check if a person is deceased """
         if not self.individual():
             return False
-        for e in self.children_elements():
+        for e in self.children_lines():
             if e.tag() == "DEAT":
                 return True
         return False
 
     def criteria_match(self,criteria):
-        """ Check in this element matches all of the given criteria.
+        """ Check in this line matches all of the given criteria.
 
         The criteria is a colon-separated list, where each item in the list has the form [name]=[value]. The following criteria are supported:
 
@@ -726,14 +726,14 @@ class Individual(Element):
         date = ""
         place = ""
 
-        for e in self.children_elements():
+        for e in self.children_lines():
             if e.tag() == "FAMS":
                 f = self.dict.get(e.value(),None)
                 if f == None:
                     return (date,place)
-                for g in f.children_elements():
+                for g in f.children_lines():
                     if g.tag() == "MARR":
-                        for h in g.children_elements():
+                        for h in g.children_lines():
                             if h.tag() == "DATE":
                                 date = h.value()
                             if h.tag() == "PLAC":
@@ -747,14 +747,14 @@ class Individual(Element):
         dates = []
         if not self.individual():
             return dates
-        for e in self.children_elements():
+        for e in self.children_lines():
             if e.tag() == "FAMS":
                 f = self.dict.get(e.value(),None)
                 if f == None:
                     return dates
-                for g in f.children_elements():
+                for g in f.children_lines():
                     if g.tag() == "MARR":
-                        for h in g.children_elements():
+                        for h in g.children_lines():
                             if h.tag() == "DATE":
                                 datel = string.split(h.value())
                                 date = datel[len(datel)-1]
@@ -767,37 +767,37 @@ class Individual(Element):
 
     
 
-class Family(Element):
-    """ Gedcom element representing a family
+class Family(Line):
+    """ Gedcom line representing a family
 
-    Child class of Element
+    Child class of Line
 
     """
 
     def __init__(self,level,pointer,tag,value,dict):
-        Element.__init__(self,level,pointer,tag,value,dict)
+        Line.__init__(self,level,pointer,tag,value,dict)
 
     def _init(self):
-        """ Implementing Element._init()
+        """ Implementing Line._init()
 
         Initialise husband, wife and children attributes. """
         
         try:
-            self.__husband = self.children_tag_elements("HUSB")[0]
+            self.__husband = self.children_tag_lines("HUSB")[0]
         except IndexError:
             self.__husband = None
 
         try:
-            self.__wife = self.children_tag_elements("WIFE")[0]
+            self.__wife = self.children_tag_lines("WIFE")[0]
         except IndexError:
             self.__wife = None
 
         try:
-            self.__children = self.children_tag_elements("CHIL")
+            self.__children = self.children_tag_lines("CHIL")
         except IndexError:
             self.__children = []
 
-#        for e in self.children_elements():
+#        for e in self.children_lines():
 #            if e.value() != None:
 #                if e.tag() == "CHIL":
 #                    self.__children.append(self.dict[e.value()])

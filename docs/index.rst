@@ -13,7 +13,7 @@ Classes
    :maxdepth: 2
 
    gedcom.rst
-   element.rst
+   line.rst
    individual.rst
    family.rst
 

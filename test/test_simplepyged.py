@@ -9,7 +9,7 @@ class Test(unittest.TestCase):
         self.g = Gedcom(os.path.abspath('test/mcintyre.ged'))
 
     def test_matches(self):
-        for e in self.g.element_list():
+        for e in self.g.line_list():
             if e.individual():
                 if e.surname_match('Merriman'):
                     self.assertEqual(e.name()[0], 'Lucy')
@@ -29,25 +29,25 @@ class Test(unittest.TestCase):
 
     def test_criteria(self):
         criteria = "surname=McIntyre:birthrange=1820-1840:deathrange=1865-1870"
-        for e in self.g.element_list():
+        for e in self.g.line_list():
             if e.individual():
                 if e.criteria_match(criteria):
                     self.assertEqual(e.name(), ('Calvin Colin', 'McIntyre'))
 
         criteria = "surname=McIntyre:birth=1890:death=1953"
-        for e in self.g.element_list():
+        for e in self.g.line_list():
             if e.individual():
                 if e.criteria_match(criteria):
                     self.assertEqual(e.name(), ('Ernest R', 'McIntyre'))
 
         criteria = "surname=McIntyre:marriage=1821"
-        for e in self.g.element_list():
+        for e in self.g.line_list():
             if e.individual():
                 if e.criteria_match(criteria):
                     self.assertEqual(e.name(), ('John M', 'McIntyre'))
 
         criteria = "surname=McIntyre:marriagerange=1820-1825"
-        for e in self.g.element_list():
+        for e in self.g.line_list():
             if e.individual():
                 if e.criteria_match(criteria):
                     self.assertEqual(e.name(), ('John M', 'McIntyre'))
@@ -55,19 +55,19 @@ class Test(unittest.TestCase):
 
     def test_missing_pointer(self):
         """I don't really know what this does..."""
-        for e in self.g.element_list():
+        for e in self.g.line_list():
             if e.value().startswith('@'):
-                f = self.g.element_dict().get(e.value(),None)
+                f = self.g.line_dict().get(e.value(),None)
                 if f == None:
                     print e.value()
 
-        for e in self.g.element_list():
+        for e in self.g.line_list():
             if e.pointer() == "@I99@":
                 print e.name()
 
     def test_individuals(self):
         num_of_individuals = 0
-        for e in self.g.element_list():
+        for e in self.g.line_list():
             if e.individual():
                 num_of_individuals += 1
 
@@ -75,8 +75,8 @@ class Test(unittest.TestCase):
         self.assertEqual(num_of_individuals, len(self.g.individual_dict()))
 
 
-    def test_element(self):
-        """Testing class Element"""
+    def test_line(self):
+        """Testing class Line"""
         mary = self.g.get_individual('@P405366386@')
 
         self.assertEqual(mary.children_tag_values("SEX"), ["F"])
