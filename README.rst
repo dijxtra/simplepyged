@@ -1,6 +1,13 @@
 simplepyged - A simple Python GEDCOM parser
 ===========================================
 
+Status of parser
+----------------
+
+Recognises a subset of GEDCOM 5.5 tags. If you need support for an
+unsupported tag, submit an issue (although implementing the tag
+yourself and sending a patch is preferable).
+
 Examples
 --------
 
