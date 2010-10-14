@@ -95,7 +95,7 @@ class Gedcom:
         """
         return self.__family_dict
 
-    def gedcom(self, xref):
+    def get_individual(self, xref):
         """ Return an object of class Individual identified by xref """
         return self.individual_dict()[xref]
 
