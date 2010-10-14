@@ -22,7 +22,7 @@
 #
 # To contact the author, see http://faculty.cs.byu.edu/~zappala
 
-__all__ = ["Gedcom", "Line", "GedcomParseError"]
+# __all__ = ["Gedcom", "Line", "GedcomParseError"]
 
 # Global imports
 import string
@@ -139,16 +139,19 @@ class Gedcom:
         if l > self.__current_level + 1:
             self.__error(number,"Structure of GEDCOM file is corrupted")
 
-        if t == "INDI":
-            e = Individual(l,p,t,v,self.line_dict())
-            self.__individual_list.append(e)
-            if p != '':
-                self.__individual_dict[p] = e
-        elif t == "FAM":
-            e = Family(l,p,t,v,self.line_dict())
-            self.__family_list.append(e)
-            if p != '':
-                self.__family_dict[p] = e
+        if l == 0: #current line is in fact a brand new record
+            if t == "INDI":
+                e = Individual(l,p,t,v,self.line_dict())
+                self.__individual_list.append(e)
+                if p != '':
+                    self.__individual_dict[p] = e
+            elif t == "FAM":
+                e = Family(l,p,t,v,self.line_dict())
+                self.__family_list.append(e)
+                if p != '':
+                    self.__family_dict[p] = e
+            else:
+                e = Record(l,p,t,v,self.line_dict())
         else:
             e = Line(l,p,t,v,self.line_dict())
 
@@ -386,16 +389,25 @@ class Line:
             result += ' ' + self.value()
         return result
 
-
-class Individual(Line):
-    """ Gedcom line representing an individual
+class Record(Line):
+    """ Gedcom line with level 0 represents a record
 
     Child class of Line
 
     """
+    
+    pass
+
+    
+class Individual(Record):
+    """ Gedcom record representing an individual
+
+    Child class of Record
+
+    """
 
     def __init__(self,level,pointer,tag,value,dict):
-        Line.__init__(self,level,pointer,tag,value,dict)
+        Record.__init__(self,level,pointer,tag,value,dict)
 
     def _init(self):
         """ Implementing Line._init() """
@@ -464,7 +476,7 @@ class Individual(Line):
         return False
 
     def families_pointers(self): #TODO: merge this method into Individual.get_families()
-        """ Return a list of pointers of all of the family lines of a person. """
+        """ Return a list of pointers of all of the family records of a person. """
         results = []
 
         results = self.children_tag_values("FAMS")
@@ -479,11 +491,11 @@ class Individual(Line):
         return results
 
     def get_families(self):
-        """ Return a list of all of the family lines of a person. """
+        """ Return a list of all of the family records of a person. """
         return map(lambda x: self.dict[x], self.families_pointers())
 
     def parent_family_pointer(self): #TODO: merge this method into Individual.get_parent_family()
-        """ Return a family line of a person in which the person is a child. """
+        """ Return a pointer to family record in which this individual is a child. """
         results = []
 
         results = self.children_tag_values("FAMC")
@@ -504,7 +516,7 @@ class Individual(Line):
         return results[0]
 
     def get_parent_family(self):
-        """ Return a family line of a person in which the person is a child. """
+        """ Return a family record in which this individual is a child. """
         if self.parent_family_pointer() is None:
             return None
         return self.dict[self.parent_family_pointer()]
@@ -624,7 +636,7 @@ class Individual(Line):
         return False
 
     def criteria_match(self,criteria):
-        """ Check in this line matches all of the given criteria.
+        """ Check in this individual matches all of the given criteria.
 
         The criteria is a colon-separated list, where each item in the list has the form [name]=[value]. The following criteria are supported:
 
@@ -767,15 +779,15 @@ class Individual(Line):
 
     
 
-class Family(Line):
-    """ Gedcom line representing a family
+class Family(Record):
+    """ Gedcom record representing a family
 
-    Child class of Line
+    Child class of Record
 
     """
 
     def __init__(self,level,pointer,tag,value,dict):
-        Line.__init__(self,level,pointer,tag,value,dict)
+        Record.__init__(self,level,pointer,tag,value,dict)
 
     def _init(self):
         """ Implementing Line._init()
