@@ -339,7 +339,12 @@ class Line:
 
     def children_tag_lines(self, tag):
         """ Returns list of lines which are pointed by child lines with given tag. """
-        lines = map(lambda x: self.dict[x.value()], self.children_tags(tag))
+        lines = []
+        for e in self.children_tags(tag):
+            try:
+                lines.append(self.dict[e.value()])
+            except KeyError:
+                pass
 
         return lines
 
@@ -680,49 +685,33 @@ class Individual(Record):
                 return True
         return False
 
-    def marriage(self):
+    def marriages(self):
         """ Return a list of marriage tuples for a person, each listing
         (date,place).
         """
-        date = ""
-        place = ""
+        retval = []
 
-        for e in self.children_lines():
-            if e.tag() == "FAMS":
-                f = self.dict.get(e.value(),None)
-                if f == None:
-                    return (date,place)
-                for g in f.children_lines():
-                    if g.tag() == "MARR":
-                        for h in g.children_lines():
-                            if h.tag() == "DATE":
-                                date = h.value()
-                            if h.tag() == "PLAC":
-                                place = h.value()
-        return (date,place)
+        for fams in self.children_tag_lines("FAMS"):
+            for marr in fams.children_tag_lines("MARR"):
+                try:
+                    date = marr.children_tag_lines("DATE")[0].value()
+                except:
+                    date = ""
+                try:
+                    place = marr.children_tag_lines("PLAC")[0].value()
+                except:
+                    place = ""
+                if date != "" or place != "":
+                    retval.append(date, place)
+
+        return retval
 
     def marriage_years(self):
         """ Return a list of marriage years for a person, each in integer
         format.
         """
-        dates = []
-        for e in self.children_lines():
-            if e.tag() == "FAMS":
-                f = self.dict.get(e.value(),None)
-                if f == None:
-                    return dates
-                for g in f.children_lines():
-                    if g.tag() == "MARR":
-                        for h in g.children_lines():
-                            if h.tag() == "DATE":
-                                datel = string.split(h.value())
-                                date = datel[len(datel)-1]
-                                try:
-                                    dates.append(int(date))
-                                except ValueError:
-                                    pass
-        return dates
 
+        return map(lambda x: x[0].split(" ")[-1], self.marriages())
 
     
 
@@ -755,15 +744,6 @@ class Family(Record):
             self.__children = self.children_tag_lines("CHIL")
         except IndexError:
             self.__children = []
-
-#        for e in self.children_lines():
-#            if e.value() != None:
-#                if e.tag() == "CHIL":
-#                    self.__children.append(self.dict[e.value()])
-#                elif e.tag() == "HUSB":
-#                    self.__husband = self.dict[e.value()]
-#                elif e.tag() == "WIFE":
-#                    self.__wife = self.dict[e.value()]
 
     def husband(self):
         """ Return husband this family """
