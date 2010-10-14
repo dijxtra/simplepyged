@@ -337,15 +337,9 @@ class Line:
 
         return lines
 
-    def children_tag_values(self, tag):
-        """ Returns list of values of child lines whos tag matches the argument. """
-        values = map(lambda x: x.value(), self.children_tags(tag))
-
-        return values
-
     def children_tag_lines(self, tag):
         """ Returns list of lines which are pointed by child lines with given tag. """
-        lines = map(lambda x: self.dict[x], self.children_tag_values(tag))
+        lines = map(lambda x: self.dict[x.value()], self.children_tags(tag))
 
         return lines
 
@@ -477,13 +471,11 @@ class Individual(Record):
 
     def get_families(self):
         """ Return a list of all of the family records of a person. """
-        return map(
-            lambda x: self.dict[x],
-            self.children_tag_values("FAMS"))
+        return self.children_tag_lines("FAMS")
 
     def get_parent_family(self):
         """ Return a family record in which this individual is a child. """
-        famc = self.children_tag_values("FAMC")
+        famc = self.children_tag_lines("FAMC")
         
         if len(famc) > 1:
             raise Exception('Individual has multiple parent families.')
@@ -491,7 +483,7 @@ class Individual(Record):
         if len(famc) == 0:
             return None
         
-        return self.dict[famc[0]]
+        return famc[0]
     
     def name(self):
         """ Return a person's names as a tuple: (first,last) """

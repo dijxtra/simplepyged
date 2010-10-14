@@ -79,7 +79,7 @@ class Test(unittest.TestCase):
         """Testing class Line"""
         mary = self.g.get_individual('@P405366386@')
 
-        self.assertEqual(mary.children_tag_values("SEX"), ["F"])
+        self.assertEqual(map(lambda x: x.value(), mary.children_tags("SEX")), ["F"])
 
     def test_individual(self):
         """Testing class Individual"""
