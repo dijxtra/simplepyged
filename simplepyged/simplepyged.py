@@ -148,6 +148,18 @@ class Gedcom:
                 self.__family_list.append(e)
                 if p != '':
                     self.__family_dict[p] = e
+            elif t == "OBJE":
+                e = Multimedia(l,p,t,v,self.line_dict())
+            elif t == "NOTE":
+                e = Note(l,p,t,v,self.line_dict())
+            elif t == "REPO":
+                e = Repository(l,p,t,v,self.line_dict())
+            elif t == "SOUR":
+                e = Source(l,p,t,v,self.line_dict())
+            elif t == "SUBN":
+                e = Submission(l,p,t,v,self.line_dict())
+            elif t == "SUBM":
+                e = Submitter(l,p,t,v,self.line_dict())
             else:
                 e = Record(l,p,t,v,self.line_dict())
         else:
@@ -395,7 +407,21 @@ class Record(Line):
     
     pass
 
-    
+class Multimedia(Record):
+    pass
+
+class Note(Record):
+    pass
+
+class Repository(Record):
+    pass
+
+class Source(Record):
+    pass
+
+class Submitter(Record):
+    pass
+
 class Individual(Record):
     """ Gedcom record representing an individual
 
