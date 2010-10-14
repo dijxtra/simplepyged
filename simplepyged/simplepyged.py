@@ -408,6 +408,10 @@ class Individual(Record):
         self.__parent_family = self.get_parent_family()
         self.__families = self.get_families()
 
+    def sex(self):
+        """ Returns 'M' for males, 'F' for females """
+        return self.children_tags("SEX")[0].value()
+
     def parent_family(self):
         return self.__parent_family
 

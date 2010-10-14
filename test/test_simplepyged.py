@@ -86,6 +86,7 @@ class Test(unittest.TestCase):
         mary = self.g.get_individual('@P405366386@')
 
         self.assertEqual(mary.birth(), ('19 Nov 1923', 'Louisiana, USA'))
+        self.assertEqual(mary.sex(), 'F')
 
         self.assertEqual(mary.parent_family().xref(), '@F5@')
         self.assertEqual(mary.parent_family().husband().xref(), '@P405368888@')
