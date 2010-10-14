@@ -53,7 +53,7 @@ class Test(unittest.TestCase):
                     self.assertEqual(e.name(), ('John M', 'McIntyre'))
 
 
-    def test_missing_pointer(self):
+    def test_missing_xref(self):
         """I don't really know what this does..."""
         for e in self.g.line_list():
             if e.value().startswith('@'):
@@ -62,7 +62,7 @@ class Test(unittest.TestCase):
                     print e.value()
 
         for e in self.g.line_list():
-            if e.pointer() == "@I99@":
+            if e.xref() == "@I99@":
                 print e.name()
 
     def test_individuals(self):
@@ -87,12 +87,11 @@ class Test(unittest.TestCase):
 
         self.assertEqual(mary.birth(), ('19 Nov 1923', 'Louisiana, USA'))
 
-        self.assertEqual(mary.parent_family_pointer(), '@F5@')
-        self.assertEqual(self.g.get_family(mary.parent_family_pointer()), mary.parent_family())
-        self.assertEqual(mary.parent_family().husband().pointer(), '@P405368888@')
-        self.assertEqual(mary.father().pointer(), '@P405368888@')
-        self.assertEqual(mary.mother().pointer(), '@P405538002@')
-        self.assertEqual(map(lambda x: x.pointer(), mary.families()), ['@F4@'])
+        self.assertEqual(mary.parent_family().xref(), '@F5@')
+        self.assertEqual(mary.parent_family().husband().xref(), '@P405368888@')
+        self.assertEqual(mary.father().xref(), '@P405368888@')
+        self.assertEqual(mary.mother().xref(), '@P405538002@')
+        self.assertEqual(map(lambda x: x.xref(), mary.families()), ['@F4@'])
         self.assertEqual(mary.father().children(), [mary])
         
 

@@ -65,9 +65,9 @@ class Gedcom:
         return self.__line_list
 
     def line_dict(self):
-        """ Return a dictionary of lines from the Gedcom file.  Only
-        lines identified by a pointer are listed in the dictionary.  The
-        key for the dictionary is the pointer.
+        """ Return a dictionary of records from the Gedcom file.  Only
+        records that have xref defined are listed in the dictionary.
+        The key for the dictionary is the xref.
         """
         return self.__line_dict
 
@@ -78,9 +78,8 @@ class Gedcom:
         return self.__individual_list
 
     def individual_dict(self):
-        """ Return a dictionary of individuals from the Gedcom file.  Only
-        individuals identified by a pointer are listed in the dictionary.  The
-        key for the dictionary is the pointer.
+        """ Return a dictionary of individuals from the Gedcom file.  The
+        key for the dictionary is individual's xref.
         """
         return self.__individual_dict
 
@@ -91,19 +90,18 @@ class Gedcom:
         return self.__family_list
 
     def family_dict(self):
-        """ Return a dictionary of families from the Gedcom file.  Only
-        families identified by a pointer are listed in the dictionary.  The
-        key for the dictionary is the pointer.
+        """ Return a dictionary of families from the Gedcom file.  The
+        key for the dictionary is family's xref.
         """
         return self.__family_dict
 
-    def get_individual(self, pointer):
-        """ Return an object of class Individual identified by pointer """
-        return self.individual_dict()[pointer]
+    def get_individual(self, xref):
+        """ Return an object of class Individual identified by xref """
+        return self.individual_dict()[xref]
 
-    def get_family(self, pointer):
-        """ Return an object of class Family identified by pointer """
-        return self.family_dict()[pointer]
+    def get_family(self, xref):
+        """ Return an object of class Family identified by xref """
+        return self.family_dict()[xref]
 
 
     # Private methods
@@ -122,13 +120,13 @@ class Gedcom:
             e._init()
 
     def __parse_line(self,number,line):
-        # each line should have: Level SP (Pointer SP)? Tag (SP Value)? (SP)? NL
+        # each line should have: Level SP (Xref SP)? Tag (SP Value)? (SP)? NL
         # parse the line
         parts = string.split(line)
         place = 0
         l = self.__level(number,parts,place) #retireve line level
         place += 1
-        p = self.__pointer(number,parts,place) #retrieve line pointer if it exists
+        p = self.__xref(number,parts,place) #retrieve line xref if it exists
         if p != '':
             place += 1
         t = self.__tag(number,parts,place) #retrieve line tag
@@ -186,7 +184,7 @@ class Gedcom:
 
         return l
 
-    def __pointer(self,number,parts,place):
+    def __xref(self,number,parts,place):
         if len(parts) <= place:
             self.__error(number,"Incomplete Line")
         p = ''
@@ -194,11 +192,11 @@ class Gedcom:
         if part[0] == '@':
             if part[len(part)-1] == '@':
                 p = part
-                # could strip the pointer to remove the @ with
+                # could strip the xref to remove the @ with
                 # string.strip(part,'@')
-                # but it may be useful to identify pointers outside this class
+                # but it may be useful to identify xrefs outside this class
             else:
-                self.__error(number,"Pointer must start and end with @")
+                self.__error(number,"Xref must start and end with @")
         return p
 
     def __tag(self,number,parts,place):
@@ -209,7 +207,7 @@ class Gedcom:
     def __value(self,number,parts,place):
         if len(parts) <= place:
             return ''
-        p = self.__pointer(number,parts,place)
+        p = self.__xref(number,parts,place)
         if p != '':
             # rest of the line should be empty
             if len(parts) > place + 1:
@@ -238,7 +236,7 @@ class Gedcom:
 
     def __print(self):
         for e in self.line_list:
-            print string.join([str(e.level()),e.pointer(),e.tag(),e.value()])
+            print string.join([str(e.level()),e.xref(),e.tag(),e.value()])
 
 
 class GedcomParseError(Exception):
@@ -256,36 +254,35 @@ class Line:
 
     Each line in a Gedcom file has following format:
 
-    level [pointer] tag [value]
+    level [xref] tag [value]
 
-    where level and tag are required, and pointer and value are
-    optional.  Lines are arranged hierarchically according to their
-    level, and lines with a level of zero are at the top level.
-    Lines with a level greater than zero are children of their
+    where level and tag are required, and xref and value are optional.
+    Lines are arranged hierarchically according to their level, and
+    lines with a level of zero (called 'records') are at the top
+    level.  Lines with a level greater than zero are children of their
     parent.
 
-    A pointer has the format @pname@, where pname is any sequence of
-    characters and numbers.  The pointer identifies the object being
-    pointed to, so that any pointer included as the value of any
-    line points back to the original object.  For example, an
-    line may have a FAMS tag whose value is @F1@, meaning that this
-    line points to the family record in which the associated person
-    is a spouse.  Likewise, an line with a tag of FAMC has a value
-    that points to a family record in which the associated person is a
-    child.
+    A xref has the format @pname@, where pname is any sequence of
+    characters and numbers.  The xref identifies the record being
+    referenced to, so that any xref included as the value of any line
+    points back to the original record.  For example, an line may have
+    a FAMS tag whose value is @F1@, meaning that this line points to
+    the family record in which the associated individual is a spouse.
+    Likewise, an line with a tag of FAMC has a value that points to a
+    family record in which the associated individual is a child.
     
     See a Gedcom file for examples of tags and their values.
 
     """
 
-    def __init__(self,level,pointer,tag,value,dict):
-        """ Initialize a line.  You must include a level, pointer,
+    def __init__(self,level,xref,tag,value,dict):
+        """ Initialize a line.  You must include a level, xref,
         tag, value, and global line dictionary.  Normally initialized
         by the Gedcom parser, not by a user.
         """
         # basic line info
         self.__level = level
-        self.__pointer = pointer
+        self.__xref = xref
         self.__tag = tag
         self.__value = value
         self.dict = dict #subclasses need to use it, so it is not private
@@ -301,9 +298,9 @@ class Line:
         """ Return the level of this line """
         return self.__level
 
-    def pointer(self):
-        """ Return the pointer of this line """
-        return self.__pointer
+    def xref(self):
+        """ Return the xref of this line """
+        return self.__xref
     
     def tag(self):
         """ Return the tag of this line """
@@ -382,8 +379,8 @@ class Line:
     def __str__(self):
         """ Format this line as its original string """
         result = str(self.level())
-        if self.pointer() != "":
-            result += ' ' + self.pointer()
+        if self.xref() != "":
+            result += ' ' + self.xref()
         result += ' ' + self.tag()
         if self.value() != "":
             result += ' ' + self.value()
@@ -406,8 +403,8 @@ class Individual(Record):
 
     """
 
-    def __init__(self,level,pointer,tag,value,dict):
-        Record.__init__(self,level,pointer,tag,value,dict)
+    def __init__(self,level,xref,tag,value,dict):
+        Record.__init__(self,level,xref,tag,value,dict)
 
     def _init(self):
         """ Implementing Line._init() """
@@ -475,51 +472,23 @@ class Individual(Record):
             return True
         return False
 
-    def families_pointers(self): #TODO: merge this method into Individual.get_families()
-        """ Return a list of pointers of all of the family records of a person. """
-        results = []
-
-        results = self.children_tag_values("FAMS")
-
-#        for e in self.children_lines():
-#            if e.tag() == "FAMS":
-#                if e.value() != None:
-#                    results.append(e.value())
-##                f = self.dict.get(e.value(),None) #old version (why did this need to go through __dict?)
-##                if f != None:
-##                    results.append(f)
-        return results
-
     def get_families(self):
         """ Return a list of all of the family records of a person. """
-        return map(lambda x: self.dict[x], self.families_pointers())
-
-    def parent_family_pointer(self): #TODO: merge this method into Individual.get_parent_family()
-        """ Return a pointer to family record in which this individual is a child. """
-        results = []
-
-        results = self.children_tag_values("FAMC")
-        
-#        for e in self.children_lines():
-#            if e.tag() == "FAMC":
-#                if e.value() != None:
-#                    results.append(e.value())
-##                f = self.dict.get(e.value(),None) #old version (why did this need to go through __dict?)
-##                if f != None:
-##                    results.append(f)
-        if len(results) > 1:
-            raise Exception('Individual has multiple parent families.')
-
-        if len(results) == 0:
-            return None
-        
-        return results[0]
+        return map(
+            lambda x: self.dict[x],
+            self.children_tag_values("FAMS"))
 
     def get_parent_family(self):
         """ Return a family record in which this individual is a child. """
-        if self.parent_family_pointer() is None:
+        famc = self.children_tag_values("FAMC")
+        
+        if len(famc) > 1:
+            raise Exception('Individual has multiple parent families.')
+
+        if len(famc) == 0:
             return None
-        return self.dict[self.parent_family_pointer()]
+        
+        return self.dict[famc[0]]
     
     def name(self):
         """ Return a person's names as a tuple: (first,last) """
@@ -786,8 +755,8 @@ class Family(Record):
 
     """
 
-    def __init__(self,level,pointer,tag,value,dict):
-        Record.__init__(self,level,pointer,tag,value,dict)
+    def __init__(self,level,xref,tag,value,dict):
+        Record.__init__(self,level,xref,tag,value,dict)
 
     def _init(self):
         """ Implementing Line._init()
