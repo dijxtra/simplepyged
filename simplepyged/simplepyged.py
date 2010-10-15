@@ -46,54 +46,54 @@ class Gedcom:
     def __init__(self,file):
         """ Initialize a Gedcom parser. You must supply a Gedcom file.
         """
-        self.__line_list = []
-        self.__line_dict = {}
-        self.__individual_list = []
-        self.__individual_dict = {}
-        self.__family_list = []
-        self.__family_dict = {}
-        self.__line_top = Line(-1,"","TOP","",self.__line_dict)
-        self.__current_level = -1
-        self.__current_line = self.__line_top
-        self.__individuals = 0
-        self.__parse(file)
+        self._line_list = []
+        self._line_dict = {}
+        self._individual_list = []
+        self._individual_dict = {}
+        self._family_list = []
+        self._family_dict = {}
+        self._line_top = Line(-1,"","TOP","",self._line_dict)
+        self._current_level = -1
+        self._current_line = self._line_top
+        self._individuals = 0
+        self._parse(file)
 
     def line_list(self):
         """ Return a list of all the lines in the Gedcom file.  The
         lines are in the same order as they appeared in the file.
         """
-        return self.__line_list
+        return self._line_list
 
     def line_dict(self):
         """ Return a dictionary of records from the Gedcom file.  Only
         records that have xref defined are listed in the dictionary.
         The key for the dictionary is the xref.
         """
-        return self.__line_dict
+        return self._line_dict
 
     def individual_list(self):
         """ Return a list of all the individuals in the Gedcom file.  The
         individuals are in the same order as they appeared in the file.
         """
-        return self.__individual_list
+        return self._individual_list
 
     def individual_dict(self):
         """ Return a dictionary of individuals from the Gedcom file.  The
         key for the dictionary is individual's xref.
         """
-        return self.__individual_dict
+        return self._individual_dict
 
     def family_list(self):
         """ Return a list of all the families in the Gedcom file.  The
         families are in the same order as they appeared in the file.
         """
-        return self.__family_list
+        return self._family_list
 
     def family_dict(self):
         """ Return a dictionary of families from the Gedcom file.  The
         key for the dictionary is family's xref.
         """
-        return self.__family_dict
+        return self._family_dict
 
     def get_individual(self, xref):
         """ Return an object of class Individual identified by xref """
@@ -105,47 +105,47 @@ class Gedcom:
 
     # Private methods
 
-    def __parse(self,file):
+    def _parse(self,file):
         # open file
         # go through the lines
         f = open(file)
         number = 1
         for line in f.readlines():
-            self.__parse_line(number,line)
+            self._parse_line(number,line)
             number += 1
 
         for e in self.line_list():
             e._init()
 
-    def __parse_line(self,number,line):
+    def _parse_line(self,number,line):
         # each line should have: Level SP (Xref SP)? Tag (SP Value)? (SP)? NL
         # parse the line
         parts = string.split(line)
         place = 0
-        l = self.__level(number,parts,place) #retireve line level
+        l = self._level(number,parts,place) #retireve line level
         place += 1
-        p = self.__xref(number,parts,place) #retrieve line xref if it exists
+        p = self._xref(number,parts,place) #retrieve line xref if it exists
         if p != '':
             place += 1
-        t = self.__tag(number,parts,place) #retrieve line tag
+        t = self._tag(number,parts,place) #retrieve line tag
         place += 1
-        v = self.__value(number,parts,place) #retrieve value of tag if it exists
+        v = self._value(number,parts,place) #retrieve value of tag if it exists
 
         # create the line
-        if l > self.__current_level + 1:
-            self.__error(number,"Structure of GEDCOM file is corrupted")
+        if l > self._current_level + 1:
+            self._error(number,"Structure of GEDCOM file is corrupted")
 
         if l == 0: #current line is in fact a brand new record
             if t == "INDI":
                 e = Individual(l,p,t,v,self.line_dict())
-                self.__individual_list.append(e)
+                self._individual_list.append(e)
                 if p != '':
-                    self.__individual_dict[p] = e
+                    self._individual_dict[p] = e
             elif t == "FAM":
                 e = Family(l,p,t,v,self.line_dict())
-                self.__family_list.append(e)
+                self._family_list.append(e)
                 if p != '':
-                    self.__family_dict[p] = e
+                    self._family_dict[p] = e
             elif t == "OBJE":
                 e = Multimedia(l,p,t,v,self.line_dict())
             elif t == "NOTE":
@@ -163,40 +163,40 @@ class Gedcom:
         else:
             e = Line(l,p,t,v,self.line_dict())
 
-        self.__line_list.append(e)
+        self._line_list.append(e)
         if p != '':
-            self.__line_dict[p] = e
+            self._line_dict[p] = e
 
-        if l > self.__current_level:
-            self.__current_line.add_child(e)
-            e.add_parent_line(self.__current_line)
+        if l > self._current_level:
+            self._current_line.add_child(e)
+            e.add_parent_line(self._current_line)
         else:
-            # l.value <= self.__current_level:
-            while (self.__current_line.level() != l - 1):
-                self.__current_line = self.__current_line.parent_line()
-            self.__current_line.add_child(e)
-            e.add_parent_line(self.__current_line)
+            # l.value <= self._current_level:
+            while (self._current_line.level() != l - 1):
+                self._current_line = self._current_line.parent_line()
+            self._current_line.add_child(e)
+            e.add_parent_line(self._current_line)
 
         # finish up
-        self.__current_level = l
-        self.__current_line = e
+        self._current_level = l
+        self._current_line = e
 
-    def __level(self,number,parts,place):
+    def _level(self,number,parts,place):
         if len(parts) <= place:
-            self.__error(number,"Empty line")
+            self._error(number,"Empty line")
         try:
             l = int(parts[place])
         except ValueError:
-            self.__error(number,"Line must start with an integer level")
+            self._error(number,"Line must start with an integer level")
 
         if (l < 0):
-            self.__error(number,"Line must start with a positive integer")
+            self._error(number,"Line must start with a positive integer")
 
         return l
 
-    def __xref(self,number,parts,place):
+    def _xref(self,number,parts,place):
         if len(parts) <= place:
-            self.__error(number,"Incomplete Line")
+            self._error(number,"Incomplete Line")
         p = ''
         part = parts[1]
         if part[0] == '@':
@@ -206,22 +206,22 @@ class Gedcom:
                 # string.strip(part,'@')
                 # but it may be useful to identify xrefs outside this class
             else:
-                self.__error(number,"Xref must start and end with @")
+                self._error(number,"Xref must start and end with @")
         return p
 
-    def __tag(self,number,parts,place):
+    def _tag(self,number,parts,place):
         if len(parts) <= place:
-            self.__error(number,"Incomplete line")
+            self._error(number,"Incomplete line")
         return parts[place]
 
-    def __value(self,number,parts,place):
+    def _value(self,number,parts,place):
         if len(parts) <= place:
             return ''
-        p = self.__xref(number,parts,place)
+        p = self._xref(number,parts,place)
         if p != '':
             # rest of the line should be empty
             if len(parts) > place + 1:
-                self.__error(number,"Too many parts of line")
+                self._error(number,"Too many parts of line")
             return p
         else:
             # rest of the line should be ours
@@ -232,11 +232,11 @@ class Gedcom:
             v = string.join(vlist)
             return v
             
-    def __error(self,number,text):
+    def _error(self,number,text):
         error = "Gedcom format error on line " + str(number) + ': ' + text
         raise GedcomParseError, error
 
-    def __print(self):
+    def _print(self):
         for e in self.line_list:
             print string.join([str(e.level()),e.xref(),e.tag(),e.value()])
 
@@ -248,7 +248,7 @@ class GedcomParseError(Exception):
     def __init__(self, value):
         self.value = value
         
-    def __str__(self):
+    def _str_(self):
         return `self.value`
 
 class Line:
@@ -283,14 +283,14 @@ class Line:
         by the Gedcom parser, not by a user.
         """
         # basic line info
-        self.__level = level
-        self.__xref = xref
-        self.__tag = tag
-        self.__value = value
-        self.dict = dict #subclasses need to use it, so it is not private
+        self._level = level
+        self._xref = xref
+        self._tag = tag
+        self._value = value
+        self._dict = dict
         # structuring
-        self.__children_lines = []
-        self.__parent_line = None
+        self._children_lines = []
+        self._parent_line = None
 
     def _init(self):
         """ A method to which GEDCOM parser runs after all lines are available. Subclasses should implement this method if they want to work with other Lines at parse time, but after all Lines are parsed. """
@@ -298,27 +298,27 @@ class Line:
 
     def level(self):
         """ Return the level of this line """
-        return self.__level
+        return self._level
 
     def xref(self):
         """ Return the xref of this line """
-        return self.__xref
+        return self._xref
     
     def tag(self):
         """ Return the tag of this line """
-        return self.__tag
+        return self._tag
 
     def value(self):
         """ Return the value of this line """
-        return self.__value
+        return self._value
 
     def children_lines(self):
         """ Return the child lines of this line """
-        return self.__children_lines
+        return self._children_lines
 
     def parent_line(self):
         """ Return the parent line of this line """
-        return self.__parent_line
+        return self._parent_line
 
     def add_child(self,line):
         """ Add a child line to this line """
@@ -326,7 +326,7 @@ class Line:
         
     def add_parent_line(self,line):
         """ Add a parent line to this line """
-        self.__parent_line = line
+        self._parent_line = line
 
     def children_tags(self, tag):
         """ Returns list of child lines whos tag matchs the argument. """
@@ -342,7 +342,7 @@ class Line:
         lines = []
         for e in self.children_tags(tag):
             try:
-                lines.append(self.dict[e.value()])
+                lines.append(self._dict[e.value()])
             except KeyError:
                 pass
 
@@ -355,7 +355,7 @@ class Line:
             result += '\n' + e.gedcom()
         return result
 
-    def __str__(self):
+    def _str_(self):
         """ Format this line as its original string """
         result = str(self.level())
         if self.xref() != "":
@@ -401,18 +401,18 @@ class Individual(Record):
 
     def _init(self):
         """ Implementing Line._init() """
-        self.__parent_family = self.get_parent_family()
-        self.__families = self.get_families()
+        self._parent_family = self.get_parent_family()
+        self._families = self.get_families()
 
     def sex(self):
         """ Returns 'M' for males, 'F' for females """
         return self.children_tags("SEX")[0].value()
 
     def parent_family(self):
-        return self.__parent_family
+        return self._parent_family
 
     def families(self):
-        return self.__families
+        return self._families
 
     def father(self):
         if self.parent_family() != None:
@@ -731,32 +731,32 @@ class Family(Record):
         Initialise husband, wife and children attributes. """
         
         try:
-            self.__husband = self.children_tag_lines("HUSB")[0]
+            self._husband = self.children_tag_lines("HUSB")[0]
         except IndexError:
-            self.__husband = None
+            self._husband = None
 
         try:
-            self.__wife = self.children_tag_lines("WIFE")[0]
+            self._wife = self.children_tag_lines("WIFE")[0]
         except IndexError:
-            self.__wife = None
+            self._wife = None
 
         try:
-            self.__children = self.children_tag_lines("CHIL")
+            self._children = self.children_tag_lines("CHIL")
         except IndexError:
-            self.__children = []
+            self._children = []
 
     def husband(self):
         """ Return husband this family """
-        return self.__husband
+        return self._husband
 
     def wife(self):
         """ Return wife this family """
-        return self.__wife
+        return self._wife
 
     def parents(self):
         """ Return list of parents in this family """
-        return [self.__husband, self.__wife]
+        return [self._husband, self._wife]
 
     def children(self):
         """ Return list of children in this family """
-        return self.__children
+        return self._children
