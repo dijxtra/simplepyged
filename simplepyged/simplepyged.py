@@ -217,24 +217,24 @@ class Gedcom:
     def _value(self,number,parts,place):
         if len(parts) <= place:
             return ''
-        p = self._xref(number,parts,place)
-        if p != '':
-            # rest of the line should be empty
-            if len(parts) > place + 1:
-                self._error(number,"Too many parts of line")
-            return p
-        else:
-            # rest of the line should be ours
-            vlist = []
-            while place < len(parts):
-                vlist.append(parts[place])
-                place += 1
-            v = string.join(vlist)
-            return v
+#        p = self._xref(number,parts,place)
+#        if p != '':
+#            # rest of the line should be empty
+#            if len(parts) > place + 1:
+#                self._error(number,"Too many parts of line")
+#            return p
+#        else:
+        # rest of the line should be ours
+        vlist = []
+        while place < len(parts):
+            vlist.append(parts[place])
+            place += 1
+        v = string.join(vlist)
+        return v
             
     def _error(self,number,text):
         error = "Gedcom format error on line " + str(number) + ': ' + text
-        raise GedcomParseError, error
+        raise GedcomParseError(error)
 
     def _print(self):
         for e in self.line_list:
@@ -248,8 +248,8 @@ class GedcomParseError(Exception):
     def __init__(self, value):
         self.value = value
         
-    def _str_(self):
-        return `self.value`
+    def __str__(self):
+        return self.value
 
 class Line:
     """ Line of a GEDCOM file
@@ -362,7 +362,7 @@ class Line:
             result += '\n' + e.gedcom()
         return result
 
-    def _str_(self):
+    def __str__(self):
         """ Format this line as its original string """
         result = str(self.level())
         if self.xref() != "":
