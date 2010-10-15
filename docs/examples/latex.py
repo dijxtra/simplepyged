@@ -10,15 +10,15 @@ def name(person):
 def link_latex(record, prefix=""):
     if record == None:
         return ""
-    return '$^{\pageref{' + prefix + str(record.pointer()) + '}}$ '
+    return '$^{\pageref{' + prefix + str(record.xref()) + '}}$ '
 
 def link_latex_index(record, prefix=""):
     if record == None:
         return ""
-    return '\pageref{' + prefix + str(record.pointer()) + '}'
+    return '\pageref{' + prefix + str(record.xref()) + '}'
 
 def anchor_latex(person, prefix=""):
-    return '\label{' + prefix + str(person.pointer()) + '}'
+    return '\label{' + prefix + str(person.xref()) + '}'
 
 def start_latex():
     retval = ''
