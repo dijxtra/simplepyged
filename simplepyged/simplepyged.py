@@ -296,6 +296,13 @@ class Line:
         """ A method to which GEDCOM parser runs after all lines are available. Subclasses should implement this method if they want to work with other Lines at parse time, but after all Lines are parsed. """
         pass
 
+    def type(self):
+        """ Return class name of this instance
+
+        Useful for determining if this line is Individual, Family, Note or some other record.
+        """
+        return self.__class__.__name__
+
     def level(self):
         """ Return the level of this line """
         return self._level

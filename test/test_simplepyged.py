@@ -10,7 +10,7 @@ class Test(unittest.TestCase):
 
     def test_matches(self):
         for e in self.g.line_list():
-            if e.__class__.__name__ == 'Individual':
+            if e.type() == 'Individual':
                 if e.surname_match('Merriman'):
                     self.assertEqual(e.name()[0], 'Lucy')
                 if e.given_match('Archibald'):
@@ -30,25 +30,25 @@ class Test(unittest.TestCase):
     def test_criteria(self):
         criteria = "surname=McIntyre:birthrange=1820-1840:deathrange=1865-1870"
         for e in self.g.line_list():
-            if e.__class__.__name__ == 'Individual':
+            if e.type() == 'Individual':
                 if e.criteria_match(criteria):
                     self.assertEqual(e.name(), ('Calvin Colin', 'McIntyre'))
 
         criteria = "surname=McIntyre:birth=1890:death=1953"
         for e in self.g.line_list():
-            if e.__class__.__name__ == 'Individual':
+            if e.type() == 'Individual':
                 if e.criteria_match(criteria):
                     self.assertEqual(e.name(), ('Ernest R', 'McIntyre'))
 
         criteria = "surname=McIntyre:marriage=1821"
         for e in self.g.line_list():
-            if e.__class__.__name__ == 'Individual':
+            if e.type() == 'Individual':
                 if e.criteria_match(criteria):
                     self.assertEqual(e.name(), ('John M', 'McIntyre'))
 
         criteria = "surname=McIntyre:marriagerange=1820-1825"
         for e in self.g.line_list():
-            if e.__class__.__name__ == 'Individual':
+            if e.type() == 'Individual':
                 if e.criteria_match(criteria):
                     self.assertEqual(e.name(), ('John M', 'McIntyre'))
 
@@ -68,7 +68,7 @@ class Test(unittest.TestCase):
     def test_individuals(self):
         num_of_individuals = 0
         for e in self.g.line_list():
-            if e.__class__.__name__ == 'Individual':
+            if e.type() == 'Individual':
                 num_of_individuals += 1
 
         self.assertEqual(num_of_individuals, len(self.g.individual_list()))
@@ -85,6 +85,8 @@ class Test(unittest.TestCase):
         """Testing class Individual"""
         mary = self.g.get_individual('@P405366386@')
 
+        self.assertEqual(mary.type(), 'Individual')
+       
         self.assertEqual(mary.birth(), ('19 Nov 1923', 'Louisiana, USA'))
         self.assertEqual(mary.sex(), 'F')
         self.assertEqual(mary.given_name(), 'Mary Christine')
