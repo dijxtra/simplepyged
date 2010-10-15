@@ -159,7 +159,8 @@ def latex_index(stack):
     return retval
 
 #g = Gedcom(os.path.abspath('mcintyre.ged'))
-g = Gedcom(os.path.abspath('moje.ged'))
+g = Gedcom(os.path.abspath('wright.ged'))
+#g = Gedcom(os.path.abspath('moje.ged'))
 #fam = g.get_family('@F5@')
 #stack = [fam]
 #stack = construct_stack(stack, 6)

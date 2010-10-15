@@ -767,3 +767,23 @@ class Family(Record):
     def children(self):
         """ Return list of children in this family """
         return self._children
+
+    def married(self):
+        """ Return True if parents were married """
+        return len(self.children_tags("MARR")) > 0
+
+    def marriage(self):
+        """ Return (date, place) tuple of (first) marriage of family parents. """
+
+        for marr in self.children_tags("MARR"):
+            try:
+               date = marr.children_tags("DATE")[0].value()
+            except:
+                date = ''
+            try:
+                place = marr.children_tags("PLAC")[0].value()
+            except:
+                place = ''
+
+            return (date, place)
+        return ('', '')

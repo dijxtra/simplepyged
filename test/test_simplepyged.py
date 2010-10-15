@@ -129,5 +129,13 @@ class WrightTest(unittest.TestCase):
         self.assertEqual(map(lambda x: x.xref(), delores.families()), ['@F295@'])
         self.assertEqual(delores in delores.father().children(), True)
 
+    def test_family(self):
+        family = self.g.get_family('@F1@')
+
+        self.assertEqual(family.husband().name(), ('Cosmond G', 'Wright'))
+        self.assertEqual(family.married(), True)
+        self.assertEqual(family.marriage(), ('1 SEP 1973', 'Troronto, Ontario, Canada')) #sic :-)
+        
+
 if __name__ == '__main__':
     unittest.main()
