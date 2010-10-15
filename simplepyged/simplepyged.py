@@ -336,7 +336,7 @@ class Line:
         self._parent_line = line
 
     def children_tags(self, tag):
-        """ Returns list of child lines whos tag matchs the argument. """
+        """ Returns list of child lines whos tag matches the argument. """
         lines = []
         for c in self.children_lines():
             if c.tag() == tag:
@@ -344,8 +344,8 @@ class Line:
 
         return lines
 
-    def children_tag_lines(self, tag):
-        """ Returns list of lines which are pointed by child lines with given tag. """
+    def children_tag_records(self, tag):
+        """ Returns list of records which are pointed by child lines with given tag. """
         lines = []
         for e in self.children_tags(tag):
             try:
@@ -478,11 +478,11 @@ class Individual(Record):
 
     def get_families(self):
         """ Return a list of all of the family records of a person. """
-        return self.children_tag_lines("FAMS")
+        return self.children_tag_records("FAMS")
 
     def get_parent_family(self):
         """ Return a family record in which this individual is a child. """
-        famc = self.children_tag_lines("FAMC")
+        famc = self.children_tag_records("FAMC")
         
         if len(famc) > 1:
             raise Exception('Individual has multiple parent families.')
@@ -698,18 +698,9 @@ class Individual(Record):
         """
         retval = []
 
-        for fams in self.children_tag_lines("FAMS"):
-            for marr in fams.children_tag_lines("MARR"):
-                try:
-                    date = marr.children_tag_lines("DATE")[0].value()
-                except:
-                    date = ""
-                try:
-                    place = marr.children_tag_lines("PLAC")[0].value()
-                except:
-                    place = ""
-                if date != "" or place != "":
-                    retval.append(date, place)
+        for f in self.families():
+            if f.married():
+                retval.append(f.marriage())
 
         return retval
 
@@ -738,17 +729,17 @@ class Family(Record):
         Initialise husband, wife and children attributes. """
         
         try:
-            self._husband = self.children_tag_lines("HUSB")[0]
+            self._husband = self.children_tag_records("HUSB")[0]
         except IndexError:
             self._husband = None
 
         try:
-            self._wife = self.children_tag_lines("WIFE")[0]
+            self._wife = self.children_tag_records("WIFE")[0]
         except IndexError:
             self._wife = None
 
         try:
-            self._children = self.children_tag_lines("CHIL")
+            self._children = self.children_tag_records("CHIL")
         except IndexError:
             self._children = []
 
