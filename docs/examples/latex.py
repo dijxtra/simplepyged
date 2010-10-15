@@ -59,7 +59,10 @@ def latex(family):
     retval += '\end{multicols}' + "\n\n"
 
 #    retval += '\\paragraph{}' + "\n"
-    retval += 'Married: ' + '' + "\n\n"
+    retval += 'Married: '
+    if family.married():
+        retval += str(family.marriage())
+    retval += "\n\n"
 
 #    retval += '\\paragraph{}' + "\n\n"
     retval += '\\begin{center}Children\end{center}' + '' + "\n\n"
@@ -69,13 +72,22 @@ def latex(family):
         retval += str(i) + '. ' + name(c)
         for f in c.families():
             retval += link_latex(f)
-        retval += "\n\n"
-        if c.birth() != ('',''):
-            retval += "\tBorn: " + str(c.birth()) + "\n\n"
-        if c.death() != ('',''):
-            retval += "\tDied: " + str(c.death()) + "\n\n"
+        retval += ' '
+        if c.birth()[0] != '' or c.death()[0] != '':
+            retval += '('
+            if c.birth()[0] != '':
+                retval += str(c.birth()[0])
+            else:
+                retval += '?'
+            retval += ' - '
+            if c.death()[0] != '':
+                retval += str(c.death()[0])
+            retval += ") "
         if len(c.children()) > 0:
-            retval += "\tChildren: " + str(len(c.children())) + "\n\n"
+            if len(c.children()) == 1:
+                retval += '1 child '
+            else:
+                retval += str(len(c.children())) + ' children '
         retval += "\n\n"
 
     retval += '\\newpage' + "\n\n"
