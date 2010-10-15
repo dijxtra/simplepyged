@@ -2,8 +2,8 @@ import unittest
 import os
 from simplepyged import *
 
-class Test(unittest.TestCase):
-    """Unit tests for simplepyged.py."""
+class McIntyreTest(unittest.TestCase):
+    """Unit tests for simplepyged.py using mcintyre.ged."""
 
     def setUp(self):
         self.g = Gedcom(os.path.abspath('test/mcintyre.ged'))
@@ -103,6 +103,31 @@ class Test(unittest.TestCase):
         self.assertEqual(map(lambda x: x.xref(), mary.families()), ['@F4@'])
         self.assertEqual(mary.father().children(), [mary])
         
+
+class WrightTest(unittest.TestCase):
+    """Unit tests for simplepyged.py using wright.ged."""
+
+    def setUp(self):
+        self.g = Gedcom(os.path.abspath('test/wright.ged'))
+
+    def test_individual(self):
+        """Testing class Individual"""
+        delores = self.g.get_individual('@I294@')
+
+        self.assertEqual(delores.type(), 'Individual')
+
+        self.assertEqual(delores.birth(), ('24 JUL 1963', ''))
+        self.assertEqual(delores.sex(), 'F')
+        self.assertEqual(delores.given_name(), 'Delores')
+        self.assertEqual(delores.surname(), 'Hyatt')
+        self.assertEqual(delores.fathers_name(), 'HORACE')
+
+        self.assertEqual(delores.deceased(), False)
+        self.assertEqual(delores.death(), ('', ''))
+           
+        self.assertEqual(delores.parent_family().xref(), '@F159@')
+        self.assertEqual(map(lambda x: x.xref(), delores.families()), ['@F295@'])
+        self.assertEqual(delores in delores.father().children(), True)
 
 if __name__ == '__main__':
     unittest.main()
