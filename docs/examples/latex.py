@@ -1,3 +1,4 @@
+from mako.template import Template
 import os
 import locale
 from simplepyged import *
@@ -6,104 +7,6 @@ def name(person):
     if person is None:
         return ""
     return str(person.surname()) + ", " + str(person.given_name())
-
-def link_latex(record, prefix=""):
-    if record == None:
-        return ""
-    return '$^{\pageref{' + prefix + str(record.xref()) + '}}$ '
-
-def link_latex_index(record, prefix=""):
-    if record == None:
-        return ""
-    return '\pageref{' + prefix + str(record.xref()) + '}'
-
-def anchor_latex(person, prefix=""):
-    return '\label{' + prefix + str(person.xref()) + '}'
-
-def start_latex():
-    retval = ''
-    retval += '\documentclass[12pt]{article}' + "\n"
-    retval += '\usepackage[utf8]{inputenc}' + "\n"
-    retval += '\usepackage{multicol}' + "\n"
-    retval += '\\begin{document}' + "\n"
-    return retval
-
-def latex(family):
-    retval = ''
-    retval += anchor_latex(family) + "\n"
-    retval += '\\begin{multicols}{3}' + "\n"
-    retval += '*' + " \\\\ \n"
-    retval += 'Name: ' + " \\\\ \n"
-    retval += 'Birth date: ' + " \\\\ \n"
-    retval += 'Birth place: ' + " \\\\ \n"
-    retval += 'Death date: ' + " \\\\ \n"
-    retval += 'Death place: ' + " \\\\ \n"
-    retval += '\\columnbreak ' + " \\\\ \n"
-
-    retval += 'Husband' + " \\\\ \n"
-    if family.husband() is not None:
-        retval += name(family.husband()) + link_latex(family.husband().parent_family()) + " \\\\ \n"
-        retval += str(family.husband().birth()[0]) + " \\\\ \n"
-        retval += str(family.husband().birth()[1]) + " \\\\ \n"
-        retval += str(family.husband().death()[0]) + " \\\\ \n"
-        retval += str(family.husband().death()[1]) + " \\\\ \n"
-    retval += '\\columnbreak ' + " \\\\ \n"
-
-    retval += 'Wife' + " \\\\ \n"
-    if family.wife() is not None:
-        retval += name(family.wife()) + link_latex(family.wife().parent_family()) + " \\\\ \n"
-        retval += str(family.wife().birth()[0]) + " \\\\ \n"
-        retval += str(family.wife().birth()[1]) + " \\\\ \n"
-        retval += str(family.wife().death()[0]) + " \\\\ \n"
-        retval += str(family.wife().death()[1]) + " \\\\ \n"
-    retval += '\end{multicols}' + "\n\n"
-
-#    retval += '\\paragraph{}' + "\n"
-    retval += 'Married: '
-    if family.married():
-        retval += str(family.marriage())
-    retval += "\n\n"
-
-#    retval += '\\paragraph{}' + "\n\n"
-    retval += '\\begin{center}Children\end{center}' + '' + "\n\n"
-    for i in range(1, len(family.children()) + 1):
-        c = family.children()[i - 1]
-        retval += '\\paragraph{}' + "\n"
-        retval += str(i) + '. ' + name(c)
-        for f in c.families():
-            retval += link_latex(f)
-        retval += ' '
-        if c.birth()[0] != '' or c.death()[0] != '':
-            retval += '('
-            if c.birth()[0] != '':
-                retval += str(c.birth()[0])
-            else:
-                retval += '?'
-            retval += ' - '
-            if c.death()[0] != '':
-                retval += str(c.death()[0])
-            retval += ") "
-        if len(c.children()) > 0:
-            if len(c.children()) == 1:
-                retval += '1 child '
-            else:
-                retval += str(len(c.children())) + ' children '
-        retval += "\n\n"
-
-    retval += '\\newpage' + "\n\n"
-    return retval
-
-def end_latex():
-    retval = ''
-    retval += '\end{document}'
-    return retval
-
-def print_stack(fn, stack):
-    retval = ""
-    for family in stack:
-        retval += fn(family)
-
-    return retval
 
 def push(stack, item):
     if item == None:
@@ -150,37 +53,25 @@ def latex_index(stack):
 
     individuals.sort(cmp=lambda x, y: locale.strcoll(name(x), name(y)))
 
-    retval = ''
-    retval += '\\begin{multicols}{2}' + "\n"
-    for i in individuals:
-        if i.given_name() == '' and i.surname() == '':
-            continue
-        retval += name(i) + " "
-        retval += ' \hfill '
-        pages = []
-        if i.parent_family() is not None:
-            pages = push(pages, link_latex_index(i.parent_family()))
-        for f in i.families():
-            if f is not None:
-                pages = push(pages, link_latex_index(f))
+    return individuals
 
-        retval += ', '.join(pages)
-        retval += '\\newline ' + "\n"
+def pages(individual):
+    pages = []
+    if individual.parent_family() is not None:
+        return [individual.parent_family().xref()]
+    for f in individual.families():
+        if f is not None:
+            pages.append(f.xref())
 
-    retval += '\\end{multicols}' + "\n"
-    return retval
+    return pages
 
 #g = Gedcom(os.path.abspath('mcintyre.ged'))
 g = Gedcom(os.path.abspath('wright.ged'))
-#g = Gedcom(os.path.abspath('moje.ged'))
 #fam = g.get_family('@F5@')
 #stack = [fam]
 #stack = construct_stack(stack, 6)
 
 stack = g.family_list()
 
-print start_latex()
-print print_stack(latex, stack)
-print latex_index(stack)
-print end_latex()
-
+mytemplate = Template(filename = 'template.tex')
+print mytemplate.render(stack=stack, index=latex_index(stack), pages=pages)
