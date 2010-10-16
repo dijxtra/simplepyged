@@ -1,0 +1,88 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\begin{document}
+
+% for family in stack:
+\label{${family.xref()}}
+\begin{multicols}{3}
+* \\ 
+Name: \\ 
+Birth date: \\ 
+Birth place: \\ 
+Death date: \\ 
+Death place: \\ 
+\columnbreak
+
+Husband \\ 
+% if family.husband() != None:
+${family.husband().surname()}, ${family.husband().given_name()}
+% if family.husband().parent_family() != None:
+$^{\pageref{${family.husband().parent_family().xref()}}}$ \\ 
+% endif
+ \\ 
+${family.husband().birth()[0]} \\ 
+${family.husband().birth()[1]} \\ 
+${family.husband().death()[0]} \\ 
+${family.husband().death()[1]} \\ 
+% endif
+\columnbreak
+
+Wife \\ 
+% if family.wife() != None:
+${family.wife().surname()}, ${family.wife().given_name()}
+% if family.wife().parent_family() != None:
+$^{\pageref{${family.wife().parent_family().xref()}}}$ \\ 
+% endif
+ \\ 
+${family.wife().birth()[0]} \\ 
+${family.wife().birth()[1]} \\ 
+${family.wife().death()[0]} \\ 
+${family.wife().death()[1]} \\ 
+% endif
+\end{multicols}
+
+% if family.married():
+Married: ${family.marriage()}
+% else:
+Married: 
+% endif
+
+\begin{center}Children\end{center}
+% for child in family.children():
+\paragraph{}
+${child.surname()}, ${child.given_name()}
+   % for f in child.families():
+$^{\pageref{${f.xref()}}}$ 
+   % endfor
+   % if child.birth()[0] != '' or child.death()[0] != '':
+(
+      % if child.birth()[0] != '':
+${child.birth()[0]}
+      % else:
+?
+      % endif
+      % if child.death()[0] != '':
+ - ${child.death()[0]}
+      % endif
+)
+   % endif
+   % if len(child.children()) > 0:
+      % if len(child.children()) == 1:
+1 child
+      % else:
+${len(child.children())} children
+      % endif
+   % endif
+% endfor
+\newpage
+% endfor
+
+\begin{multicols}{2}
+% for individual in index:
+   % if individual.given_name() != '' or i.surname() != '': 
+${individual.surname()}, ${individual.given_name()} \hfill ${', '.join(map(lambda x: '\pageref{' + x + '}', pages(individual)))} \\ 
+   % endif
+% endfor
+\end{multicols}
+\end{document}
