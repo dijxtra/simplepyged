@@ -560,18 +560,23 @@ class Individual(Record):
         except ValueError:
             return -1
 
+    def alive(self):
+        """ Return True if individual lacks death entry """
+        return self.death() == ('', '')
+
     def death(self):
         """ Return the death tuple of a person as (date,place) """
-        date = ""
-        place = ""
-        for e in self.children_lines():
-            if e.tag() == "DEAT":
-                for c in e.children_lines():
-                    if c.tag() == "DATE":
-                        date = c.value()
-                    if c.tag() == "PLAC":
-                        place = c.value()
-        return (date,place)
+        for deat in self.children_tags("DEAT"):
+            try:
+               date = deat.children_tags("DATE")[0].value()
+            except:
+                date = ''
+            try:
+                place = deat.children_tags("PLAC")[0].value()
+            except:
+                place = ''
+            return (date, place)
+        return ('', '')
 
     def death_year(self):
         """ Return the death year of a person in integer format """

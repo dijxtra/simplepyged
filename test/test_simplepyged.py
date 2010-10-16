@@ -88,6 +88,9 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(mary.type(), 'Individual')
        
         self.assertEqual(mary.birth(), ('19 Nov 1923', 'Louisiana, USA'))
+        self.assertEqual(mary.alive(), True)
+        self.assertEqual(mary.father().alive(), False)
+        self.assertEqual(mary.father().death(), ('19 Aug 1975', 'Bastrop, Louisiana'))
         self.assertEqual(mary.sex(), 'F')
         self.assertEqual(mary.given_name(), 'Mary Christine')
         self.assertEqual(mary.surname(), 'Hern')
