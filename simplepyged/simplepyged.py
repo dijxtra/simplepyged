@@ -111,7 +111,7 @@ class Gedcom:
         f = open(file)
         number = 1
         for line in f.readlines():
-            self._parse_line(number,line)
+            self._parse_line(number,line.decode("utf-8"))
             number += 1
 
         for e in self.line_list():
@@ -233,12 +233,12 @@ class Gedcom:
         return v
             
     def _error(self,number,text):
-        error = "Gedcom format error on line " + str(number) + ': ' + text
+        error = "Gedcom format error on line " + unicode(number) + ': ' + text
         raise GedcomParseError(error)
 
     def _print(self):
         for e in self.line_list:
-            print string.join([str(e.level()),e.xref(),e.tag(),e.value()])
+            print string.join([unicode(e.level()),e.xref(),e.tag(),e.value()])
 
 
 class GedcomParseError(Exception):
@@ -357,14 +357,14 @@ class Line:
 
     def gedcom(self):
         """ Return GEDCOM code for this line and all of its sub-lines """
-        result = str(self)
+        result = unicode(self)
         for e in self.children_lines():
             result += '\n' + e.gedcom()
         return result
 
     def __str__(self):
         """ Format this line as its original string """
-        result = str(self.level())
+        result = unicode(self.level())
         if self.xref() != "":
             result += ' ' + self.xref()
         result += ' ' + self.tag()
