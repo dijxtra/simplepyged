@@ -6,7 +6,17 @@ from simplepyged import *
 def name(person):
     if person is None:
         return ""
-    return str(person.surname()) + ", " + str(person.given_name())
+
+    if person.surname() is None:
+        s = ''
+    else:
+        s = person.surname()
+
+    if person.given_name() is None:
+        g = ''
+    else:
+        g = person.given_name()
+    return s + ", " + g
 
 def push(stack, item):
     if item == None:
@@ -65,8 +75,8 @@ def pages(individual):
 
     return pages
 
-#g = Gedcom(os.path.abspath('mcintyre.ged'))
-g = Gedcom(os.path.abspath('wright.ged'))
+#g = Gedcom(os.path.abspath('../../test/mcintyre.ged'))
+g = Gedcom(os.path.abspath('../../test/wright.ged'))
 #fam = g.get_family('@F5@')
 #stack = [fam]
 #stack = construct_stack(stack, 6)
@@ -74,4 +84,4 @@ g = Gedcom(os.path.abspath('wright.ged'))
 stack = g.family_list()
 
 mytemplate = Template(filename = 'template.tex')
-print mytemplate.render(stack=stack, index=latex_index(stack), pages=pages)
+print  mytemplate.render_unicode(stack=stack, index=latex_index(stack), pages=pages)

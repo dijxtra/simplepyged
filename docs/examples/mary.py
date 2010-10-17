@@ -1,7 +1,7 @@
 import os
 from simplepyged import *
 
-g = Gedcom(os.path.abspath('mcintyre.ged'))
+g = Gedcom(os.path.abspath('../../test/mcintyre.ged'))
 mary = g.get_individual('@P405366386@')
 
 print mary.name()
