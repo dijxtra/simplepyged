@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 \documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{multicol}
@@ -80,9 +81,9 @@ ${len(child.children())} children
 
 \begin{multicols}{2}
 % for individual in index:
-   % if individual.given_name() != '' or i.surname() != '': 
-${individual.surname()}, ${individual.given_name()} \hfill ${', '.join(map(lambda x: '\pageref{' + x + '}', pages(individual)))} \\ 
-   % endif
+##   % if individual.given_name() != '' or i.surname() != '': 
+##${individual.surname()}, ${individual.given_name()} \hfill ${', '.join(map(lambda x: '\pageref{' + x + '}', pages(individual)))} \\ 
+##   % endif
 % endfor
 \end{multicols}
 \end{document}
