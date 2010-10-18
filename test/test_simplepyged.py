@@ -10,47 +10,49 @@ class McIntyreTest(unittest.TestCase):
 
     def test_matches(self):
         for e in self.g.line_list():
-            if e.type() == 'Individual':
-                if e.surname_match('Merriman'):
-                    self.assertEqual(e.name()[0], 'Lucy')
-                if e.given_match('Archibald'):
-                    self.assertEqual(e.name()[1], 'McIntyre')
-                    self.assertEqual(e.birth_range_match(1810,1820), True)
-                    self.assertEqual(e.birth_year_match(1819), True)
-                if e.birth_year_match(1904):
-                    self.assertEqual(e.name(), ('Carrie Lee', 'Horney'))
-                    self.assertEqual(e.death_range_match(1970,1980), True)
-                    self.assertEqual(e.death_year_match(1979), True)
-                    self.assertEqual(e.death_year_match(1978), False)
-                if e.marriage_year_match(1821):
-                    if e.marriage_range_match(1820,1825):
-                        if e.surname_match('McIntyre'):
-                            self.assertEqual(e.name(), ('John M', 'McIntyre'))
+            m = MatchIndividual(e)
+            if m.individual.type() == 'Individual':
+                if m.surname_match('Merriman'):
+                    self.assertEqual(m.individual.name()[0], 'Lucy')
+                if m.given_match('Archibald'):
+                    self.assertEqual(m.individual.name()[1], 'McIntyre')
+                    self.assertEqual(m.birth_range_match(1810,1820), True)
+                    self.assertEqual(m.birth_year_match(1819), True)
+                if m.birth_year_match(1904):
+                    self.assertEqual(m.individual.name(), ('Carrie Lee', 'Horney'))
+                    self.assertEqual(m.death_range_match(1970,1980), True)
+                    self.assertEqual(m.death_year_match(1979), True)
+                    self.assertEqual(m.death_year_match(1978), False)
+                if m.marriage_year_match(1821):
+                    if m.marriage_range_match(1820,1825):
+                        if m.surname_match('McIntyre'):
+                            self.assertEqual(m.individual.name(), ('John M', 'McIntyre'))
 
     def test_criteria(self):
         criteria = "surname=McIntyre:birthrange=1820-1840:deathrange=1865-1870"
         for e in self.g.line_list():
-            if e.type() == 'Individual':
-                if e.criteria_match(criteria):
-                    self.assertEqual(e.name(), ('Calvin Colin', 'McIntyre'))
+            m = MatchIndividual(e)
+            if m.individual.type() == 'Individual':
+                if m.criteria_match(criteria):
+                    self.assertEqual(m.individual.name(), ('Calvin Colin', 'McIntyre'))
 
         criteria = "surname=McIntyre:birth=1890:death=1953"
         for e in self.g.line_list():
-            if e.type() == 'Individual':
-                if e.criteria_match(criteria):
-                    self.assertEqual(e.name(), ('Ernest R', 'McIntyre'))
+            if m.individual.type() == 'Individual':
+                if m.criteria_match(criteria):
+                    self.assertEqual(m.individual.name(), ('Ernest R', 'McIntyre'))
 
         criteria = "surname=McIntyre:marriage=1821"
         for e in self.g.line_list():
-            if e.type() == 'Individual':
-                if e.criteria_match(criteria):
-                    self.assertEqual(e.name(), ('John M', 'McIntyre'))
+            if m.individual.type() == 'Individual':
+                if m.criteria_match(criteria):
+                    self.assertEqual(m.individual.name(), ('John M', 'McIntyre'))
 
         criteria = "surname=McIntyre:marriagerange=1820-1825"
         for e in self.g.line_list():
-            if e.type() == 'Individual':
-                if e.criteria_match(criteria):
-                    self.assertEqual(e.name(), ('John M', 'McIntyre'))
+            if m.individual.type() == 'Individual':
+                if m.criteria_match(criteria):
+                    self.assertEqual(m.individual.name(), ('John M', 'McIntyre'))
 
 
     def test_missing_xref(self):
@@ -72,7 +74,6 @@ class McIntyreTest(unittest.TestCase):
                 num_of_individuals += 1
 
         self.assertEqual(num_of_individuals, len(self.g.individual_list()))
-        self.assertEqual(num_of_individuals, len(self.g.individual_dict()))
 
 
     def test_line(self):

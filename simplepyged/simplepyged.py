@@ -46,23 +46,15 @@ class Gedcom:
     def __init__(self,file):
         """ Initialize a Gedcom parser. You must supply a Gedcom file.
         """
-        self._line_list = []
         self._record_dict = {}
+        self._line_list = []
         self._individual_list = []
-        self._individual_dict = {}
         self._family_list = []
-        self._family_dict = {}
         self._line_top = Line(-1,"","TOP","",self._record_dict)
         self._current_level = -1
         self._current_line = self._line_top
         self._individuals = 0
         self._parse(file)
-
-    def line_list(self):
-        """ Return a list of all the lines in the Gedcom file.  The
-        lines are in the same order as they appeared in the file.
-        """
-        return self._line_list
 
     def record_dict(self):
         """ Return a dictionary of records from the Gedcom file.  Only
@@ -71,17 +63,17 @@ class Gedcom:
         """
         return self._record_dict
 
+    def line_list(self):
+        """ Return a list of all the lines in the Gedcom file.  The
+        lines are in the same order as they appeared in the file.
+        """
+        return self._line_list
+
     def individual_list(self):
         """ Return a list of all the individuals in the Gedcom file.  The
         individuals are in the same order as they appeared in the file.
         """
         return self._individual_list
-
-    def individual_dict(self):
-        """ Return a dictionary of individuals from the Gedcom file.  The
-        key for the dictionary is individual's xref.
-        """
-        return self._individual_dict
 
     def family_list(self):
         """ Return a list of all the families in the Gedcom file.  The
@@ -89,19 +81,26 @@ class Gedcom:
         """
         return self._family_list
 
-    def family_dict(self):
-        """ Return a dictionary of families from the Gedcom file.  The
-        key for the dictionary is family's xref.
-        """
-        return self._family_dict
+    def get_record(self, xref):
+        """ Return an object of class Record (or it's subclass) identified by xref """
+        return self.record_dict()[xref]
 
     def get_individual(self, xref):
         """ Return an object of class Individual identified by xref """
-        return self.individual_dict()[xref]
+        record = self.get_record(xref)
+        if record.type() == 'Individual':
+            return record
+        else:
+            return None
 
     def get_family(self, xref):
         """ Return an object of class Family identified by xref """
-        return self.family_dict()[xref]
+        record = self.get_record(xref)
+        if record.type() == 'Family':
+            return record
+        else:
+            return None
+
 
     # Private methods
 
@@ -139,13 +138,9 @@ class Gedcom:
             if t == "INDI":
                 e = Individual(l,p,t,v,self.record_dict())
                 self._individual_list.append(e)
-                if p != '':
-                    self._individual_dict[p] = e
             elif t == "FAM":
                 e = Family(l,p,t,v,self.record_dict())
                 self._family_list.append(e)
-                if p != '':
-                    self._family_dict[p] = e
             elif t == "OBJE":
                 e = Multimedia(l,p,t,v,self.record_dict())
             elif t == "NOTE":
@@ -440,42 +435,6 @@ class Individual(Record):
 
         return retval
 
-    def surname_match(self,name):
-        """ Match a string with the surname of an individual """
-        (first,last) = self.name()
-        return last.find(name) >= 0
-
-    def given_match(self,name):
-        """ Match a string with the given names of an individual """
-        (first,last) = self.name()
-        return first.find(name) >= 0
-
-    def birth_year_match(self,year):
-        """ Match the birth year of an individual.  Year is an integer. """
-        return self.birth_year() == year
-
-    def birth_range_match(self,year1,year2):
-        """ Check if the birth year of an individual is in a given range.
-        Years are integers.
-        """
-        year = self.birth_year()
-        if year >= year1 and year <= year2:
-            return True
-        return False
-
-    def death_year_match(self,year):
-        """ Match the death year of an individual.  Year is an integer. """
-        return self.death_year() == year
-
-    def death_range_match(self,year1,year2):
-        """ Check if the death year of an individual is in a given range.
-        Years are integers.
-        """
-        year = self.death_year()
-        if year >= year1 and year <= year2:
-            return True
-        return False
-
     def get_families(self):
         """ Return a list of all of the family records of a person. """
         return self.children_tag_records("FAMS")
@@ -601,6 +560,68 @@ class Individual(Record):
                 return True
         return False
 
+    def marriages(self):
+        """ Return a list of marriage tuples for a person, each listing
+        (date,place).
+        """
+        retval = []
+
+        for f in self.families():
+            if f.married():
+                retval.append(f.marriage())
+
+        return retval
+
+    def marriage_years(self):
+        """ Return a list of marriage years for a person, each in integer
+        format.
+        """
+
+        return map(lambda x: int(x[0].split(" ")[-1]), self.marriages())
+
+
+class MatchIndividual():
+    """ Class for determining whether an Individual matches certain criteria """
+
+    def __init__(self, individual):
+        self.individual = individual
+
+    def surname_match(self,name):
+        """ Match a string with the surname of an individual """
+        (first,last) = self.individual.name()
+        return last.find(name) >= 0
+
+    def given_match(self,name):
+        """ Match a string with the given names of an individual """
+        (first,last) = self.individual.name()
+        return first.find(name) >= 0
+
+    def birth_year_match(self,year):
+        """ Match the birth year of an individual.  Year is an integer. """
+        return self.individual.birth_year() == year
+
+    def birth_range_match(self,year1,year2):
+        """ Check if the birth year of an individual is in a given range.
+        Years are integers.
+        """
+        year = self.individual.birth_year()
+        if year >= year1 and year <= year2:
+            return True
+        return False
+
+    def death_year_match(self,year):
+        """ Match the death year of an individual.  Year is an integer. """
+        return self.individual.death_year() == year
+
+    def death_range_match(self,year1,year2):
+        """ Check if the death year of an individual is in a given range.
+        Years are integers.
+        """
+        year = self.individual.death_year()
+        if year >= year1 and year <= year2:
+            return True
+        return False
+
     def criteria_match(self,criteria):
         """ Check in this individual matches all of the given criteria.
 
@@ -684,39 +705,20 @@ class Individual(Record):
     def marriage_year_match(self,year):
         """ Check if one of the marriage years of an individual matches
         the supplied year.  Year is an integer. """
-        years = self.marriage_years()
+        years = self.individual.marriage_years()
         return year in years
 
     def marriage_range_match(self,year1,year2):
         """ Check if one of the marriage year of an individual is in a
         given range.  Years are integers.
         """
-        years = self.marriage_years()
+        years = self.individual.marriage_years()
         for year in years:
             if year >= year1 and year <= year2:
                 return True
         return False
 
-    def marriages(self):
-        """ Return a list of marriage tuples for a person, each listing
-        (date,place).
-        """
-        retval = []
 
-        for f in self.families():
-            if f.married():
-                retval.append(f.marriage())
-
-        return retval
-
-    def marriage_years(self):
-        """ Return a list of marriage years for a person, each in integer
-        format.
-        """
-
-        return map(lambda x: int(x[0].split(" ")[-1]), self.marriages())
-
-    
 
 class Family(Record):
     """ Gedcom record representing a family
