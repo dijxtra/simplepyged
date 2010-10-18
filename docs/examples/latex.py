@@ -3,6 +3,29 @@ import os
 import locale
 from simplepyged import *
 
+def escape_latex(in_str):
+    map = {'#': '\\#', 
+	'$': '\\$', 
+	'%': '\\%', 
+	'^': '\\textasciicircum{}', 
+	'&': '\\&', 
+	'_': '\\_', 
+	'{': '\\{', 
+	'}': '\\}', 
+	'~': '\\~{}', 
+	'\\': '\\textbackslash{}'}
+
+    in_str = unicode(in_str)
+
+    retval = ''
+    for c in in_str:
+        if c in map.keys():
+            c = map[c]
+        retval += c
+
+    return retval
+            
+
 def name(person):
     if person is None:
         return ""
@@ -83,5 +106,10 @@ g = Gedcom(os.path.abspath('../../test/wright.ged'))
 
 stack = g.family_list()
 
-mytemplate = Template(filename = 'template.tex')
-print  mytemplate.render_unicode(stack=stack, index=latex_index(stack), pages=pages).encode('utf-8')
+latex = Template(
+    filename = 'template.tex',
+    default_filters=['unicode', 'escape_latex'],
+    imports=['from latex import escape_latex'])
+source = latex.render_unicode(stack=stack, index=latex_index(stack), pages=pages).encode('utf-8')
+
+print source

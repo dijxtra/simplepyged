@@ -82,7 +82,7 @@ ${len(child.children())} children
 \begin{multicols}{2}
 % for individual in index:
    % if (individual.given_name() != '' or individual.surname() != '') and (individual.given_name() != None or individual.surname() != None): 
-${individual.surname()}, ${individual.given_name()} \hfill ${', '.join(map(lambda x: '\pageref{' + x + '}', pages(individual)))} \\ 
+${individual.surname()}, ${individual.given_name()} \hfill ${', '.join(map(lambda x: '\pageref{' + x + '}', pages(individual))) | n} \\ 
    % endif
 % endfor
 \end{multicols}
