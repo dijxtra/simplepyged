@@ -105,6 +105,13 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(mary.mother().xref(), '@P405538002@')
         self.assertEqual(map(lambda x: x.xref(), mary.families()), ['@F4@'])
         self.assertEqual(mary.father().children(), [mary])
+
+
+    def test_family(self):
+        """Testing class Family"""
+        fam = self.g.get_family('@F8@')
+
+        self.assertEqual(fam.marriage(), ('22 Oct 1821', 'Jefferson County, Mississippi, USA'))
         
 
 class WrightTest(unittest.TestCase):

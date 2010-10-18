@@ -714,7 +714,7 @@ class Individual(Record):
         format.
         """
 
-        return map(lambda x: x[0].split(" ")[-1], self.marriages())
+        return map(lambda x: int(x[0].split(" ")[-1]), self.marriages())
 
     
 
