@@ -47,12 +47,12 @@ class Gedcom:
         """ Initialize a Gedcom parser. You must supply a Gedcom file.
         """
         self._line_list = []
-        self._line_dict = {}
+        self._record_dict = {}
         self._individual_list = []
         self._individual_dict = {}
         self._family_list = []
         self._family_dict = {}
-        self._line_top = Line(-1,"","TOP","",self._line_dict)
+        self._line_top = Line(-1,"","TOP","",self._record_dict)
         self._current_level = -1
         self._current_line = self._line_top
         self._individuals = 0
@@ -64,12 +64,12 @@ class Gedcom:
         """
         return self._line_list
 
-    def line_dict(self):
+    def record_dict(self):
         """ Return a dictionary of records from the Gedcom file.  Only
         records that have xref defined are listed in the dictionary.
         The key for the dictionary is the xref.
         """
-        return self._line_dict
+        return self._record_dict
 
     def individual_list(self):
         """ Return a list of all the individuals in the Gedcom file.  The
@@ -137,35 +137,35 @@ class Gedcom:
 
         if l == 0: #current line is in fact a brand new record
             if t == "INDI":
-                e = Individual(l,p,t,v,self.line_dict())
+                e = Individual(l,p,t,v,self.record_dict())
                 self._individual_list.append(e)
                 if p != '':
                     self._individual_dict[p] = e
             elif t == "FAM":
-                e = Family(l,p,t,v,self.line_dict())
+                e = Family(l,p,t,v,self.record_dict())
                 self._family_list.append(e)
                 if p != '':
                     self._family_dict[p] = e
             elif t == "OBJE":
-                e = Multimedia(l,p,t,v,self.line_dict())
+                e = Multimedia(l,p,t,v,self.record_dict())
             elif t == "NOTE":
-                e = Note(l,p,t,v,self.line_dict())
+                e = Note(l,p,t,v,self.record_dict())
             elif t == "REPO":
-                e = Repository(l,p,t,v,self.line_dict())
+                e = Repository(l,p,t,v,self.record_dict())
             elif t == "SOUR":
-                e = Source(l,p,t,v,self.line_dict())
+                e = Source(l,p,t,v,self.record_dict())
             elif t == "SUBN":
-                e = Submission(l,p,t,v,self.line_dict())
+                e = Submission(l,p,t,v,self.record_dict())
             elif t == "SUBM":
-                e = Submitter(l,p,t,v,self.line_dict())
+                e = Submitter(l,p,t,v,self.record_dict())
             else:
-                e = Record(l,p,t,v,self.line_dict())
+                e = Record(l,p,t,v,self.record_dict())
         else:
-            e = Line(l,p,t,v,self.line_dict())
+            e = Line(l,p,t,v,self.record_dict())
 
         self._line_list.append(e)
         if p != '':
-            self._line_dict[p] = e
+            self._record_dict[p] = e
 
         if l > self._current_level:
             self._current_line.add_child(e)

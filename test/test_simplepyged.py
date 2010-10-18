@@ -57,7 +57,7 @@ class McIntyreTest(unittest.TestCase):
         """I don't really know what this does..."""
         for e in self.g.line_list():
             if e.value().startswith('@'):
-                f = self.g.line_dict().get(e.value(),None)
+                f = self.g.record_dict().get(e.value(),None)
                 if f == None:
                     print e.value()
 
