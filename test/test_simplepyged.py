@@ -10,7 +10,7 @@ class McIntyreTest(unittest.TestCase):
         self.g = Gedcom(os.path.abspath('test/mcintyre.ged'))
 
     def test_matches(self):
-        """ Testing MatchIndividual class """
+        """ Testing class MatchIndividual """
         visited = 0
         for e in self.g.line_list():
             m = MatchIndividual(e)
@@ -37,7 +37,7 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(visited, 4)
 
     def test_matchlist(self):
-        """ Testing MatchList class """
+        """ Testing class MatchList """
         m = MatchList(self.g.individual_list())
 
         results = m.surname_match('Merriman')
@@ -52,37 +52,33 @@ class McIntyreTest(unittest.TestCase):
         individual = results[0]
         self.assertEqual(individual.xref(), '@P405538002@')
 
-        
-        
-
     def test_criteria(self):
+        """ Testing criteria search """
+
+        m = MatchList(self.g.individual_list())
+
         criteria = "surname=McIntyre:birthrange=1820-1840:deathrange=1865-1870"
-        for e in self.g.line_list():
-            m = MatchIndividual(e)
-            if m.individual.type() == 'Individual':
-                if m.criteria_match(criteria):
-                    self.assertEqual(m.individual.name(), ('Calvin Colin', 'McIntyre'))
+        result = m.criteria_match(criteria)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].name(), ('Calvin Colin', 'McIntyre'))
 
         criteria = "surname=McIntyre:birth=1890:death=1953"
-        for e in self.g.line_list():
-            if m.individual.type() == 'Individual':
-                if m.criteria_match(criteria):
-                    self.assertEqual(m.individual.name(), ('Ernest R', 'McIntyre'))
+        result = m.criteria_match(criteria)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].name(), ('Ernest R', 'McIntyre'))
 
         criteria = "surname=McIntyre:marriage=1821"
-        for e in self.g.line_list():
-            if m.individual.type() == 'Individual':
-                if m.criteria_match(criteria):
-                    self.assertEqual(m.individual.name(), ('John M', 'McIntyre'))
+        result = m.criteria_match(criteria)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].name(), ('John M', 'McIntyre'))
 
         criteria = "surname=McIntyre:marriagerange=1820-1825"
-        for e in self.g.line_list():
-            if m.individual.type() == 'Individual':
-                if m.criteria_match(criteria):
-                    self.assertEqual(m.individual.name(), ('John M', 'McIntyre'))
+        result = m.criteria_match(criteria)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].name(), ('John M', 'McIntyre'))
 
     def test_missing_xref(self):
-        """I don't really know what this does..."""
+        """I don't really know what this does... (original author didn't bother to comment) """
         for e in self.g.line_list():
             if e.value().startswith('@'):
                 f = self.g.record_dict().get(e.value(),None)
@@ -92,20 +88,6 @@ class McIntyreTest(unittest.TestCase):
         for e in self.g.line_list():
             if e.xref() == "@I99@":
                 print e.name()
-
-    def test_individuals(self):
-        num_of_individuals = 0
-        for e in self.g.line_list():
-            if e.type() == 'Individual':
-                num_of_individuals += 1
-
-        self.assertEqual(num_of_individuals, len(self.g.individual_list()))
-
-    def test_line(self):
-        """Testing class Line"""
-        mary = self.g.get_individual('@P405366386@')
-
-        self.assertEqual(mary.children_tags("SEX")[0].value(), "F")
 
     def test_individual(self):
         """Testing class Individual"""
@@ -165,6 +147,7 @@ class WrightTest(unittest.TestCase):
         self.assertEqual(delores in delores.father().children(), True)
 
     def test_family(self):
+        """Testing class Family"""
         family = self.g.get_family('@F1@')
 
         self.assertEqual(family.husband().name(), ('Cosmond G', 'Wright'))
