@@ -734,13 +734,15 @@ class MatchList:
     in MatchList with same name which returns list of Individuals in
     the list for which given method returns True.
 
-    Example (returns True):
+    Example:
+.. code-block:: python
+
     gedcom = Gedcom(somefile)
     list = gedcom.individual_list()
     individual = gedcom.get_individual(xref)
     
     if MatchIndividual(individual).given_match(some_name):
-        individual in MatchList(list).given_match(some_name)
+        individual in MatchList(list).given_match(some_name) # this line returns True
     """
     def __init__(self, record_list):
         self.records = record_list

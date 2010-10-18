@@ -8,10 +8,12 @@ Recognises a subset of GEDCOM 5.5 tags. If you need support for an
 unsupported tag, submit an issue (although implementing the tag
 yourself and sending a patch is preferable).
 
-Examples
---------
+Documentation and Examples
+--------------------------
 
-Examples of how to use this parser are at docs/examples.
+Documentation is in docs/. Examples of how to use this parser are at
+docs/examples. If you find documentation and/or examples confusing,
+let me know and I'll try to fix it.
 
 Licence
 --------

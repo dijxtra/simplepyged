@@ -9,13 +9,31 @@
 Classes
 -------
 
+General
+^^^^^^^
+
 .. toctree::
-   :maxdepth: 2
 
    gedcom.rst
    line.rst
+   record.rst
+
+Record types
+^^^^^^^^^^^^
+
+.. toctree::
+   
    individual.rst
    family.rst
+   uniplemented_records.rst
+
+Searching and filtering
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+
+   matching.rst
+
 
 
 Indices and tables
