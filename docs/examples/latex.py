@@ -84,4 +84,4 @@ g = Gedcom(os.path.abspath('../../test/wright.ged'))
 stack = g.family_list()
 
 mytemplate = Template(filename = 'template.tex')
-print  mytemplate.render_unicode(stack=stack, index=latex_index(stack), pages=pages)
+print  mytemplate.render_unicode(stack=stack, index=latex_index(stack), pages=pages).encode('utf-8')
