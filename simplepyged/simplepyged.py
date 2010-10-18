@@ -27,6 +27,7 @@
 # Global imports
 import string
 
+
 class Gedcom:
     """ Gedcom parser
 
@@ -100,7 +101,6 @@ class Gedcom:
             return record
         else:
             return None
-
 
     # Private methods
 
@@ -246,6 +246,7 @@ class GedcomParseError(Exception):
     def __str__(self):
         return self.value
 
+
 class Line:
     """ Line of a GEDCOM file
 
@@ -367,6 +368,7 @@ class Line:
             result += ' ' + self.value()
         return result
 
+
 class Record(Line):
     """ Gedcom line with level 0 represents a record
 
@@ -376,20 +378,26 @@ class Record(Line):
     
     pass
 
+
 class Multimedia(Record):
     pass
+
 
 class Note(Record):
     pass
 
+
 class Repository(Record):
     pass
+
 
 class Source(Record):
     pass
 
+
 class Submitter(Record):
     pass
+
 
 class Individual(Record):
     """ Gedcom record representing an individual
@@ -754,6 +762,7 @@ class MatchList:
                 retval.append(record)
 
         return retval
+
 
 class Family(Record):
     """ Gedcom record representing a family

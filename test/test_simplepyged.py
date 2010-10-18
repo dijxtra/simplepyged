@@ -2,6 +2,7 @@ import unittest
 import os
 from simplepyged import *
 
+
 class McIntyreTest(unittest.TestCase):
     """Unit tests for simplepyged.py using mcintyre.ged."""
 
@@ -80,7 +81,6 @@ class McIntyreTest(unittest.TestCase):
                 if m.criteria_match(criteria):
                     self.assertEqual(m.individual.name(), ('John M', 'McIntyre'))
 
-
     def test_missing_xref(self):
         """I don't really know what this does..."""
         for e in self.g.line_list():
@@ -100,7 +100,6 @@ class McIntyreTest(unittest.TestCase):
                 num_of_individuals += 1
 
         self.assertEqual(num_of_individuals, len(self.g.individual_list()))
-
 
     def test_line(self):
         """Testing class Line"""
@@ -132,7 +131,6 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(mary.mother().xref(), '@P405538002@')
         self.assertEqual(map(lambda x: x.xref(), mary.families()), ['@F4@'])
         self.assertEqual(mary.father().children(), [mary])
-
 
     def test_family(self):
         """Testing class Family"""
