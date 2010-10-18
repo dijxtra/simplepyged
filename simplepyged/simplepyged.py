@@ -719,6 +719,41 @@ class MatchIndividual():
         return False
 
 
+class MatchList:
+    """ Class for matching individuals against list of records
+
+    For each boolean method of MatchIndividual class, there is method
+    in MatchList with same name which returns list of Individuals in
+    the list for which given method returns True.
+
+    Example (returns True):
+    gedcom = Gedcom(somefile)
+    list = gedcom.individual_list()
+    individual = gedcom.get_individual(xref)
+    
+    if MatchIndividual(individual).given_match(some_name):
+        individual in MatchList(list).given_match(some_name)
+    """
+    def __init__(self, record_list):
+        self.records = record_list
+
+        methods = [method for method in dir(MatchIndividual) if callable(getattr(MatchIndividual, method)) and not method.startswith('__') ]
+
+        for method in methods:
+            setattr(self, method, self.__factory(method))
+
+    def __factory(self, method):
+        def product(*args):
+            return self.__abstract(method, *args)
+        return product
+        
+    def __abstract(self, method, *args):
+        retval = []
+        for record in self.records:
+            if getattr(MatchIndividual(record), method)(*args):
+                retval.append(record)
+
+        return retval
 
 class Family(Record):
     """ Gedcom record representing a family
