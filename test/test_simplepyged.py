@@ -1,6 +1,9 @@
 import unittest
 import os
-from simplepyged import *
+from gedcom import *
+from records import *
+from matches import *
+from events import *
 
 
 class McIntyreTest(unittest.TestCase):
@@ -95,17 +98,17 @@ class McIntyreTest(unittest.TestCase):
 
         self.assertEqual(mary.type(), 'Individual')
        
-        self.assertEqual(mary.birth(), ('19 Nov 1923', 'Louisiana, USA'))
+        self.assertEqual(mary.birth().dateplace(), ('19 Nov 1923', 'Louisiana, USA'))
         self.assertEqual(mary.alive(), True)
         self.assertEqual(mary.father().alive(), False)
-        self.assertEqual(mary.father().death(), ('19 Aug 1975', 'Bastrop, Louisiana'))
+        self.assertEqual(mary.father().death().dateplace(), ('19 Aug 1975', 'Bastrop, Louisiana'))
         self.assertEqual(mary.sex(), 'F')
         self.assertEqual(mary.given_name(), 'Mary Christine')
         self.assertEqual(mary.surname(), 'Hern')
         self.assertEqual(mary.fathers_name(), 'Thomas Clyde')
 
         self.assertEqual(mary.deceased(), False)
-        self.assertEqual(mary.death(), ('', ''))
+        self.assertEqual(mary.death(), None)
            
         self.assertEqual(mary.parent_family().xref(), '@F5@')
         self.assertEqual(mary.parent_family().husband().xref(), '@P405368888@')
@@ -133,14 +136,14 @@ class WrightTest(unittest.TestCase):
 
         self.assertEqual(delores.type(), 'Individual')
 
-        self.assertEqual(delores.birth(), ('24 JUL 1963', ''))
+        self.assertEqual(delores.birth().dateplace(), ('24 JUL 1963', ''))
         self.assertEqual(delores.sex(), 'F')
         self.assertEqual(delores.given_name(), 'Delores')
         self.assertEqual(delores.surname(), 'Hyatt')
         self.assertEqual(delores.fathers_name(), 'HORACE')
 
         self.assertEqual(delores.deceased(), False)
-        self.assertEqual(delores.death(), ('', ''))
+        self.assertEqual(delores.death(), None)
            
         self.assertEqual(delores.parent_family().xref(), '@F159@')
         self.assertEqual(map(lambda x: x.xref(), delores.families()), ['@F295@'])
