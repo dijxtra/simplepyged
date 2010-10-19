@@ -1,7 +1,7 @@
 Line
 ====
 
-.. automodule:: line
+.. automodule:: records
 
 .. autoclass:: Line
    :members:
