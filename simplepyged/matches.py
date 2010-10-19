@@ -3,6 +3,8 @@
 # Gedcom 5.5 Parser
 #
 # Copyright (C) 2010 Nikola Škorić (nskoric [ at ] gmail.com)
+# Copyright (C) 2005 Daniel Zappala (zappala [ at ] cs.byu.edu)
+# Copyright (C) 2005 Brigham Young University
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
