@@ -1,7 +1,7 @@
 Individual
 ==========
 
-.. automodule:: simplepyged
+.. automodule:: records
 
 .. autoclass:: Individual
    :members:

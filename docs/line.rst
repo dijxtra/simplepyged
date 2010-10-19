@@ -1,7 +1,7 @@
 Line
-=======
+====
 
-.. automodule:: simplepyged
+.. automodule:: line
 
 .. autoclass:: Line
    :members:

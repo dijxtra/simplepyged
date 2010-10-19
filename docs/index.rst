@@ -27,8 +27,15 @@ Record types
    family.rst
    uniplemented_records.rst
 
-Searching and filtering
-^^^^^^^^^^^^^^^^^^^^^^^
+Event types
+^^^^^^^^^^^
+
+.. toctree::
+   
+   event.rst
+
+Searching and filtering of records
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
 

@@ -180,6 +180,7 @@ class MatchList:
     if MatchIndividual(individual).given_match(some_name):
         individual in MatchList(list).given_match(some_name) # this line returns True
     """
+
     def __init__(self, record_list):
         self.records = record_list
 
