@@ -1,7 +1,7 @@
 from mako.template import Template
 import os
 import locale
-from simplepyged import *
+from simplepyged.gedcom import *
 
 def escape_latex(in_str):
     map = {'#': '\\#', 

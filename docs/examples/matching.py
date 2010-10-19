@@ -1,5 +1,6 @@
 import os
-from simplepyged import *
+from simplepyged.gedcom import *
+from simplepyged.matches import *
 
 g = Gedcom(os.path.abspath('../../test/mcintyre.ged'))
 

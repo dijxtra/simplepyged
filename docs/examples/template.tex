@@ -22,10 +22,14 @@ ${family.husband().surname()}, ${family.husband().given_name()}
 $^{\pageref{${family.husband().parent_family().xref()}}}$ \\ 
 % endif
  \\ 
-${family.husband().birth()[0]} \\ 
-${family.husband().birth()[1]} \\ 
-${family.husband().death()[0]} \\ 
-${family.husband().death()[1]} \\ 
+% if family.husband().birth() != None:
+${family.husband().birth().date} \\ 
+${family.husband().birth().place} \\ 
+% endif
+% if family.husband().death() != None:
+${family.husband().death().date} \\ 
+${family.husband().death().place} \\ 
+% endif
 % endif
 \columnbreak
 
@@ -36,10 +40,14 @@ ${family.wife().surname()}, ${family.wife().given_name()}
 $^{\pageref{${family.wife().parent_family().xref()}}}$ \\ 
 % endif
  \\ 
-${family.wife().birth()[0]} \\ 
-${family.wife().birth()[1]} \\ 
-${family.wife().death()[0]} \\ 
-${family.wife().death()[1]} \\ 
+% if family.wife().birth() != None:
+${family.wife().birth().date} \\ 
+${family.wife().birth().place} \\ 
+% endif
+% if family.wife().death() != None:
+${family.wife().death().date} \\ 
+${family.wife().death().place} \\ 
+% endif
 % endif
 \end{multicols}
 
@@ -56,15 +64,15 @@ ${child.surname()}, ${child.given_name()}
    % for f in child.families():
 $^{\pageref{${f.xref()}}}$ 
    % endfor
-   % if child.birth()[0] != '' or child.death()[0] != '':
+   % if ((child.birth() != None and child.birth().date != '') or (child.death() != None and child.death().date != '')):
 (
-      % if child.birth()[0] != '':
-${child.birth()[0]}
+      % if child.birth() != None and child.birth().date != '':
+${child.birth().date}
       % else:
 ?
       % endif
-      % if child.death()[0] != '':
- - ${child.death()[0]}
+      % if  child.birth() != None and child.death().date != '':
+ - ${child.death().date}
       % endif
 )
    % endif

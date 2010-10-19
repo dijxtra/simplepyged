@@ -4,4 +4,4 @@
 t.sh
 htmlcov
 docs/_build
-docs/examples/simplepyged.py
+docs/examples/simplepyged
