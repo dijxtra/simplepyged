@@ -34,7 +34,13 @@ class Record(Line):
 
     """
     
-    pass
+    def _parse_generic_event_list(self, tag):
+        """ Creates new event for each line with given tag"""
+        retval = []
+        for event_line in self.children_tags(tag):
+            retval.append(Event(event_line))
+
+        return retval
 
 
 class Multimedia(Record):
@@ -75,14 +81,6 @@ class Individual(Record):
         self.birth_events = self._parse_generic_event_list("BIRT")
         self.death_events = self._parse_generic_event_list("DEAT")
 
-    def _parse_generic_event_list(self, tag):
-        """ Creates new event for each line with given tag"""
-        retval = []
-        for event_line in self.children_tags(tag):
-            retval.append(Event(event_line))
-
-        return retval
-        
     def sex(self):
         """ Returns 'M' for males, 'F' for females """
         return self.children_tags("SEX")[0].value()
@@ -231,14 +229,13 @@ class Individual(Record):
         return not self.alive()
 
     def marriages(self):
-        """ Return a list of marriage tuples for a person, each listing
-        (date,place).
+        """ Return a list of marriage events for a person.
         """
         retval = []
 
         for f in self.families():
-            if f.married():
-                retval.append(f.marriage())
+            for marr in f.marriage_events:
+                retval.append(marr)
 
         return retval
 
@@ -246,8 +243,12 @@ class Individual(Record):
         """ Return a list of marriage years for a person, each in integer
         format.
         """
+        def ret_year(marr):
+            if marr.date is None:
+                return ''
+            return int(marr.date.split(" ")[-1])
 
-        return map(lambda x: int(x[0].split(" ")[-1]), self.marriages())
+        return map(ret_year, self.marriages())
 
 
 class Family(Record):
@@ -280,6 +281,9 @@ class Family(Record):
         except IndexError:
             self._children = []
 
+        self.marriage_events = self._parse_generic_event_list("MARR")
+
+
     def husband(self):
         """ Return husband this family """
         return self._husband
@@ -301,17 +305,11 @@ class Family(Record):
         return len(self.children_tags("MARR")) > 0
 
     def marriage(self):
-        """ Return (date, place) tuple of (first) marriage of family parents. """
+        """ Return one randomly chosen marriage event
 
-        for marr in self.children_tags("MARR"):
-            try:
-               date = marr.children_tags("DATE")[0].value()
-            except:
-                date = ''
-            try:
-                place = marr.children_tags("PLAC")[0].value()
-            except:
-                place = ''
+        If a family has only one marriage event (which is most common
+        case), return that one marriage event. For list of all marriage
+        events see self.marriage_events.
+        """
 
-            return (date, place)
-        return ('', '')
+        return self.marriage_events[0]

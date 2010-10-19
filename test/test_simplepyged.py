@@ -121,7 +121,7 @@ class McIntyreTest(unittest.TestCase):
         """Testing class Family"""
         fam = self.g.get_family('@F8@')
 
-        self.assertEqual(fam.marriage(), ('22 Oct 1821', 'Jefferson County, Mississippi, USA'))
+        self.assertEqual(fam.marriage().dateplace(), ('22 Oct 1821', 'Jefferson County, Mississippi, USA'))
         
 
 class WrightTest(unittest.TestCase):
@@ -155,7 +155,7 @@ class WrightTest(unittest.TestCase):
 
         self.assertEqual(family.husband().name(), ('Cosmond G', 'Wright'))
         self.assertEqual(family.married(), True)
-        self.assertEqual(family.marriage(), ('1 SEP 1973', 'Troronto, Ontario, Canada')) #sic :-)
+        self.assertEqual(family.marriage().dateplace(), ('1 SEP 1973', 'Troronto, Ontario, Canada')) #sic :-)
         
 
 if __name__ == '__main__':
