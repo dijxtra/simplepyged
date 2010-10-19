@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 #
 # Gedcom 5.5 Parser
 #
