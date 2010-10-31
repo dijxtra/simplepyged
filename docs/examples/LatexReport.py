@@ -1,7 +1,7 @@
+#this code is used from latex.py
 from mako.template import Template
 import os
 import locale
-from simplepyged.gedcom import *
 
 class Stack:
     def __init__(self, stack = []):
@@ -138,7 +138,7 @@ class LatexReport:
         latex = Template(
             filename = self.template,
             default_filters=['unicode', 'escape_latex'],
-            imports=['from latex import escape_latex']) # so that mako.template.Template can find escape_latex
+            imports=['from LatexReport import escape_latex']) # so that mako.template.Template can find escape_latex
         source = latex.render_unicode(
             stack=stack.stack,
             index=self.latex_index(stack.stack),
@@ -148,14 +148,3 @@ class LatexReport:
         return source
 
 escape_latex = LatexReport.escape_latex # so that mako.template.Template can find escape_latex
-
-g = Gedcom(os.path.abspath('../../test/mcintyre.ged'))
-#g = Gedcom(os.path.abspath('../../test/wright.ged'))
-l = LatexReport(g)
-
-# This is some old code that doesn't work anymore (TODO: rewrite this)
-#fam = g.get_family('@F5@')
-#stack = [fam]
-#stack = construct_stack(stack, 6)
-
-print  l.get_latex()
