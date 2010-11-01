@@ -7,6 +7,7 @@ class Stack:
     def __init__(self, stack = []):
         self.stack = stack
         self.sort = self.stack.sort
+        self.home_person = None
 
     def __contains__(self, item):
         return item in self.stack
@@ -129,6 +130,16 @@ class LatexReport:
 
         return pages
 
+    @staticmethod
+    def arrow(in_str):
+        """ Format an arrow """
+        d = '\\rightarrow'
+        if in_str == 'up':
+            d = '\\nearrow'
+        if in_str == 'down':
+            d = '\\searrow'
+        return unicode('$' + d + '$')
+
     def get_latex(self, stack = None):
         """ Print out latex code using mako template engine """
         
@@ -140,9 +151,12 @@ class LatexReport:
             default_filters=['unicode', 'escape_latex'],
             imports=['from LatexReport import escape_latex']) # so that mako.template.Template can find escape_latex
         source = latex.render_unicode(
+            home_person = self.home_person,
             stack=stack.stack,
             index=self.latex_index(stack.stack),
             pages=self.pages,
+            name=self.name,
+            arrow=self.arrow,
             ).encode('utf-8')
 
         return source

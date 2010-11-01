@@ -17,7 +17,7 @@ Death place: \\
 
 Husband \\ 
 % if family.husband() != None:
-${family.husband().surname()}, ${family.husband().given_name()}
+${name(family.husband())}
 % if family.husband().parent_family() != None:
 $^{\pageref{${family.husband().parent_family().xref()}}}$ \\ 
 % endif
@@ -35,7 +35,7 @@ ${family.husband().death().place} \\
 
 Wife \\ 
 % if family.wife() != None:
-${family.wife().surname()}, ${family.wife().given_name()}
+${name(family.wife())}
 % if family.wife().parent_family() != None:
 $^{\pageref{${family.wife().parent_family().xref()}}}$ \\ 
 % endif
@@ -60,7 +60,7 @@ Married?
 \begin{center}Children\end{center}
 % for child in family.children():
 \paragraph{}
-${child.surname()}, ${child.given_name()}
+${name(child)}
    % for f in child.families():
 $^{\pageref{${f.xref()}}}$ 
    % endfor
@@ -84,6 +84,26 @@ ${len(child.children())} children
       % endif
    % endif
 % endfor
+
+% if home_person is not None:
+%     if home_person.is_relative(family.husband()):
+\let\thefootnote\relax\footnotetext{
+%         for step in home_person.path_to_relative(family.husband()):
+${name(step[0])} ${arrow(step[1]) | n} 
+%         endfor
+}
+%     endif
+% endif
+
+% if home_person is not None:
+%     if home_person.is_relative(family.wife()):
+\let\thefootnote\relax\footnotetext{
+%         for step in home_person.path_to_relative(family.wife()):
+${name(step[0])} ${arrow(step[1]) | n} 
+%         endfor
+} 
+%     endif
+% endif
 \newpage
 % endfor
 
