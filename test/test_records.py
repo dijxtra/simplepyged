@@ -39,7 +39,26 @@ class McIntyreTest(unittest.TestCase):
         fam = self.g.get_family('@F8@')
 
         self.assertEqual(fam.marriage().dateplace(), ('22 Oct 1821', 'Jefferson County, Mississippi, USA'))
-        
+
+    def test_relatives(self):
+        """Testing Individual methods concerned with finding a relative"""
+        mary = self.g.get_individual('@P405366386@')
+
+        self.assertEqual(mary.common_ancestor(mary), mary)
+        self.assertEqual(mary.common_ancestor(mary.father()), mary.father())
+        self.assertEqual(mary.father().common_ancestor(mary), mary.father())
+
+        chris = self.g.get_individual('@P405749335@')
+        barbara = self.g.get_individual('@P407946950@')
+        marys_husband = self.g.get_individual('@P405364205@')
+        self.assertEqual(chris.common_ancestor(barbara) in [mary, marys_husband], True)
+        self.assertEqual(barbara.common_ancestor(chris) in [mary, marys_husband], True)
+        self.assertEqual(barbara.is_relative(chris), True)
+        self.assertEqual(chris.is_relative(barbara), True)
+
+        will = self.g.get_individual('@P407996928@')
+        self.assertEqual(barbara.is_relative(will), False)
+        self.assertEqual(chris.is_relative(will), False)
 
 class WrightTest(unittest.TestCase):
     """Unit tests for records.py using wright.ged."""

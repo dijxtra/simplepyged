@@ -371,6 +371,59 @@ class Individual(Record):
 
         return map(ret_year, self.marriages())
 
+    def parents(self):
+        """ Return list of parents of this Individual """
+
+        if self.parent_family() is None:
+            return []
+
+        return self.parent_family().parents()
+    
+    def common_ancestor(self, relative):
+        """ Find a common ancestor with a relative """
+
+        me = {}
+        him = {}
+        
+        me['new'] = [self]
+        me['old'] = []
+        him['new'] = [relative]
+        him['old'] = []
+
+        while(me['new'] != [] and him['new'] != []): #loop until we have no new ancestors to compare
+            for p in me['new']: #compare new ancestors of both me and him
+                if p in him['new']:
+                    return p
+
+            #compare new ancestors to old ones
+            for p in me['new']:
+                if p in him['old']:
+                    return p
+
+            for p in him['new']:
+                if p in me['old']:
+                    return p
+
+            for l in [me, him]: # do this for both me and him
+                new = []
+                for p in l['new']: #find parents of all memebers of 'new'
+                    new.extend(p.parents())
+                l['old'].extend(l['new']) #copy members of 'new' to 'old'
+                if None in new:
+                    new.remove(None)
+                l['new'] = new #parents of 'new' members became themselves 'new'
+
+
+        return None
+
+    def is_relative(self, candidate):
+        """ Determine if candidate is relative of self """
+        if self.common_ancestor(candidate) is not None:
+            return True
+
+        return False
+        
+
 
 class Family(Record):
     """ Gedcom record representing a family
