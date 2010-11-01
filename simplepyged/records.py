@@ -382,6 +382,9 @@ class Individual(Record):
     def common_ancestor(self, relative):
         """ Find a common ancestor with a relative """
 
+        if relative is None:
+            return None
+
         me = {}
         him = {}
         
@@ -408,9 +411,8 @@ class Individual(Record):
                 new = []
                 for p in l['new']: #find parents of all memebers of 'new'
                     new.extend(p.parents())
+                new = filter(lambda x: x is not None, new)
                 l['old'].extend(l['new']) #copy members of 'new' to 'old'
-                if None in new:
-                    new.remove(None)
                 l['new'] = new #parents of 'new' members became themselves 'new'
 
         return None
