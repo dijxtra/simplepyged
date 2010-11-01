@@ -60,6 +60,15 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(barbara.is_relative(will), False)
         self.assertEqual(chris.is_relative(will), False)
 
+        self.assertEqual(barbara.distance_to_ancestor(mary), 1)
+        self.assertEqual(chris.distance_to_ancestor(mary), 3)
+        self.assertEqual(map(lambda x: x.xref(), chris.down_path(mary, barbara, 1)), ['@P405366386@'])
+        self.assertEqual(map(lambda x: x.xref(), chris.down_path(mary, chris, 3)), ['@P405366386@', '@P405342543@', '@P405313470@'])
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), chris.path_to_relative(barbara)), [('@P405749335@', 'up'), ('@P405313470@', 'up'), ('@P405342543@', 'up'), ('@P405364205@', 'down'), ('@P407946950@', 'down')])
+        
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), barbara.path_to_relative(chris)), [('@P407946950@', 'up'), ('@P405364205@', 'down'), ('@P405342543@', 'down'), ('@P405313470@', 'down'), ('@P405749335@', 'down')])
+
+
 class WrightTest(unittest.TestCase):
     """Unit tests for records.py using wright.ged."""
 

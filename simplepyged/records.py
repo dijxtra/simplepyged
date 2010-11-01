@@ -413,7 +413,6 @@ class Individual(Record):
                     new.remove(None)
                 l['new'] = new #parents of 'new' members became themselves 'new'
 
-
         return None
 
     def is_relative(self, candidate):
@@ -423,7 +422,97 @@ class Individual(Record):
 
         return False
         
+    def distance_to_ancestor(self, ancestor):
+        """Distance to an ancestor given in number of generations
 
+        Examples of return value:
+        * from self to self: 0
+        * from self to father: 1
+        * from self to mother: 1
+        * from self to grandfather: 2 """
+
+        distance = 0
+        ancestor_list = [self]
+
+        while ancestor_list != []:
+            if ancestor in ancestor_list:
+                return distance
+
+            new_list = []
+            for a in ancestor_list:
+                new_list.extend(a.parents())
+                if None in new_list:
+                    new_list.remove(None)
+
+            ancestor_list = new_list
+
+            distance += 1
+
+        return None
+
+    @staticmethod
+    def down_path(ancestor, descendant, distance = None):
+        """ Return path between ancestor and descendant (do not go deeper than distance depth) """
+
+        if distance is not None:
+            if distance <= 0:
+                return None
+
+        if ancestor.children() == []:
+            return None
+        
+        if descendant in ancestor.children():
+            return [ancestor]
+
+        for c in ancestor.children():
+            if distance is None:
+                path = ancestor.down_path(c, descendant)
+            else:
+                path = ancestor.down_path(c, descendant, distance - 1)
+            if path is not None:
+                path.insert(0, ancestor)
+                return path
+    
+        return None
+
+    def path_to_relative(self, relative):
+        """ Find path to a relative
+
+        Returns a list of tuples (ancestor, direction) where:
+        * ancestor is a person in the path between self and relative
+        * direction is 'up' if this step in the path is parent of previous step
+        * direction is 'down' if this step in the path is child of previous step
+        """
+        
+        root = self.common_ancestor(relative)
+
+        if root is None: # is not relative
+            return None
+
+        if root == self:
+            my_path = []
+        else:
+            my_path = self.down_path(root, self, self.distance_to_ancestor(root))
+
+        if root == relative:
+            his_path = []
+        else:
+            his_path = self.down_path(root, relative, self.distance_to_ancestor(relative))
+
+        my_path.append(self)
+        his_path.append(relative)
+
+        my_path.reverse()
+
+        full_path = []
+        for step in my_path[:-1]: #my path without common ancestor (his path will add that)
+            full_path.append((step, 'up'))
+        for step in his_path:
+            full_path.append((step, 'down'))
+            
+        return full_path
+        
+        
 
 class Family(Record):
     """ Gedcom record representing a family
