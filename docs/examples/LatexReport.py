@@ -82,7 +82,7 @@ class LatexReport:
         """ Construct a stack full of depth distant relatives of members of stack (a recursion, obviously) """
         
         if depth == 0:
-            return Stack([])
+            return Stack()
         if stack.empty():
             return stack
 
@@ -142,6 +142,26 @@ class LatexReport:
         if in_str == 'down':
             d = '\\searrow'
         return unicode('$' + d + '$')
+
+
+    def get_home_person_latex(self, stack = None):
+        """ Print out latex code for home_person relatives """
+        
+        if stack is None:
+            stack = Stack(self.gedcom.family_list())
+
+        filtered = Stack()
+
+        for family in stack:
+            if family.husband() is not None and family.husband().is_relative(self.home_person):
+                filtered.push(family)
+                continue
+            if family.wife() is not None and family.wife().is_relative(self.home_person):
+                filtered.push(family)
+                continue
+
+        return self.get_latex(filtered)
+            
 
     def get_latex(self, stack = None):
         """ Print out latex code using mako template engine """
