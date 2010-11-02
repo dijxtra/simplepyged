@@ -78,11 +78,11 @@ class LatexReport:
 
         return retval
 
-    def construct_stack(self, stack, depth):
+    def construct_stack(self, stack, depth = None):
         """ Construct a stack full of depth distant relatives of members of stack (a recursion, obviously) """
         
         if depth == 0:
-            return []
+            return Stack([])
         if stack.empty():
             return stack
 
@@ -96,7 +96,10 @@ class LatexReport:
                 for f in c.families():
                     addendum.push(f)
 
-        expanded_family = construct_stack(addendum, depth - 1)
+        if depth is None:
+            expanded_family = construct_stack(addendum)
+        else:
+            expanded_family = construct_stack(addendum, depth - 1)
 
         for e in expanded_family:
             stack.push(e)
