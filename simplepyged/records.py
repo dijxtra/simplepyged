@@ -393,7 +393,7 @@ class Individual(Record):
         him['new'] = [relative]
         him['old'] = []
 
-        while(me['new'] != [] and him['new'] != []): #loop until we have no new ancestors to compare
+        while(me['new'] != [] or him['new'] != []): #loop until we have no new ancestors to compare
             for p in me['new']: #compare new ancestors of both me and him
                 if p in him['new']:
                     return p
