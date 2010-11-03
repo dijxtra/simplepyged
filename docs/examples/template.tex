@@ -7,21 +7,20 @@
 % for family in stack:
 \label{${family.xref()}}
 \begin{multicols}{3}
-* \\ 
-Name: \\ 
-Birth date: \\ 
-Birth place: \\ 
-Death date: \\ 
-Death place: \\ 
+<%text>\noindent \\
+ Name: \\ 
+$\star$ \\
+ \\ 
++ \\ 
+\\</%text>
 \columnbreak
 
-Husband \\ 
+<%text>\noindent Husband \\ </%text>
 % if family.husband() != None:
 ${name(family.husband())}
 % if family.husband().parent_family() != None:
 $^{\pageref{${family.husband().parent_family().xref()}}}$ \\ 
 % endif
- \\ 
 % if family.husband().birth() != None:
 ${family.husband().birth().date} \\ 
 ${family.husband().birth().place} \\ 
@@ -33,13 +32,12 @@ ${family.husband().death().place} \\
 % endif
 \columnbreak
 
-Wife \\ 
+<%text>\noindent Wife \\ </%text>
 % if family.wife() != None:
 ${name(family.wife())}
 % if family.wife().parent_family() != None:
 $^{\pageref{${family.wife().parent_family().xref()}}}$ \\ 
 % endif
- \\ 
 % if family.wife().birth() != None:
 ${family.wife().birth().date} \\ 
 ${family.wife().birth().place} \\ 
@@ -52,7 +50,7 @@ ${family.wife().death().place} \\
 \end{multicols}
 
 % if family.married():
-Married: ${family.marriage()}
+Married: ${family.marriage().dateplace()}
 % else:
 Married?
 % endif

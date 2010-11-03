@@ -1,34 +1,19 @@
 #this code is used from latex.py
-from mako.template import Template
-import os
 import locale
+import os
+from mako.template import Template
 
-class Stack:
-    def __init__(self, stack = []):
-        self.stack = stack
-        self.sort = self.stack.sort
-        self.home_person = None
 
-    def __contains__(self, item):
-        return item in self.stack
+def push(stack, item):
+    if item == None:
+        return stack
 
-    def push(self, item):
-        if item == None:
-            return
+    if item in stack:
+        return stack
 
-        if item in self.stack:
-            return
-
-        self.stack.append(item)
-
-    def empty(self):
-        return self.stack == []
-
-    def __iter__(self):
-        return self.stack.__iter__()
-
-    def next(self):
-        return self.stack.next()
+    stack.append(item)
+    
+    return stack
 
 class LatexReport:
     def __init__(self, gedcom):
@@ -82,19 +67,19 @@ class LatexReport:
         """ Construct a stack full of depth distant relatives of members of stack (a recursion, obviously) """
         
         if depth == 0:
-            return Stack()
-        if stack.empty():
+            return []
+        if not stack: # empty stack
             return stack
 
         for family in stack:
             if family == None:
                 continue
-            addendum = Stack()
+            addendum = []
             for p in family.parents():
-                addendum.push(p.parent_family())
+                addendum = push(addendum, p.parent_family())
             for c in family.children():
                 for f in c.families():
-                    addendum.push(f)
+                    addendum = push(addendum, f)
 
         if depth is None:
             expanded_family = construct_stack(addendum)
@@ -102,19 +87,19 @@ class LatexReport:
             expanded_family = construct_stack(addendum, depth - 1)
 
         for e in expanded_family:
-            stack.push(e)
+            stack = push(stack, e)
 
         return stack
 
     def latex_index(self, stack):
         """ Create an index of all individuals printed in report """
         
-        individuals = Stack()
+        individuals = []
         for family in stack:
             for p in family.parents():
-                individuals.push(p)
+                individuals = push(individuals, p)
             for c in family.children():
-                individuals.push(c)
+                individuals = push(individuals, c)
 
         locale.setlocale(locale.LC_ALL, '')
         individuals.sort(cmp=lambda x, y: locale.strcoll(self.name(x), self.name(y)))
@@ -148,17 +133,13 @@ class LatexReport:
         """ Print out latex code for home_person relatives """
         
         if stack is None:
-            stack = Stack(self.gedcom.family_list())
+            stack = self.gedcom.family_list()
 
-        filtered = Stack()
+        filtered = []
 
         for family in stack:
-            if family.husband() is not None and family.husband().is_relative(self.home_person):
-                filtered.push(family)
-                continue
-            if family.wife() is not None and family.wife().is_relative(self.home_person):
-                filtered.push(family)
-                continue
+            if family.is_relative(self.home_person):
+                filtered = push(filtered, family)
 
         return self.get_latex(filtered)
             
@@ -167,16 +148,22 @@ class LatexReport:
         """ Print out latex code using mako template engine """
         
         if stack is None:
-            stack = Stack(self.gedcom.family_list())
+            stack = self.gedcom.family_list()
+
+        locale.setlocale(locale.LC_ALL, '')
+        stack.sort(cmp=lambda x, y:
+                locale.strcoll(
+                  self.name(x.husband()) + self.name(x.wife()),
+                  self.name(y.husband()) + self.name(y.wife())))
 
         latex = Template(
             filename = self.template,
-            default_filters=['unicode', 'escape_latex'],
-            imports=['from LatexReport import escape_latex']) # so that mako.template.Template can find escape_latex
+            default_filters=['unicode', 'escape_latex', 'empty_none'],
+            imports=['from LatexReport import escape_latex, empty_none']) # so that mako.template.Template can find escape_latex
         source = latex.render_unicode(
             home_person = self.home_person,
-            stack=stack.stack,
-            index=self.latex_index(stack.stack),
+            stack=stack,
+            index=self.latex_index(stack),
             pages=self.pages,
             name=self.name,
             arrow=self.arrow,
@@ -185,3 +172,8 @@ class LatexReport:
         return source
 
 escape_latex = LatexReport.escape_latex # so that mako.template.Template can find escape_latex
+def empty_none(in_str):
+    if in_str == 'None':
+        return ''
+
+    return in_str
