@@ -578,3 +578,13 @@ class Family(Record):
         """
 
         return self.marriage_events[0]
+
+    def is_relative(self, candidate):
+        """ Determine if candidate is relative of a member of family """
+        if self.husband() is not None and self.husband().is_relative(candidate):
+            return True
+
+        if self.wife() is not None and self.wife().is_relative(candidate):
+            return True
+
+        return False
