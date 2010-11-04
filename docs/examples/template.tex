@@ -86,8 +86,12 @@ ${len(child.children())} children
 % if home_person is not None:
 %     if home_person.is_relative(family.husband()):
 \let\thefootnote\relax\footnotetext{
-%         for step in home_person.path_to_relative(family.husband()):
-${name(step[0])} ${arrow(step[1]) | n} 
+%         for [person, arrow] in home_person.path_to_relative(family.husband()):
+${name(person)}
+% if person.parent_family() != None:
+$^{\pageref{${person.parent_family().xref()}}}$
+% endif
+${fmt_arrow(arrow) | n} 
 %         endfor
 }
 %     endif
@@ -96,8 +100,12 @@ ${name(step[0])} ${arrow(step[1]) | n}
 % if home_person is not None:
 %     if home_person.is_relative(family.wife()):
 \let\thefootnote\relax\footnotetext{
-%         for step in home_person.path_to_relative(family.wife()):
-${name(step[0])} ${arrow(step[1]) | n} 
+%         for [person, arrow] in home_person.path_to_relative(family.wife()):
+${name(person)}
+% if person.parent_family() != None:
+$^{\pageref{${person.parent_family().xref()}}}$
+% endif
+${fmt_arrow(arrow) | n} 
 %         endfor
 } 
 %     endif

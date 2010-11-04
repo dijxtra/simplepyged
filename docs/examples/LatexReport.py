@@ -121,12 +121,17 @@ class LatexReport:
     @staticmethod
     def arrow(in_str):
         """ Format an arrow """
-        d = '\\rightarrow'
-        if in_str == 'up':
-            d = '\\nearrow'
-        if in_str == 'down':
-            d = '\\searrow'
-        return unicode('$' + d + '$')
+        d = ''
+        if in_str == 'parent':
+            d = '\\leftarrow'
+        elif in_str == 'child':
+            d = '\\rightarrow'
+        elif in_str == 'sibling':
+            d = '\\Leftrightarrow'
+        if d != '':
+            return unicode('$' + d + '$')
+        else:
+            return unicode('')
 
 
     def get_home_person_latex(self, stack = None):
@@ -166,7 +171,7 @@ class LatexReport:
             index=self.latex_index(stack),
             pages=self.pages,
             name=self.name,
-            arrow=self.arrow,
+            fmt_arrow=self.arrow,
             ).encode('utf-8')
 
         return source

@@ -485,6 +485,12 @@ class Individual(Record):
         * direction is 'up' if this step in the path is parent of previous step
         * direction is 'down' if this step in the path is child of previous step
         """
+
+        if relative == self:
+            return []
+
+        if relative in self.parents():
+            return []
         
         root = self.common_ancestor(relative)
 
@@ -507,13 +513,15 @@ class Individual(Record):
         my_path.reverse()
 
         full_path = []
-        for step in my_path[:-1]: #my path without common ancestor (his path will add that)
-            full_path.append((step, 'up'))
-        for step in his_path:
-            full_path.append((step, 'down'))
+        for step in my_path[:-1]: #my path without common ancestor
+            full_path.append([step, 'parent'])
+        full_path[-1][1] = 'sibling' # we leave out common ancestor, so two paths join at two siblings
+        
+        for step in his_path[1:]: #his path without common ancestor
+            full_path.append([step, 'child'])
+        full_path[-1][1] = '' # last person doesn't have next person to relate to
             
         return full_path
-        
         
 
 class Family(Record):
