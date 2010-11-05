@@ -83,7 +83,7 @@ ${len(child.children())} children
    % endif
 % endfor
 
-% if home_person is not None:
+% if home_person is not None and home_person not in family.children():
 %     if home_person.is_relative(family.husband()):
 \let\thefootnote\relax\footnotetext{
 %         for [person, arrow] in home_person.path_to_relative(family.husband()):
@@ -95,9 +95,6 @@ ${fmt_arrow(arrow) | n}
 %         endfor
 }
 %     endif
-% endif
-
-% if home_person is not None:
 %     if home_person.is_relative(family.wife()):
 \let\thefootnote\relax\footnotetext{
 %         for [person, arrow] in home_person.path_to_relative(family.wife()):

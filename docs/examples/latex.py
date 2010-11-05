@@ -9,8 +9,8 @@ l = LatexReport(g)
 
 #l.home_person = g.get_individual('@P405366386@') # mary
 #l.home_person = g.get_individual('@I0282@') # me
-#l.home_person = g.get_individual('@I0282@').mother().father() # deda novosel
-l.home_person = g.get_individual('@I13@') # evica
+l.home_person = g.get_individual('@I0282@').mother().father() # deda novosel
+#l.home_person = g.get_individual('@I13@') # evica
 #l.home_person = g.get_individual('@I34@') # ante
 
 # This is some old code that doesn't work anymore (TODO: rewrite this)

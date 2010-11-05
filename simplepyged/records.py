@@ -417,6 +417,13 @@ class Individual(Record):
 
         return None
 
+    def is_sibling(self, candidate):
+        """ Determine if candidate is sibling of self """
+        if self.parent_family() == candidate.parent_family():
+            return True
+
+        return False
+        
     def is_relative(self, candidate):
         """ Determine if candidate is relative of self """
         if self.common_ancestor(candidate) is not None:
@@ -490,22 +497,22 @@ class Individual(Record):
             return []
 
         if relative in self.parents():
-            return []
+            return [[self, 'parent'], [relative, '']]
         
-        root = self.common_ancestor(relative)
+        common_ancestor = self.common_ancestor(relative)
 
-        if root is None: # is not relative
+        if common_ancestor is None: # is not relative
             return None
 
-        if root == self:
+        if common_ancestor == self:
             my_path = []
         else:
-            my_path = self.down_path(root, self, self.distance_to_ancestor(root))
+            my_path = self.down_path(common_ancestor, self, self.distance_to_ancestor(common_ancestor))
 
-        if root == relative:
+        if common_ancestor == relative:
             his_path = []
         else:
-            his_path = self.down_path(root, relative, self.distance_to_ancestor(relative))
+            his_path = self.down_path(common_ancestor, relative, relative.distance_to_ancestor(common_ancestor))
 
         my_path.append(self)
         his_path.append(relative)
@@ -515,7 +522,18 @@ class Individual(Record):
         full_path = []
         for step in my_path[:-1]: #my path without common ancestor
             full_path.append([step, 'parent'])
-        full_path[-1][1] = 'sibling' # we leave out common ancestor, so two paths join at two siblings
+
+        # if two children of common ancestor are siblings, then leave
+        # out common ancestor
+        try:
+            if full_path[-1][0].is_sibling(his_path[1]):
+                full_path[-1][1] = 'sibling'
+            else: # children of common ancestor are half-siblings, so
+                  # we won't leave common ancestor out
+                full_path.append([common_ancestor, 'child'])
+        except IndexError: # sibling check didn't work out, we'll just
+                           # put common ancestor in there
+            full_path.append([common_ancestor, 'child'])
         
         for step in his_path[1:]: #his path without common ancestor
             full_path.append([step, 'child'])
