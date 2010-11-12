@@ -68,7 +68,7 @@ class Line:
         self._parent_line = None
 
     def _init(self):
-        """ A method to which GEDCOM parser runs after all lines are available. Subclasses should implement this method if they want to work with other Lines at parse time, but after all Lines are parsed. """
+        """ A method which GEDCOM parser runs after all lines are available. Subclasses should implement this method if they want to work with other Lines at parse time, but after all Lines are parsed. """
         pass
 
     def type(self):
