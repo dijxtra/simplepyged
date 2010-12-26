@@ -12,7 +12,9 @@ class McIntyreTest(unittest.TestCase):
     def test_matches(self):
         """ Testing class MatchIndividual """
         visited = 0
-        for e in self.g.line_list():
+        self.assertEqual(len(self.g.individual_list()), 41)
+
+        for e in self.g.individual_list():
             m = MatchIndividual(e)
             if m.individual.type() == 'Individual':
                 if m.surname_match('Merriman'):

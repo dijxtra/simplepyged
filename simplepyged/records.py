@@ -52,7 +52,7 @@ class Line:
 
     """
 
-    def __init__(self,level,xref,tag,value,dict):
+    def __init__(self, level, xref, tag, value, children):
         """ Initialize a line.  You must include a level, xref,
         tag, value, and global line dictionary.  Normally initialized
         by the Gedcom parser, not by a user.
@@ -62,14 +62,27 @@ class Line:
         self._xref = xref
         self._tag = tag
         self._value = value
-        self._dict = dict
+        self._value_pointer = None
         # structuring
-        self._children_lines = []
+        self._children_lines = children
         self._parent_line = None
 
-    def _init(self):
+    def _init(self, dict):
         """ A method which GEDCOM parser runs after all lines are available. Subclasses should implement this method if they want to work with other Lines at parse time, but after all Lines are parsed. """
-        pass
+        self._link_xrefs(dict)
+        
+        for child in self._children_lines:
+            child._init(dict)
+
+        return
+
+
+    def _link_xrefs(self, dict):
+        """ If self._value is reference to a record (a key in dict), then set self._value_pointer to that record. """
+        if self._value in dict.keys():
+            self._value_pointer = dict[self._value]
+
+        return
 
     def type(self):
         """ Return class name of this instance
@@ -77,10 +90,6 @@ class Line:
         Useful for determining if this line is Individual, Family, Note or some other record.
         """
         return self.__class__.__name__
-
-    def level(self):
-        """ Return the level of this line """
-        return self._level
 
     def xref(self):
         """ Return the xref of this line """
@@ -114,7 +123,7 @@ class Line:
         """ Returns list of child lines whos tag matches the argument. """
         lines = []
         for c in self.children_lines():
-            if c.tag() == tag:
+            if c._tag == tag:
                 lines.append(c)
 
         return lines
@@ -124,18 +133,15 @@ class Line:
         lines = []
         for e in self.children_tags(tag):
             try:
-                lines.append(self._dict[e.value()])
+                lines.append(e._value_pointer)
             except KeyError:
                 pass
 
         return lines
 
-    def gedcom(self):
-        """ Return GEDCOM code for this line and all of its sub-lines """
-        result = unicode(self)
-        for e in self.children_lines():
-            result += '\n' + e.gedcom()
-        return result
+
+    def __repr__(self):
+        return str({self._tag : [self._level, self._value, self._value_pointer, self._children_lines]})
 
     def __str__(self):
         """ Format this line as its original string """
@@ -154,7 +160,7 @@ class Record(Line):
     Child class of Line
 
     """
-    
+
     def _parse_generic_event_list(self, tag):
         """ Creates new event for each line with given tag"""
         retval = []
@@ -191,11 +197,13 @@ class Individual(Record):
 
     """
 
-    def __init__(self,level,xref,tag,value,dict):
-        Record.__init__(self,level,xref,tag,value,dict)
+    def __init__(self, level, xref, tag, value, children):
+        Record.__init__(self, level, xref, tag, value, children)
 
-    def _init(self):
+    def _init(self, dict):
         """ Implementing Line._init() """
+        Line._init(self, dict)
+        
         self._parent_family = self.get_parent_family()
         self._families = self.get_families()
 
@@ -552,10 +560,11 @@ class Family(Record):
     def __init__(self,level,xref,tag,value,dict):
         Record.__init__(self,level,xref,tag,value,dict)
 
-    def _init(self):
+    def _init(self, dict):
         """ Implementing Line._init()
 
         Initialise husband, wife and children attributes. """
+        Line._init(self, dict)
         
         try:
             self._husband = self.children_tag_records("HUSB")[0]

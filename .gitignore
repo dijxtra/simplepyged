@@ -5,3 +5,5 @@ t.sh
 htmlcov
 docs/_build
 docs/examples/simplepyged
+parsetab.py
+parser.out
