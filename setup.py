@@ -9,7 +9,7 @@ setup(
     keywords='gedcom, genealogy',
     author=u'Nikola Škorić',
     author_email='',
-    url='codekoala at gmail co://github.com/dijxtra/simplepyged/',
+    url='https://github.com/dijxtra/simplepyged/',
     license='GPL',
     package_dir={'simplepyged': 'simplepyged'},
     include_package_data=True,
