@@ -1,6 +1,6 @@
 Installation and building the docs
 ==================================
-(stolen from GRAMPS docmentation)
+(stolen from GRAMPS documentation)
 
 You need to install sphinx. Assuming you have installed the python setuptools, just do:
 
