@@ -204,7 +204,10 @@ class Individual(Record):
 
     def sex(self):
         """ Returns 'M' for males, 'F' for females """
-        return self.children_tags("SEX")[0].value()
+        try:
+            return self.children_tags("SEX")[0].value()
+        except IndexError:
+            return '?'
 
     def parent_family(self):
         return self._parent_family
