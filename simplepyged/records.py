@@ -201,6 +201,12 @@ class Individual(Record):
 
         self.birth_events = self._parse_generic_event_list("BIRT")
         self.death_events = self._parse_generic_event_list("DEAT")
+        self.other_events = []
+        for event_type in ["ADOP", "BAPM", "BARM", "BASM", "BLES", "BURI",
+                           "CENS", "CHR", "CHRA", "CONF", "CREM", "EMIG",
+                           "FCOM", "GRAD", "IMMI", "NATU", "ORDN", "RETI",
+                           "PROB", "WILL", "EVEN"]:
+            self.other_events.extend(self._parse_generic_event_list(event_type))
 
     def sex(self):
         """ Returns 'M' for males, 'F' for females """
@@ -576,7 +582,10 @@ class Family(Record):
             self._children = []
 
         self.marriage_events = self._parse_generic_event_list("MARR")
-
+        self.other_events = []
+        for event_type in ["ANUL", "CENS", "DIV", "DIVF", "ENGA", "MARB",
+                           "MARC", "MARL", "MARS", "EVEN"]:
+            self.other_events.extend(self._parse_generic_event_list(event_type))
 
     def husband(self):
         """ Return husband this family """
