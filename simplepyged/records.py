@@ -258,7 +258,7 @@ class Individual(Record):
                 if e.value() != "":
                     name = string.split(e.value(),'/')
                     first = string.strip(name[0])
-                    last = string.strip(name[1])
+                    last = string.strip(name[1]) if len(name) > 1 else None
                 else:
                     for c in e.children_lines():
                         if c.tag() == "GIVN":
