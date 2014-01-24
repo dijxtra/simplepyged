@@ -121,17 +121,32 @@ class Gedcom:
     def _parse_line(self,number,line):
         # each line should have: Level SP (Xref SP)? Tag (SP Value)? (SP)? NL
         # parse the line
-        parts = string.split(line)
-        place = 0
-        l = self._level(number,parts,place) #retireve line level
-        place += 1
-        p = self._xref(number,parts,place) #retrieve line xref if it exists
-        if p != '':
-            place += 1
-        t = self._tag(number,parts,place) #retrieve line tag
-        place += 1
-        v = self._value(number,parts,place) #retrieve value of tag if it exists
+        tail = line.strip()
 
+        if tail == '':
+            self._error(number,"Empty line")
+
+        try:
+            [head, tail] = tail.split(' ', 1)
+        except ValueError:
+            self._error(number,"Incomplete line")
+
+        l = self._level(number,head) #retireve line level
+
+        try:
+            [head, tail] = tail.split(' ', 1)
+        except ValueError:
+            [head, tail] = [tail, '']
+        p = self._xref(number,head) #retrieve line xref if it exists
+        if p != '':
+            try:
+                [head, tail] = tail.split(' ', 1)
+            except ValueError:
+                [head, tail] = [tail, '']
+        t = self._tag(number,head) #retrieve line tag
+
+        v = tail #retrieve value of tag if it exists
+        
         # create the line
         if l > self._current_level + 1:
             self._error(number,"Structure of GEDCOM file is corrupted")
@@ -178,11 +193,9 @@ class Gedcom:
         self._current_level = l
         self._current_line = e
 
-    def _level(self,number,parts,place):
-        if len(parts) <= place:
-            self._error(number,"Empty line")
+    def _level(self,number,head):
         try:
-            l = int(parts[place])
+            l = int(head)
         except ValueError:
             self._error(number,"Line must start with an integer level")
 
@@ -191,44 +204,25 @@ class Gedcom:
 
         return l
 
-    def _xref(self,number,parts,place):
-        if len(parts) <= place:
+    def _xref(self,number,head):
+        if head == '':
             self._error(number,"Incomplete Line")
         p = ''
-        part = parts[1]
-        if part[0] == '@':
-            if part[len(part)-1] == '@':
-                p = part
+        if head[0] == '@':
+            if head[len(head)-1] == '@':
+                p = head
                 # could strip the xref to remove the @ with
-                # string.strip(part,'@')
+                # string.strip(head,'@')
                 # but it may be useful to identify xrefs outside this class
             else:
                 self._error(number,"Xref must start and end with @")
         return p
 
-    def _tag(self,number,parts,place):
-        if len(parts) <= place:
-            self._error(number,"Incomplete line")
-        return parts[place]
+    def _tag(self,number,head):
+        if head == '':
+            self._error(number,"Incomplete Line")
+        return head
 
-    def _value(self,number,parts,place):
-        if len(parts) <= place:
-            return ''
-#        p = self._xref(number,parts,place)
-#        if p != '':
-#            # rest of the line should be empty
-#            if len(parts) > place + 1:
-#                self._error(number,"Too many parts of line")
-#            return p
-#        else:
-        # rest of the line should be ours
-        vlist = []
-        while place < len(parts):
-            vlist.append(parts[place])
-            place += 1
-        v = string.join(vlist)
-        return v
-            
     def _error(self,number,text):
         error = "Gedcom format error on line " + unicode(number) + ': ' + text
         raise GedcomParseError(error)

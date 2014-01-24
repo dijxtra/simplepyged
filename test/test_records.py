@@ -68,7 +68,16 @@ class McIntyreTest(unittest.TestCase):
         
         self.assertEqual(map(lambda (x, y): (x.xref(), y), barbara.path_to_relative(chris)), [('@P407946950@', 'sibling'), ('@P405342543@', 'child'), ('@P405313470@', 'child'), ('@P405749335@', '')])
 
+    def test_spaces(self):
+        """Testing indenting spaces"""
+        ernest = self.g.get_individual('@P405362004@')
 
+        self.assertEqual(ernest.type(), 'Individual')
+
+        notes = ernest.children_tags('NOTE')
+        self.assertEqual(len(notes), 1)
+        self.assertEqual(notes[0].value(), '    Ma and Papa')
+       
 class WrightTest(unittest.TestCase):
     """Unit tests for records.py using wright.ged."""
 
