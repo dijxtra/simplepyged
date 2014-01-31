@@ -209,11 +209,11 @@ class Individual(Record):
             self.other_events.extend(self._parse_generic_event_list(event_type))
 
     def sex(self):
-        """ Returns 'M' for males, 'F' for females """
+        """ Returns 'M' for males, 'F' for females, or None if not specified """
         try:
             return self.children_tags("SEX")[0].value()
         except IndexError:
-            return '?'
+            return None
 
     def parent_family(self):
         return self._parent_family
