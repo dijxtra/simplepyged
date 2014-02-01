@@ -1,0 +1,20 @@
+﻿0 HEAD
+	1 SOUR GENBOX
+		2 VERS 3.6.5
+		2 NAME Genbox Family History
+		2 CORP Thoughtful Creations
+			3 ADDR PO Box 112077
+				4 CONT Cincinnati, OH 45211
+				4 CONT USA
+	1 DEST GENViewer
+	1 DATE 13 SEP 2006
+		2 TIME 09:37:39
+	1 GEDC
+		2 VERS 5.5
+		2 FORM LINEAGE-LINKED
+	1 CHAR UTF-8
+0 @I1@ INDI
+	1 NAME Some /Person/
+	1 SEX M
+	1 DEAT
+0 TRLR
