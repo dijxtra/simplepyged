@@ -180,6 +180,10 @@ class Source(Record):
     pass
 
 
+class Submission(Record):
+    pass
+
+
 class Submitter(Record):
     pass
 
