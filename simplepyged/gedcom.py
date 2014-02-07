@@ -112,7 +112,7 @@ class Gedcom:
         f = open(file)
         number = 1
         for line in f.readlines():
-            self._parse_line(number,line.decode("utf-8"))
+            self._parse_line(number,line.decode("utf-8-sig"))
             number += 1
 
         for e in self.line_list():

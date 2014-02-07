@@ -180,6 +180,10 @@ class Source(Record):
     pass
 
 
+class Submission(Record):
+    pass
+
+
 class Submitter(Record):
     pass
 
@@ -201,10 +205,19 @@ class Individual(Record):
 
         self.birth_events = self._parse_generic_event_list("BIRT")
         self.death_events = self._parse_generic_event_list("DEAT")
+        self.other_events = []
+        for event_type in ["ADOP", "BAPM", "BARM", "BASM", "BLES", "BURI",
+                           "CENS", "CHR", "CHRA", "CONF", "CREM", "EMIG",
+                           "FCOM", "GRAD", "IMMI", "NATU", "ORDN", "RETI",
+                           "PROB", "WILL", "EVEN"]:
+            self.other_events.extend(self._parse_generic_event_list(event_type))
 
     def sex(self):
-        """ Returns 'M' for males, 'F' for females """
-        return self.children_tags("SEX")[0].value()
+        """ Returns 'M' for males, 'F' for females, or None if not specified """
+        try:
+            return self.children_tags("SEX")[0].value()
+        except IndexError:
+            return None
 
     def parent_family(self):
         return self._parent_family
@@ -573,7 +586,10 @@ class Family(Record):
             self._children = []
 
         self.marriage_events = self._parse_generic_event_list("MARR")
-
+        self.other_events = []
+        for event_type in ["ANUL", "CENS", "DIV", "DIVF", "ENGA", "MARB",
+                           "MARC", "MARL", "MARS", "EVEN"]:
+            self.other_events.extend(self._parse_generic_event_list(event_type))
 
     def husband(self):
         """ Return husband this family """
