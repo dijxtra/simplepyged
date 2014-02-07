@@ -65,9 +65,27 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(map(lambda x: x.xref(), chris.down_path(mary, barbara, 1)), ['@P405366386@'])
         self.assertEqual(map(lambda x: x.xref(), chris.down_path(mary, chris, 3)), ['@P405366386@', '@P405342543@', '@P405313470@'])
 
-        self.assertEqual(map(lambda (x, y): (x.xref(), y), chris.path_to_relative(barbara)), [('@P405749335@', 'parent'), ('@P405313470@', 'parent'), ('@P405342543@', 'sibling'), ('@P407946950@', '')])
+        kimberly = self.g.get_individual('@P405313470@')
+        marsha = self.g.get_individual('@P405342543@')
+
+        self.assertTrue(marsha.is_relative(kimberly))
+        self.assertTrue(kimberly.is_relative(marsha))
+
+        self.assertFalse(marsha.is_parent(kimberly))
+        self.assertTrue(kimberly.is_parent(marsha))
+
+        self.assertFalse(marsha.is_sibling(kimberly))
+        self.assertFalse(kimberly.is_sibling(marsha))
+
+        self.assertFalse(marsha.is_parent(barbara))
+        self.assertFalse(barbara.is_parent(marsha))
+
+        self.assertTrue(marsha.is_sibling(barbara))
+        self.assertTrue(barbara.is_sibling(marsha))
+
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), chris.path_to_relative(barbara)), [('@P405749335@', 'start'), ('@P405313470@', 'parent'), ('@P405342543@', 'parent'), ('@P407946950@', 'sibling')])
         
-        self.assertEqual(map(lambda (x, y): (x.xref(), y), barbara.path_to_relative(chris)), [('@P407946950@', 'sibling'), ('@P405342543@', 'child'), ('@P405313470@', 'child'), ('@P405749335@', '')])
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), barbara.path_to_relative(chris)), [('@P407946950@', 'start'), ('@P405342543@', 'sibling'), ('@P405313470@', 'child'), ('@P405749335@', 'child')])
 
     def test_spaces(self):
         """Testing indenting spaces"""

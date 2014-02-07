@@ -446,6 +446,13 @@ class Individual(Record):
                 mutual_families.append(my_family)
                 
 
+    def is_parent(self, candidate):
+        """ Determine if candidate is parent of self """
+        if candidate in self.parents():
+            return True
+
+        return False
+        
     def is_sibling(self, candidate):
         """ Determine if candidate is sibling of self """
         if self.mutual_families(candidate):
@@ -526,7 +533,7 @@ class Individual(Record):
             return []
 
         if relative in self.parents():
-            return [[self, 'parent'], [relative, '']]
+            return [[self, 'start'], [relative, 'parent']]
         
         common_ancestor = self.common_ancestor(relative)
 
