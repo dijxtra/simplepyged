@@ -26,6 +26,9 @@
 import string
 from events import Event
 
+class MultipleReturnValues(Exception):
+    pass
+
 class Line:
     """ Line of a GEDCOM file
 
@@ -222,8 +225,28 @@ class Individual(Record):
     def parent_families(self):
         return self._parent_families
 
+    def parent_family(self):
+        if len(self.parent_families()) == 0:
+            return None
+
+        if len(self.parent_families()) == 1:
+            return self.parent_families()[0]
+
+        if len(self.parent_families()) > 1:
+            raise MultipleReturnValues("Individual has multiple parent families.")
+
     def families(self):
         return self._families
+
+    def family(self):
+        if len(self.family()) == 0:
+            return None
+
+        if len(self.family()) == 1:
+            return self.family()[0]
+
+        if len(self.family()) > 1:
+            raise MultipleReturnValues("Individual has multiple families.")
 
     def father(self):
         """Returns a father as an Individual object. If person has multiple fathers, returns a list of Individual objects. """

@@ -33,6 +33,7 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(map(lambda x: x.husband().xref(), mary.parent_families()), ['@P405368888@'])
         self.assertEqual(mary.father().xref(), '@P405368888@')
         self.assertEqual(mary.mother().xref(), '@P405538002@')
+        self.assertEqual(mary.family().xref(), '@F4@')
         self.assertEqual(map(lambda x: x.xref(), mary.families()), ['@F4@'])
         self.assertEqual(mary.father().children(), [mary])
 
