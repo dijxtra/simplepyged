@@ -40,19 +40,30 @@ class McIntyreTest(unittest.TestCase):
 
         self.assertEqual(fam.marriage().dateplace(), ('22 Oct 1821', 'Jefferson County, Mississippi, USA'))
 
+        daniel = fam.children()[0]
+        calvin = fam.children()[2]
+
+        self.assertEqual(map(lambda x: x.xref(), daniel.siblings()), ['@P405608614@', '@P405613353@', '@P405421877@'])
+        self.assertEqual(daniel.mutual_families(calvin), [fam])
+        
+        kim = self.g.get_individual('@P405313470@')
+        barbara = kim.mother().siblings()[0]
+
+        self.assertEqual(map(lambda x: x.xref(), kim.common_ancestor_families(barbara)), ['@F4@'])
+        
+
     def test_relatives(self):
         """Testing Individual methods concerned with finding a relative"""
         mary = self.g.get_individual('@P405366386@')
 
-        self.assertEqual(mary.common_ancestor(mary), mary)
-        self.assertEqual(mary.common_ancestor(mary.father()), mary.father())
-        self.assertEqual(mary.father().common_ancestor(mary), mary.father())
+        self.assertEqual(mary.common_ancestor_families(mary), mary.families())
+        self.assertEqual(mary.common_ancestor_families(mary.father()), mary.parent_families())
+        self.assertEqual(mary.father().common_ancestor_families(mary), mary.parent_families())
 
         chris = self.g.get_individual('@P405749335@')
         barbara = self.g.get_individual('@P407946950@')
-        marys_husband = self.g.get_individual('@P405364205@')
-        self.assertEqual(chris.common_ancestor(barbara) in [mary, marys_husband], True)
-        self.assertEqual(barbara.common_ancestor(chris) in [mary, marys_husband], True)
+        self.assertEqual(chris.common_ancestor_families(barbara), mary.families())
+        self.assertEqual(barbara.common_ancestor_families(chris), mary.families())
         self.assertEqual(barbara.is_relative(chris), True)
         self.assertEqual(chris.is_relative(barbara), True)
 
@@ -62,8 +73,14 @@ class McIntyreTest(unittest.TestCase):
 
         self.assertEqual(barbara.distance_to_ancestor(mary), 1)
         self.assertEqual(chris.distance_to_ancestor(mary), 3)
-        self.assertEqual(map(lambda x: x.xref(), chris.down_path(mary, barbara, 1)), ['@P405366386@'])
-        self.assertEqual(map(lambda x: x.xref(), chris.down_path(mary, chris, 3)), ['@P405366386@', '@P405342543@', '@P405313470@'])
+
+        
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(mary, mary)), ['@P405366386@'])
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(mary, barbara)), ['@P405366386@', '@P407946950@'])
+        self.assertEqual(Individual.down_path(mary, chris, 2), None)
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(mary, chris, 3)), ['@P405366386@', '@P405342543@', '@P405313470@', '@P405749335@'])
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(mary, chris, 10)), ['@P405366386@', '@P405342543@', '@P405313470@', '@P405749335@'])
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(mary, chris)), ['@P405366386@', '@P405342543@', '@P405313470@', '@P405749335@'])
 
         kimberly = self.g.get_individual('@P405313470@')
         marsha = self.g.get_individual('@P405342543@')
@@ -82,6 +99,9 @@ class McIntyreTest(unittest.TestCase):
 
         self.assertTrue(marsha.is_sibling(barbara))
         self.assertTrue(barbara.is_sibling(marsha))
+
+        self.assertEqual(chris.common_ancestor(barbara).name(), mary.name())
+        self.assertEqual(chris.common_ancestor(barbara).xref(), mary.xref())
 
         self.assertEqual(map(lambda (x, y): (x.xref(), y), chris.path_to_relative(barbara)), [('@P405749335@', 'start'), ('@P405313470@', 'parent'), ('@P405342543@', 'parent'), ('@P407946950@', 'sibling')])
         
