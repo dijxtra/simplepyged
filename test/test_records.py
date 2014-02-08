@@ -27,6 +27,8 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(mary.deceased(), False)
         self.assertEqual(mary.death(), None)
            
+        self.assertEqual(mary.parent_family().xref()), '@F5@')
+        self.assertEqual(mary.parent_family().husband().xref()), '@P405368888@')
         self.assertEqual(map(lambda x: x.xref(), mary.parent_families()), ['@F5@'])
         self.assertEqual(map(lambda x: x.husband().xref(), mary.parent_families()), ['@P405368888@'])
         self.assertEqual(mary.father().xref(), '@P405368888@')
@@ -56,12 +58,19 @@ class McIntyreTest(unittest.TestCase):
         """Testing Individual methods concerned with finding a relative"""
         mary = self.g.get_individual('@P405366386@')
 
+        self.assertEqual(mary.common_ancestor(mary), mary)
+        self.assertEqual(mary.common_ancestor(mary.father()), mary.father())
+        self.assertEqual(mary.father().common_ancestor(mary), mary.father())
+        
         self.assertEqual(mary.common_ancestor_families(mary), mary.families())
         self.assertEqual(mary.common_ancestor_families(mary.father()), mary.parent_families())
         self.assertEqual(mary.father().common_ancestor_families(mary), mary.parent_families())
 
         chris = self.g.get_individual('@P405749335@')
         barbara = self.g.get_individual('@P407946950@')
+        marys_husband = self.g.get_individual('@P405364205@')
+        self.assertEqual(chris.common_ancestor(barbara) in [mary, marys_husband], True)
+        self.assertEqual(barbara.common_ancestor(chris) in [mary, marys_husband], True)
         self.assertEqual(chris.common_ancestor_families(barbara), mary.families())
         self.assertEqual(barbara.common_ancestor_families(chris), mary.families())
         self.assertEqual(barbara.is_relative(chris), True)
@@ -137,7 +146,8 @@ class WrightTest(unittest.TestCase):
 
         self.assertEqual(delores.deceased(), False)
         self.assertEqual(delores.death(), None)
-           
+
+        self.assertEqual(delores.parent_family().xref(), '@F159@')        
         self.assertEqual(map(lambda x: x.xref(), delores.parent_families()), ['@F159@'])
         self.assertEqual(map(lambda x: x.xref(), delores.families()), ['@F295@'])
         self.assertEqual(delores in delores.father().children(), True)
