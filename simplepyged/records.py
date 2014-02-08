@@ -473,14 +473,6 @@ class Individual(Record):
         if relative is None:
             return []
 
-        for family in self.parent_families():
-            if relative in family.parents():
-                return [family]
-
-        for family in relative.parent_families():
-            if self in family.parents():
-                return [family]
-            
         mutual = self.mutual_parent_families(relative)
         if mutual:
             return mutual
@@ -564,6 +556,9 @@ class Individual(Record):
             if distance <= 0:
                 return None
 
+        if ancestor == descendant:
+            return [ancestor]
+            
         if ancestor.children() == []:
             return None
         
