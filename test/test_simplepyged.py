@@ -1,6 +1,6 @@
 import unittest
 import os
-from gedcom import *
+from simplepyged.gedcom import *
 
 
 class McIntyreTest(unittest.TestCase):

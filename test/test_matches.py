@@ -1,7 +1,7 @@
 import unittest
 import os
-from gedcom import *
-from matches import *
+from simplepyged.gedcom import *
+from simplepyged.matches import *
 
 class McIntyreTest(unittest.TestCase):
     """Unit tests for matches.py using mcintyre.ged."""
