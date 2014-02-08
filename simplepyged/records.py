@@ -283,6 +283,16 @@ class Individual(Record):
 
         return retval
 
+    def siblings(self):
+        siblings = []
+
+        for family in self.parent_families():
+            for child in family.children():
+                if child != self:
+                    siblings.append(child)
+
+        return siblings
+
     def get_families(self):
         """ Return a list of all of the family records of a person. """
         return self.children_tag_records("FAMS")
