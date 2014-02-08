@@ -59,8 +59,9 @@ class McIntyreTest(unittest.TestCase):
         """Testing Individual methods concerned with finding a relative"""
         mary = self.g.get_individual('@P405366386@')
 
-        self.assertEqual(mary.common_ancestor(mary), mary)
-        self.assertEqual(mary.common_ancestor(mary.father()), mary.father())
+        self.assertRaises(MultipleReturnValues, mary.common_ancestor, mary)
+        self.assertEqual(mary.common_ancestors(mary), [mary.father(), mary.mother()])
+        self.assertEqual(mary.common_ancestors(mary.father()), [mary.father().father(), mary.father().mother()])
         self.assertEqual(mary.father().common_ancestor(mary), mary.father())
         
         self.assertEqual(mary.common_ancestor_families(mary), mary.families())

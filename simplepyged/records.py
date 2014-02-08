@@ -433,43 +433,75 @@ class Individual(Record):
         return [parent for parent_pair in parent_pairs for parent in parent_pair]   
 
     def common_ancestor(self, relative):
-        """ Find a common ancestor with a relative """
+        """ Find a common ancestor with a relative. """
+        common_ancestors = self.common_ancestors(relative)
 
         if relative is None:
             return None
 
-        me = {}
-        him = {}
+        if len(common_ancestors) == 0:
+            return None
+
+        if len(common_ancestors) == 1:
+            return common_ancestors[0]
+
+        if len(common_ancestors) > 1:
+            raise MultipleReturnValues("Individual has multiple common ancestors with that relative.")
+
         
-        me['new'] = [self]
-        me['old'] = []
-        him['new'] = [relative]
-        him['old'] = []
 
-        while(me['new'] != [] or him['new'] != []): #loop until we have no new ancestors to compare
-            for p in me['new']: #compare new ancestors of both me and him
-                if p in him['new']:
-                    return p
+    def common_ancestors(self, relative):
+        """ Find all common ancestors with a relative. """
 
-            #compare new ancestors to old ones
-            for p in me['new']:
-                if p in him['old']:
-                    return p
+        if relative is None:
+            return []
 
-            for p in him['new']:
-                if p in me['old']:
-                    return p
+        common_ancestors = []
 
-            for l in [me, him]: # do this for both me and him
-                new = []
-                for p in l['new']: #find parents of all memebers of 'new'
-                    new.extend(p.parents())
-                new = filter(lambda x: x is not None, new)
-                l['old'].extend(l['new']) #copy members of 'new' to 'old'
-                l['new'] = new #parents of 'new' members became themselves 'new'
+        for family in self.common_ancestor_families(relative):
+            for ancestor in family.parents():
+                if ancestor:
+                    if not (ancestor in common_ancestors):
+                        common_ancestors.append(ancestor)
 
-        return None
+        return common_ancestors
+        
 
+    def common_ancestor_families(self, relative):
+        """ Find a common ancestor family with a relative. """
+
+        if relative is None:
+            return []
+
+        for family in self.parent_families():
+            if relative in family.parents():
+                return [family]
+
+        for family in relative.parent_families():
+            if self in family.parents():
+                return [family]
+            
+        mutual = self.mutual_families(relative)
+        if mutual:
+            return mutual
+
+        for my_parent in self.parents():
+            if my_parent is None:
+                continue
+            common = my_parent.common_ancestor_families(relative)
+            if common:
+                return common
+
+        for his_parent in relative.parents():
+            if his_parent is None:
+                continue
+            common = his_parent.common_ancestor_families(self)
+            if common:
+                return common
+
+        return []
+
+            
     def mutual_families(self, candidate):
         """Return mutual families of self and candidate. """
         mutual_families = []
