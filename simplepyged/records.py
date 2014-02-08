@@ -500,7 +500,6 @@ class Individual(Record):
                 return common
 
         return []
-
             
     def mutual_parent_families(self, candidate):
         """Return mutual parent families of self and candidate. If self na candidate are not siblings, it will return empty list."""
@@ -524,7 +523,7 @@ class Individual(Record):
         
     def is_relative(self, candidate):
         """ Determine if candidate is relative of self """
-        if self.common_ancestor(candidate) is not None:
+        if self.common_ancestor_families(candidate):
             return True
 
         return False
@@ -597,17 +596,19 @@ class Individual(Record):
         if relative in self.parents():
             return [[self, 'start'], [relative, 'parent']]
         
-        common_ancestor = self.common_ancestor(relative)
+        common_ancestors = self.common_ancestors(relative)
 
-        if common_ancestor is None: # is not relative
+        if not common_ancestors: # is not relative
             return None
 
-        if common_ancestor == self:
+        common_ancestor = common_ancestors[0]
+
+        if self in common_ancestors:
             my_path = []
         else:
             my_path = self.down_path(common_ancestor, self, self.distance_to_ancestor(common_ancestor))
 
-        if common_ancestor == relative:
+        if relative in common_ancestors:
             his_path = []
         else:
             his_path = self.down_path(common_ancestor, relative, relative.distance_to_ancestor(common_ancestor))
