@@ -27,8 +27,8 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(mary.deceased(), False)
         self.assertEqual(mary.death(), None)
            
-        self.assertEqual(mary.parent_family().xref()), '@F5@')
-        self.assertEqual(mary.parent_family().husband().xref()), '@P405368888@')
+        self.assertEqual(mary.parent_family().xref(), '@F5@')
+        self.assertEqual(mary.parent_family().husband().xref(), '@P405368888@')
         self.assertEqual(map(lambda x: x.xref(), mary.parent_families()), ['@F5@'])
         self.assertEqual(map(lambda x: x.husband().xref(), mary.parent_families()), ['@P405368888@'])
         self.assertEqual(mary.father().xref(), '@P405368888@')
@@ -146,8 +146,8 @@ class WrightTest(unittest.TestCase):
 
         self.assertEqual(delores.deceased(), False)
         self.assertEqual(delores.death(), None)
-
-        self.assertEqual(delores.parent_family().xref(), '@F159@')        
+        
+        self.assertEqual(delores.parent_family().xref(), '@F159@')
         self.assertEqual(map(lambda x: x.xref(), delores.parent_families()), ['@F159@'])
         self.assertEqual(map(lambda x: x.xref(), delores.families()), ['@F295@'])
         self.assertEqual(delores in delores.father().children(), True)
