@@ -239,13 +239,13 @@ class Individual(Record):
         return self._families
 
     def family(self):
-        if len(self.family()) == 0:
+        if len(self.families()) == 0:
             return None
 
-        if len(self.family()) == 1:
-            return self.family()[0]
+        if len(self.families()) == 1:
+            return self.families()[0]
 
-        if len(self.family()) > 1:
+        if len(self.families()) > 1:
             raise MultipleReturnValues("Individual has multiple families.")
 
     def father(self):
