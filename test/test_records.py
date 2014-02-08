@@ -47,13 +47,16 @@ class McIntyreTest(unittest.TestCase):
         calvin = fam.children()[2]
 
         self.assertEqual(map(lambda x: x.xref(), daniel.siblings()), ['@P405608614@', '@P405613353@', '@P405421877@'])
-        self.assertEqual(daniel.mutual_families(calvin), [fam])
+        self.assertEqual(daniel.mutual_parent_families(calvin), [fam])
         
         kim = self.g.get_individual('@P405313470@')
         barbara = kim.mother().siblings()[0]
 
         self.assertEqual(map(lambda x: x.xref(), kim.common_ancestor_families(barbara)), ['@F4@'])
         
+        michael = kim.siblings()[1]
+        self.assertEqual(kim.mutual_parent_families(michael), kim.parent_families())
+        self.assertEqual(kim.mutual_parent_families(barbara), [])
 
     def test_relatives(self):
         """Testing Individual methods concerned with finding a relative"""

@@ -481,7 +481,7 @@ class Individual(Record):
             if self in family.parents():
                 return [family]
             
-        mutual = self.mutual_families(relative)
+        mutual = self.mutual_parent_families(relative)
         if mutual:
             return mutual
 
@@ -502,13 +502,10 @@ class Individual(Record):
         return []
 
             
-    def mutual_families(self, candidate):
-        """Return mutual families of self and candidate. """
-        mutual_families = []
+    def mutual_parent_families(self, candidate):
+        """Return mutual parent families of self and candidate. If self na candidate are not siblings, it will return empty list."""
 
-        for my_family in self.parent_families():
-            if my_family in candidate.parent_families():
-                mutual_families.append(my_family)
+        return list(set(self.parent_families()) & set(candidate.parent_families()))
                 
 
     def is_parent(self, candidate):
@@ -520,7 +517,7 @@ class Individual(Record):
         
     def is_sibling(self, candidate):
         """ Determine if candidate is sibling of self """
-        if self.mutual_families(candidate):
+        if self.mutual_parent_families(candidate):
             return True
 
         return False
