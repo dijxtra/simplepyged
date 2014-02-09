@@ -84,21 +84,9 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(self.barbara.is_relative(self.chris), True)
         self.assertEqual(self.chris.is_relative(self.barbara), True)
 
-        will = self.g.get_individual('@P407996928@')
-        self.assertEqual(self.barbara.is_relative(will), False)
-        self.assertEqual(self.chris.is_relative(will), True)
-
         self.assertEqual(self.barbara.distance_to_ancestor(self.mary), 1)
         self.assertEqual(self.chris.distance_to_ancestor(self.mary), 3)
-
         
-        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.mary)), ['@P405366386@'])
-        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.barbara)), ['@P405366386@', '@P407946950@'])
-        self.assertEqual(Individual.down_path(self.mary, self.chris, 2), None)
-        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.chris, 3)), ['@P405366386@', '@P405342543@', '@P405313470@', '@P405749335@'])
-        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.chris, 10)), ['@P405366386@', '@P405342543@', '@P405313470@', '@P405749335@'])
-        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.chris)), ['@P405366386@', '@P405342543@', '@P405313470@', '@P405749335@'])
-
         self.assertTrue(self.marsha.is_relative(self.kim))
         self.assertTrue(self.kim.is_relative(self.marsha))
 
@@ -113,6 +101,25 @@ class McIntyreTest(unittest.TestCase):
 
         self.assertTrue(self.marsha.is_sibling(self.barbara))
         self.assertTrue(self.barbara.is_sibling(self.marsha))
+
+    def test_direct_ascendants(self):
+        """Test relatives which are direct ascendants."""
+
+        will = self.chris.father()
+        self.assertEqual(self.barbara.is_relative(will), False)
+        self.assertEqual(self.chris.is_parent(will), True)
+        self.assertEqual(self.chris.is_relative(will), True)
+
+        
+    def test_down_paths(self):
+        """Testing Individual.down_path(). """
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.mary)), ['@P405366386@'])
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.barbara)), ['@P405366386@', '@P407946950@'])
+        self.assertEqual(Individual.down_path(self.mary, self.chris, 2), None)
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.chris, 3)), ['@P405366386@', '@P405342543@', '@P405313470@', '@P405749335@'])
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.chris, 10)), ['@P405366386@', '@P405342543@', '@P405313470@', '@P405749335@'])
+        self.assertEqual(map(lambda x: x.xref(), Individual.down_path(self.mary, self.chris)), ['@P405366386@', '@P405342543@', '@P405313470@', '@P405749335@'])
+
 
     def test_paths(self):
         """Testing paths to relatives. """
