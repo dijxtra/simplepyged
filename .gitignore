@@ -3,5 +3,6 @@
 .coverage*
 t.sh
 htmlcov
+cover
 docs/_build
 docs/examples/simplepyged
