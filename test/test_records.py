@@ -64,15 +64,17 @@ class McIntyreTest(unittest.TestCase):
         self.assertRaises(MultipleReturnValues, self.mary.common_ancestor, self.mary)
         self.assertEqual(self.mary.common_ancestors(self.mary), [self.mary.father(), self.mary.mother()])
         self.assertEqual(self.mary.common_ancestors(self.mary.father()), [self.mary.father().father(), self.mary.father().mother()])
-        self.assertEqual(self.mary.father().common_ancestor(self.mary), self.mary.father())
+        self.assertRaises(MultipleReturnValues, self.mary.father().common_ancestor, self.mary)
+        self.assertEqual(self.mary.father().common_ancestors(self.mary), self.mary.father().parents())
         
-        self.assertEqual(self.mary.common_ancestor_families(self.mary), self.mary.families())
-        self.assertEqual(self.mary.common_ancestor_families(self.mary.father()), self.mary.parent_families())
-        self.assertEqual(self.mary.father().common_ancestor_families(self.mary), self.mary.parent_families())
+        self.assertEqual(self.mary.common_ancestor_families(self.mary), self.mary.parent_families())
+        self.assertEqual(self.mary.common_ancestor_families(self.mary.father()), self.mary.father().parent_families())
+        self.assertEqual(self.mary.father().common_ancestor_families(self.mary), self.mary.father().parent_families())
 
         self.marys_husband = self.g.get_individual('@P405364205@')
-        self.assertEqual(self.chris.common_ancestor(self.barbara) in [self.mary, self.marys_husband], True)
-        self.assertEqual(self.barbara.common_ancestor(self.chris) in [self.mary, self.marys_husband], True)
+        self.assertRaises(MultipleReturnValues, self.barbara.common_ancestor, self.chris)
+        self.assertEqual(self.chris.common_ancestors(self.barbara), [self.marys_husband, self.mary])
+        self.assertEqual(self.chris.common_ancestors(self.barbara), [self.marys_husband, self.mary])
         self.assertEqual(self.chris.common_ancestor_families(self.barbara), self.mary.families())
         self.assertEqual(self.barbara.common_ancestor_families(self.chris), self.mary.families())
 
