@@ -102,12 +102,13 @@ class McIntyreTest(unittest.TestCase):
         self.assertTrue(self.marsha.is_sibling(self.barbara))
         self.assertTrue(self.barbara.is_sibling(self.marsha))
 
-    def test_direct_ascendants(self):
-        """Test relatives which are direct ascendants."""
+    def test_direct_ancestors(self):
+        """Test relatives which are direct ancestors."""
 
         will = self.chris.father()
         self.assertEqual(self.barbara.is_relative(will), False)
         self.assertEqual(self.chris.is_parent(will), True)
+        self.assertEqual(self.chris.is_ancestor(will), True)
         self.assertEqual(self.chris.is_relative(will), True)
 
         

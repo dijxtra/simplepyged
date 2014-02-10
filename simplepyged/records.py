@@ -522,10 +522,31 @@ class Individual(Record):
         
     def is_relative(self, candidate):
         """ Determine if candidate is relative of self """
+
+        if self.is_ancestor(candidate):
+            return True
+            
+        if candidate.is_ancestor(self):
+            return True
+            
         if self.common_ancestor_families(candidate):
             return True
 
         return False
+
+    def is_ancestor(self, candidate):
+        """ Determine if candidate is ancestor of self """
+
+        if self.is_parent(candidate):
+            return True
+
+        for parent in self.parents():
+            if parent:
+                if parent.is_ancestor(candidate):
+                    return True
+
+        return False
+
         
     def distance_to_ancestor(self, ancestor):
         """Distance to an ancestor given in number of generations
