@@ -460,9 +460,8 @@ class Individual(Record):
 
         for family in self.common_ancestor_families(relative):
             for ancestor in family.parents():
-                if ancestor:
-                    if not (ancestor in common_ancestors):
-                        common_ancestors.append(ancestor)
+                if not (ancestor in common_ancestors):
+                    common_ancestors.append(ancestor)
 
         return common_ancestors
         
@@ -541,9 +540,8 @@ class Individual(Record):
             return True
 
         for parent in self.parents():
-            if parent:
-                if parent.is_ancestor(candidate):
-                    return True
+            if parent.is_ancestor(candidate):
+                return True
 
         return False
 
@@ -567,8 +565,6 @@ class Individual(Record):
             new_list = []
             for a in ancestor_list:
                 new_list.extend(a.parents())
-                if None in new_list:
-                    new_list.remove(None)
 
             ancestor_list = new_list
 
@@ -721,7 +717,14 @@ class Family(Record):
 
     def parents(self):
         """ Return list of parents in this family """
-        return [self._husband, self._wife]
+        parents = []
+
+        if self._husband:
+            parents.append(self._husband)
+        if self._wife:
+            parents.append(self._wife)
+        
+        return parents
 
     def children(self):
         """ Return list of children in this family """
