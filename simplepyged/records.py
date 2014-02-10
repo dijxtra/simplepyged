@@ -477,21 +477,28 @@ class Individual(Record):
         if mutual:
             return mutual
 
-        for my_parent in self.parents():
-            if my_parent is None:
-                continue
-            common = my_parent.common_ancestor_families(relative)
-            if common:
-                return common
+        my_ancestors = self.ancestor_families_with_distance()
+        if not my_ancestors:
+            return []
 
-        for his_parent in relative.parents():
-            if his_parent is None:
-                continue
-            common = his_parent.common_ancestor_families(self)
-            if common:
-                return common
+        his_ancestors = relative.ancestor_families_with_distance()
+        if not his_ancestors:
+            return []
 
-        return []
+        my_anc_without_dist = map(lambda (fam, dist): fam, my_ancestors)
+        his_anc_without_dist = map(lambda (fam, dist): fam, his_ancestors)
+
+        common_without_dist = list(set(my_anc_without_dist) & set(his_anc_without_dist))
+        if not common_without_dist:
+            return []
+
+        common_with_my_dist = filter(lambda (fam, dist): fam in common_without_dist, my_ancestors)
+
+        (fam, min_dist) = min(common_with_my_dist, key = lambda (fam, dist): dist)
+
+        common_min_with_dist = filter(lambda (fam, dist): dist == min_dist, common_with_my_dist)
+
+        return map(lambda (fam, dist): fam, common_min_with_dist)
             
     def mutual_parent_families(self, candidate):
         """Return mutual parent families of self and candidate. If self na candidate are not siblings, it will return empty list."""
