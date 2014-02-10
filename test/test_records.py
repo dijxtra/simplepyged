@@ -106,11 +106,27 @@ class McIntyreTest(unittest.TestCase):
         """Test relatives which are direct ancestors."""
 
         will = self.chris.father()
-        self.assertEqual(self.barbara.is_relative(will), False)
-        self.assertEqual(self.chris.is_parent(will), True)
-        self.assertEqual(self.chris.is_ancestor(will), True)
-        self.assertEqual(self.chris.is_relative(will), True)
+        self.assertFalse(self.barbara.is_relative(will))
+        self.assertTrue(self.chris.is_parent(will))
+        self.assertTrue(self.chris.is_ancestor(will))
+        self.assertTrue(self.chris.is_relative(will))
 
+        john = self.g.get_individual('@P405431718@')
+        p1 = john.children()[0]
+        p2 = john.children()[3].children()[0].children()[0].children()[0].children()[1]
+
+        self.assertTrue(p1.is_relative(p2))
+        self.assertTrue(p2.is_relative(p1))
+        self.assertTrue(p1.is_relative(john))
+        self.assertTrue(p2.is_relative(john))
+        self.assertTrue(john.is_relative(p1))
+        self.assertTrue(john.is_relative(p2))
+
+        self.assertFalse(john.is_ancestor(p1))
+        self.assertFalse(john.is_ancestor(p2))
+
+        self.assertTrue(p1.is_ancestor(john))
+        self.assertTrue(p2.is_ancestor(john))
         
     def test_down_paths(self):
         """Testing Individual.down_path(). """
