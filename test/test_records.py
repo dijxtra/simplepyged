@@ -136,7 +136,21 @@ class McIntyreTest(unittest.TestCase):
         notes = ernest.children_tags('NOTE')
         self.assertEqual(len(notes), 1)
         self.assertEqual(notes[0].value(), '    Ma and Papa')
-       
+
+    def test_parent_families(self):
+        """Testing Family.parent_families and Family.ancestor_families_with_distance."""
+        self.assertEqual(map(lambda x: x.xref(), self.chris.parent_family().parent_families()), ['@F1@'])
+
+        katherine = self.g.get_individual('@P405433289@')
+        john = self.g.get_individual('@P405421877@')
+        kary = self.g.get_individual('@P405313479@')
+
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), katherine.ancestor_families_with_distance()), [('@F11@', 0)])        
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), john.ancestor_families_with_distance()), [('@F8@', 0), ('@F11@', 1)])        
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), kary.ancestor_families_with_distance()), [('@F2@', 0), ('@F3@', 1), ('@F15@', 1), ('@F6@', 2), ('@F7@', 3), ('@F8@', 4), ('@F16@', 4), ('@F11@', 5)])
+        
+
+        
 class WrightTest(unittest.TestCase):
     """Unit tests for records.py using wright.ged."""
 

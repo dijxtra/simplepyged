@@ -635,7 +635,18 @@ class Individual(Record):
             
         return full_path
         
+    def ancestor_families_with_distance(self):
+        """For each family ancestor to this one return list of tuples (family, distance)."""
 
+        ancestor_families = []
+
+        for fam in self.parent_families():
+            ancestor_families.append((fam, 0))
+            ancestor_families.extend(fam._ancestor_families_with_distance(1))
+
+        return sorted(ancestor_families, key=lambda (fam, dist): dist)
+
+        
 class Family(Record):
     """ Gedcom record representing a family
 
@@ -711,3 +722,37 @@ class Family(Record):
             return True
 
         return False
+
+    def parent_families(self):
+        """Return list of families which are parent to this one."""
+
+        parent_families = []
+        
+        if self.husband():
+            husband_families = self.husband().parent_families()
+            if husband_families:
+                parent_families.extend(husband_families)
+
+        if self.wife():
+            wife_families = self.wife().parent_families()
+            if wife_families:
+                parent_families.extend(wife_families)
+
+        return parent_families
+
+    def ancestor_families_with_distance(self):
+        """For each family ancestor to this one return list of tuples (family, distance)."""
+        return sorted(self._ancestor_families_with_distance(0), key=lambda (fam, dist): dist)
+        
+    def _ancestor_families_with_distance(self, distance):
+        parent_families = self.parent_families()
+
+        anc_fam = []
+
+        for fam in parent_families:
+            anc_fam.append((fam, distance))
+
+        for fam in parent_families:
+            anc_fam.extend(fam._ancestor_families_with_distance(distance + 1))
+
+        return anc_fam
