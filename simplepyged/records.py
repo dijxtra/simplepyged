@@ -587,7 +587,7 @@ class Individual(Record):
             return None
         
         if descendant in ancestor.children():
-            return [ancestor]
+            return [ancestor, descendant]
 
         for c in ancestor.children():
             if distance is None:
