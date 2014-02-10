@@ -140,6 +140,11 @@ class McIntyreTest(unittest.TestCase):
 
     def test_paths(self):
         """Testing paths to relatives. """
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), self.mary.path_to_relative(self.mary)), [('@P405366386@', 'start')])
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), self.mary.path_to_relative(self.barbara)), [('@P405366386@', 'start'), ('@P407946950@', 'child')])
+        self.assertEqual(map(lambda (x, y): (x.xref(), y), self.mary.path_to_relative(self.chris)), [('@P405366386@', 'start'), ('@P405342543@', 'child'), ('@P405313470@', 'child'), ('@P405749335@', 'child')])
+
+
         self.assertEqual(map(lambda (x, y): (x.xref(), y), self.chris.path_to_relative(self.barbara)), [('@P405749335@', 'start'), ('@P405313470@', 'parent'), ('@P405342543@', 'parent'), ('@P407946950@', 'sibling')])
         
         self.assertEqual(map(lambda (x, y): (x.xref(), y), self.barbara.path_to_relative(self.chris)), [('@P407946950@', 'start'), ('@P405342543@', 'sibling'), ('@P405313470@', 'child'), ('@P405749335@', 'child')])
