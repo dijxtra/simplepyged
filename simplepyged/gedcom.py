@@ -46,7 +46,7 @@ class Gedcom:
 
     """
 
-    def __init__(self,file):
+    def __init__(self,file_name):
         """ Initialize a Gedcom parser. You must supply a Gedcom file.
         """
         self._record_dict = {}
@@ -57,7 +57,7 @@ class Gedcom:
         self._current_level = -1
         self._current_line = self._line_top
         self._individuals = 0
-        self._parse(file)
+        self._parse(file_name)
 
     def record_dict(self):
         """ Return a dictionary of records from the Gedcom file.  Only
@@ -106,10 +106,13 @@ class Gedcom:
 
     # Private methods
 
-    def _parse(self,file):
+    def _parse(self,file_name):
         # open file
         # go through the lines
-        f = open(file)
+        try:
+            f = open(file_name)
+        except IOError:
+            raise Exception('File ' + file_name + ' not found.')
         number = 1
         for line in f.readlines():
             self._parse_line(number,line.decode("utf-8-sig"))
