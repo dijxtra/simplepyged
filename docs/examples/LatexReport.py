@@ -16,15 +16,15 @@ def push(stack, item):
     return stack
 
 class LatexReport:
-    def __init__(self, gedcom):
-        self.template = 'template.tex'
+    def __init__(self, gedcom, template = 'template.tex'):
+        self.template = template
         self.gedcom = gedcom
 
     @staticmethod
     def name(person):
         """ Format person's name as you wish """
         
-        if person is None:
+        if not person:
             return ""
 
         if person.surname() is None:
