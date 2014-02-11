@@ -24,6 +24,7 @@
 
 # Global imports
 import string
+from itertools import groupby
 from events import Event
 
 class MultipleReturnValues(Exception):
@@ -600,7 +601,7 @@ class Individual(Record):
     
         return None
 
-    def path_to_relative(self, relative):
+    def path_to_relative(self, relative, compact = False):
         """ Find path to a relative
 
         Returns a list of tuples (ancestor, direction) where:
@@ -610,10 +611,13 @@ class Individual(Record):
         """
 
         if relative == self:
-            return []
+            return [(self, 'start')]
 
         if relative in self.parents():
-            return [[self, 'start'], [relative, 'parent']]
+            return [(self, 'start'), (relative, 'parent')]
+        
+        if relative in self.children():
+            return [(self, 'start'), (relative, 'child')]
         
         common_ancestors = self.common_ancestors(relative)
 
@@ -632,31 +636,55 @@ class Individual(Record):
         else:
             his_path = self.down_path(common_ancestor, relative, relative.distance_to_ancestor(common_ancestor))
 
-        my_path.append(self)
-        his_path.append(relative)
-
         my_path.reverse()
+        his_path.reverse()
 
-        full_path = []
-        for step in my_path[:-1]: #my path without common ancestor
-            full_path.append([step, 'parent'])
+        if relative in my_path:
+            old_path = my_path
+            my_path = []
+            for step in old_path:
+                my_path.append(step)
+                if step == relative:
+                    break
+            his_path = [relative]
 
-        # if two children of common ancestor are siblings, then leave
-        # out common ancestor
-        try:
-            if full_path[-1][0].is_sibling(his_path[1]):
-                full_path[-1][1] = 'sibling'
-            else: # children of common ancestor are half-siblings, so
-                  # we won't leave common ancestor out
+        if self in his_path:
+            old_path = his_path
+            his_path = []
+            for step in old_path:
+                his_path.append(step)
+                if step == self:
+                    break
+            my_path = [self]
+
+        his_path.reverse()
+
+        full_path = [(self, 'start')]
+        for step in my_path[1:]: #my path with common ancestor
+            full_path.append((step, 'parent'))
+
+        print map(lambda x: x.xref(), my_path)
+        print map(lambda x: x.xref(), his_path)
+        print map(lambda (x, y): (x.xref(), y), full_path)
+
+        if compact:
+            # if two children of common ancestor are siblings, then leave
+            # out common ancestor
+            try:
+                if full_path[-1][0].is_sibling(his_path[1]):
+                    full_path[-1][1] = 'sibling'
+                else: # children of common ancestor are half-siblings, so
+                      # we won't leave common ancestor out
+                    full_path.append([common_ancestor, 'child'])
+            except IndexError: # sibling check didn't work out, we'll just
+                               # put common ancestor in there
                 full_path.append([common_ancestor, 'child'])
-        except IndexError: # sibling check didn't work out, we'll just
-                           # put common ancestor in there
-            full_path.append([common_ancestor, 'child'])
         
         for step in his_path[1:]: #his path without common ancestor
-            full_path.append([step, 'child'])
-        full_path[-1][1] = '' # last person doesn't have next person to relate to
-            
+            full_path.append((step, 'child'))
+
+        print map(lambda (x, y): (x.xref(), y), full_path)
+
         return full_path
         
     def ancestor_families_with_distance(self):
