@@ -190,6 +190,20 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(map(lambda (x, y): (x.xref(), y), john.ancestor_families_with_distance()), [('@F8@', 0), ('@F11@', 1)])        
         self.assertEqual(map(lambda (x, y): (x.xref(), y), kary.ancestor_families_with_distance()), [('@F2@', 0), ('@F3@', 1), ('@F15@', 1), ('@F6@', 2), ('@F7@', 3), ('@F8@', 4), ('@F16@', 4), ('@F11@', 5)])
         
+    def test_latex_bug(self):
+        """Unittests replicating a bug in latex example."""
+        fam12 = self.g.get_family('@F12@')
+        fam13 = self.g.get_family('@F13@')
+
+        self.assertTrue(self.mary.is_relative(fam12.husband()))
+        self.assertTrue(self.mary.path_to_relative(fam12.husband()))
+        self.assertTrue(self.mary.is_relative(fam12.wife()))
+        self.assertTrue(self.mary.path_to_relative(fam12.wife()))
+
+        self.assertTrue(self.mary.is_relative(fam13.husband()))
+        self.assertTrue(self.mary.path_to_relative(fam13.husband()))
+        self.assertTrue(self.mary.is_relative(fam13.wife()))
+        self.assertTrue(self.mary.path_to_relative(fam13.wife()))
 
         
 class WrightTest(unittest.TestCase):
