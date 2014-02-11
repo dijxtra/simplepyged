@@ -657,33 +657,35 @@ class Individual(Record):
                     break
             my_path = [self]
 
+        del his_path[-1] # remove common ancestor from his_path, we have it in my_path
         his_path.reverse()
 
         full_path = [(self, 'start')]
-        for step in my_path[1:]: #my path with common ancestor
+        for step in my_path[1:]:
             full_path.append((step, 'parent'))
 
-        print map(lambda x: x.xref(), my_path)
-        print map(lambda x: x.xref(), his_path)
-        print map(lambda (x, y): (x.xref(), y), full_path)
-
+        join_on_sibling = False
         if compact:
             # if two children of common ancestor are siblings, then leave
             # out common ancestor
             try:
-                if full_path[-1][0].is_sibling(his_path[1]):
-                    full_path[-1][1] = 'sibling'
-                else: # children of common ancestor are half-siblings, so
-                      # we won't leave common ancestor out
-                    full_path.append([common_ancestor, 'child'])
+                if full_path[-2][0].is_sibling(his_path[0]):
+                    del full_path[-1]
+                    join_on_sibling = True
             except IndexError: # sibling check didn't work out, we'll just
                                # put common ancestor in there
                 full_path.append([common_ancestor, 'child'])
-        
-        for step in his_path[1:]: #his path without common ancestor
-            full_path.append((step, 'child'))
 
-        print map(lambda (x, y): (x.xref(), y), full_path)
+        try:
+            if join_on_sibling: #first step of his path
+                full_path.append((his_path[0], 'sibling'))
+            else:
+                full_path.append((his_path[0], 'child'))
+        except IndexError:
+            pass # if his_path is empty, then do nothing
+
+        for step in his_path[1:]: #his path without first step
+            full_path.append((step, 'child'))
 
         return full_path
         
