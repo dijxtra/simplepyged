@@ -522,6 +522,8 @@ class Individual(Record):
         
     def is_relative(self, candidate):
         """ Determine if candidate is relative of self """
+        if not candidate:
+            return False
 
         if self.is_ancestor(candidate):
             return True
