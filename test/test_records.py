@@ -13,7 +13,7 @@ class McIntyreTest(unittest.TestCase):
         self.mary = self.g.get_individual('@P405366386@')
         self.chris = self.g.get_individual('@P405749335@')
         self.barbara = self.g.get_individual('@P407946950@')
-
+        self.marys_husband = self.g.get_individual('@P405364205@')
 
     def test_individual(self):
         """Testing class Individual"""
@@ -71,7 +71,8 @@ class McIntyreTest(unittest.TestCase):
         self.assertEqual(self.mary.common_ancestor_families(self.mary.father()), self.mary.father().parent_families())
         self.assertEqual(self.mary.father().common_ancestor_families(self.mary), self.mary.father().parent_families())
 
-        self.marys_husband = self.g.get_individual('@P405364205@')
+        self.assertEqual(self.mary.father().common_ancestor_families(self.marys_husband), [])
+
         self.assertRaises(MultipleReturnValues, self.barbara.common_ancestor, self.chris)
         self.assertEqual(self.chris.common_ancestors(self.barbara), [self.marys_husband, self.mary])
         self.assertEqual(self.chris.common_ancestors(self.barbara), [self.marys_husband, self.mary])
@@ -140,6 +141,8 @@ class McIntyreTest(unittest.TestCase):
 
     def test_paths(self):
         """Testing paths to relatives. """
+        self.assertEqual(self.mary.father().path_to_relative(self.marys_husband), None)
+
         self.assertEqual(map(lambda (x, y): (x.xref(), y), self.mary.path_to_relative(self.mary)), [('@P405366386@', 'start')])
         self.assertEqual(map(lambda (x, y): (x.xref(), y), self.mary.path_to_relative(self.barbara)), [('@P405366386@', 'start'), ('@P407946950@', 'child')])
         self.assertEqual(map(lambda (x, y): (x.xref(), y), self.mary.path_to_relative(self.chris)), [('@P405366386@', 'start'), ('@P405342543@', 'child'), ('@P405313470@', 'child'), ('@P405749335@', 'child')])
